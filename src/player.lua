@@ -74,10 +74,14 @@ function Player:loadImages()
 	
 	self.jumpImage = love.graphics.newImage('images/'..self.color..'-jump.png')
 	
+	self.pImage = love.graphics.newImage('images/'..self.color..'-p.png')
+	
 end
 
 function Player:draw()
 	--
+	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
+	
 	--love.graphics.setColor(0, 255, 0)
 	--love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	local addX = 0
