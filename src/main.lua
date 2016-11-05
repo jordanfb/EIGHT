@@ -16,6 +16,7 @@ function love.load(args)
 	love.window.setMode(width, height, {resizable = true})
 	love.window.setFullscreen(true)
 	-- not much here
+	game:resize(width, height)
 	love.mouse.setVisible(false)
 end
 

@@ -41,7 +41,6 @@ end
 function Player:resize(screenWidth, screenHeight)
 	self.SCREENWIDTH = screenWidth
 	self.SCREENHEIGHT = screenHeight
-
 end
 
 function Player:loadImages()
