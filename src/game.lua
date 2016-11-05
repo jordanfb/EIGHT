@@ -41,7 +41,6 @@ function Game:draw()
 end
 
 function Game:update(dt)
-	self.network:update(dt)
 	for i = #self.screenStack, 1, -1 do
 		self.screenStack[i]:update(dt)
 		if not self.screenStack[i].updateUnder then
@@ -84,5 +83,5 @@ function Game:mousereleased(x, y, button)
 end
 
 function Game:quit()
-	self.network:quit()
+	--
 end
