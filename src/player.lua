@@ -17,9 +17,15 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
 	self.anim = 1
+	self.runAnim = 1
+	self.hitAnim = 1
+	self.kickAnim = 1
 	self.runanim = 1
 	self.onGround = false
 	self.onPlatform = false
+	
+	self.attackTimer = 0
+	self.attackType = 0
 	
 	self.color = color
 	self:loadImages()
@@ -92,11 +98,13 @@ function Player:draw()
 	end
 	if not self.onGround then
 		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
+	elseif self.keyboard:isDown(self.DOWNKEY) then
+		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.dx == 0 then
 		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.dx ~= 0 then
 		-- then run!
-		love.graphics.draw(self.runImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
+		love.graphics.draw(self.runImages[math.ceil(self.runAnim/5)], self.x+addX, self.y, 0, self.facing, 1)
 	end
 end
 
@@ -117,7 +125,6 @@ function Player:update(dt)
 			self.switchedDirections = true
 			-- self.x = self.x + self.width
 			-- self.width = -self.width
-			self.runAnim = 1
 		end
 	else
 		self.switchedDirections = false
@@ -157,6 +164,10 @@ function Player:update(dt)
 	-- 	end
 	end
 
+	if self.keyboard:isDown(self.PUNCHKEY) then
+	
+	end
+	
 	if self.onGround then
 		self.ay = 0
 		self.dy = 0
@@ -178,11 +189,16 @@ function Player:update(dt)
 		self.onPlatform = false
 		self.y = self.y - 1
 	end
-
+	
 	--animations
 	self.anim = self.anim%40 + 1
+	self.runAnim = self.runAnim%30 + 1
+	
+	if self.dx==0 then
+		self.runAnim = 1
+	end
+	
 end
-
 
 function Player:isColliding(x, y, width, height)
 	if (x > self.x + self.width or x + width < self.x) then
