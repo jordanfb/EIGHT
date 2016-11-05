@@ -18,7 +18,9 @@ function Level:_init(keyboard)
 	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, self.keyboard, 100, 100, "1", "2", "3", "4", "5", "6", 1)}
+	self.players = {Player(self, self.keyboard, 100, 100, "`", "1", "2", "3", "4", "5", 1),
+					Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 2),
+					}
 
 end
 
@@ -75,15 +77,15 @@ function Level:rightCollision(playerX, playerY, playerWidth, playerHeight)
 	return playerX
 end
 
-function Level:downCollision(playerX, playerY, playerWidth, playerHeight)
+function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	for i = 1, #self.platforms, 1 do
-		if playerY+playerHeight-playerHeight/8 < self.platforms[i][2]+self.platforms[i][4] and playerY + playerHeight > self.platforms[i][2] then
+		if playerY+playerHeight <= self.platforms[i][2] and playerY + playerHeight + dy >= self.platforms[i][2] then
 			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
-				return self.platforms[i][2]-playerHeight
+				return {self.platforms[i][2]-playerHeight, true}
 			end
 		end
 	end
-	return playerY
+	return {playerY, false}
 end
 
 function Level:keypressed(key, unicode)

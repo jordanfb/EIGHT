@@ -37,6 +37,9 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self:loadImages()
 	self.SCREENWIDTH = love.graphics.getWidth()
 	self.SCREENHEIGHT = love.graphics.getHeight()
+
+	self.offGroundTimer = 0
+	self.switchedDirections = false
 end
 
 function Player:resize(screenWidth, screenHeight)
@@ -67,10 +70,7 @@ function Player:loadImages()
 		self.kickImages[i] = love.graphics.newImage('images/'..self.color..'-kick-'..i..'.png')
 	end
 	
-	self.duckImages = {}
-	for i = 1, 6, 1 do
-		self.duckImages[i] = love.graphics.newImage('images/'..self.color..'-duck-'..i..'.png')
-	end
+	self.duckImage = love.graphics.newImage('images/'..self.color..'-duck-1.png')
 	
 	self.jumpImage = love.graphics.newImage('images/'..self.color..'-jump.png')
 	
@@ -80,9 +80,11 @@ function Player:draw()
 	--
 	--love.graphics.setColor(0, 255, 0)
 	--love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
-	
-	love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x, self.y, 0, self.facing, 1)
-	
+	if not self.onGround then--(self.offGroundTimer > .1) then
+		love.graphics.draw(self.jumpImage, self.x, self.y, 0, self.facing, 1)
+	else
+		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x, self.y, 0, self.facing, 1)
+	end
 end
 
 
@@ -95,11 +97,20 @@ function Player:update(dt)
 		dx = dx + 1
 	end
 
+	-- check for switching directions:
+	if self.keyboard:isDown(self.LEFTKEY) and self.keyboard:isDown(self.RIGHTKEY) then
+		if not self.switchedDirections then
+			self.facing = -self.facing
+			self.switchedDirections = true
+			self.x = self.x + self.width
+			self.width = -self.width
+		end
+	else
+		self.switchedDirections = false
+	end
+
 	self.dx = dx
 	self.dy = self.dy + self.ay
-
-	self.x = self.x + self.dx * dt * self.moveSpeed
-	self.y = self.y + self.dy * dt
 
 	self.onGround = false
 	self.onPlatform = false
@@ -109,7 +120,7 @@ function Player:update(dt)
 	elseif (self.x < 0) then
 		self.x = 0
 	end
-	if not self.onGround and (self.y + self.height > self.SCREENHEIGHT) then
+	if (self.y + self.height >= self.SCREENHEIGHT) then
 		self.y = self.SCREENHEIGHT - self.height
 		self.onGround = true
 		self.dy = 0
@@ -117,12 +128,12 @@ function Player:update(dt)
 	-- then check platforms of level
 	
 
-	if self.dy > 0 and not self.keyboard:isDown(self.DOWNKEY) then
-		local change = self.level:downCollision(self.x, self.y, self.width, self.height)
-		if change ~= self.y then
+	if self.dy >= 0 and not self.keyboard:isDown(self.DOWNKEY) then
+		local change = self.level:downCollision(self.x, self.y, self.width, self.height, self.dy*dt)
+		if change[2] then
 			self.onGround = true
 			self.onPlatform = true
-			self.y = change
+			self.y = change[1]
 		end
 	-- elseif self.dy == 0 then
 	-- 	if (self.dx < 0) then
@@ -135,12 +146,17 @@ function Player:update(dt)
 	if self.onGround then
 		self.ay = 0
 		self.dy = 0
+		self.offGroundTimer = 0
 	else
+		self.offGroundTimer = self.offGroundTimer + dt
 		self.ay = 40
 		if self.keyboard:isDown(self.DOWNKEY) then
 			self.ay = 80
 		end
 	end
+
+	self.x = self.x + self.dx * dt * self.moveSpeed
+	self.y = self.y + self.dy * dt
 
 	-- then jump?
 
@@ -148,6 +164,7 @@ function Player:update(dt)
 		self.dy = -1000
 		self.onGround = false
 		self.onPlatform = false
+		self.y = self.y - 1
 	end
 
 	--animations
