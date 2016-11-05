@@ -13,13 +13,13 @@ end
 
 
 function Keyboard:keypressed(key, unicode)
-	self.keys[unicode] = true
+	self.keys[key] = true
 end
 
 function Keyboard:keyreleased(key, unicode)
-	self.keys[unicode] = false
+	self.keys[key] = false
 end
 
-function Keyboard:isDown(unicode)
-	return self.keys[unicode]
+function Keyboard:isDown(key)
+	return self.keys[key]
 end
