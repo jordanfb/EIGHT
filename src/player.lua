@@ -203,16 +203,16 @@ function Player:update(dt)
 		self.isAttacking = false
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 1)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 0.1, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 10, self.facing, 1)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 0.1, self.facing, 20)
 			end
 			self.coolDown = 50
 		elseif self.keyboard:isDown(self.KICKKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 2)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 0.5, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 10, self.facing, 2)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 0.5, self.facing, 20)
 			end
 			self.coolDown = 50
 		end
