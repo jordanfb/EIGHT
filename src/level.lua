@@ -1,6 +1,7 @@
 
 
 require "player"
+require "attacks"
 
 require "class"
 
@@ -27,6 +28,8 @@ function Level:_init(keyboard)
 					Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 3),
 					Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 4),
 					}
+	
+	self.attacks = Attacks(self, self.players)
 
 end
 
@@ -47,6 +50,7 @@ function Level:draw()
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
+	self.attacks:draw()
 end
 
 function Level:update(dt)
