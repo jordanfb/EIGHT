@@ -15,8 +15,9 @@ function Player:_init(x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY
 	self.dy = 0
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
+	self.anim = 1
 	self.onGround = false
-
+	
 	self.color = color
 	self:loadImages()
 	self.width = 100
@@ -30,17 +31,50 @@ function Player:_init(x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY
 
 	-- animations:
 	-- punch, kick jump, duck, walking,
+	self:loadImages()
+	
+	
 end
 
 function Player:loadImages()
+
 	-- load the correct images by appending things to the default filename
+	self.breathImages = {  }
+	for i = 1, 4, 1 do
+		self.breathImages[i] = love.graphics.newImage('images/'..self.color..'-breath-'..i..'.png')
+	end 
+	
+	self.runImages = {}
+	for i = 1, 6, 1 do
+		self.runImages[i] = love.graphics.newImage('images/'..self.color..'-run-'..i..'.png')
+	end
+	
+	self.hitImages = {}
+	for i = 1, 4, 1 do
+		self.hitImages[i] = love.graphics.newImage('images/'..self.color..'-hit-'..i..'.png')
+	end
+	
+	self.kickImages = {}
+	for i = 1, 5, 1 do
+		self.kickImages[i] = love.graphics.newImage('images/'..self.color..'-kick-'..i..'.png')
+	end
+	
+	self.duckImages = {}
+	for i = 1, 6, 1 do
+		self.duckImages[i] = love.graphics.newImage('images/'..self.color..'-duck-'..i..'.png')
+	end
+	
+	self.jumpImage = love.graphics.newImage('images/'..self.color..'-jump.png')
 end
 
 
 function Player:draw()
 	--
-	love.graphics.setColor(0, 255, 0)
-	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+	--love.graphics.setColor(0, 255, 0)
+	--love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+	
+	love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x, self.y, 0, self.facing, 1)
+	
 end
 
 
@@ -83,6 +117,9 @@ function Player:update(dt)
 		self.dy = -500
 		self.onGround = false
 	end
+	
+	--animations
+	self.anim = self.anim%40 + 1
 
 end
 

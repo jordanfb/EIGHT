@@ -14,7 +14,7 @@ function Level:_init()
 	self.updateUnder = false
 
 
-	self.players = {Player(100, 100, "1", "2", "3", "4", "5", "6", "blue")}
+	self.players = {Player(100, 100, "1", "2", "3", "4", "5", "6", 1)}
 end
 
 function Level:load()
@@ -26,6 +26,7 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.setColor(255, 255, 255)
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
