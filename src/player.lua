@@ -100,13 +100,22 @@ function Player:draw()
 	end
 	if not self.onGround then
 		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
-	elseif self.keyboard:isDown(self.DOWNKEY) then
+	elseif self.keyboard:isDown(self.DOWNKEY) and self.dx==0 then
 		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.attackTimer > 0 then
-		if self.attackTimer < 20 then
-			love.graphics.draw(self.hitImages[math.ceil(self.attackTimer/5)], self.x+addX, self.y, 0, self.facing, 1)
+	
+		if self.attackType==1 then
+			if self.attackTimer < 20 then
+				love.graphics.draw(self.hitImages[math.ceil(self.attackTimer/5)], self.x+addX, self.y, 0, self.facing, 1)
+			else
+				love.graphics.draw(self.hitImages[4], self.x+addX, self.y, 0, self.facing, 1)
+			end
 		else
-			love.graphics.draw(self.hitImages[4], self.x+addX, self.y, 0, self.facing, 1)
+			if self.attackTimer < 20 then
+				love.graphics.draw(self.kickImages[math.ceil(self.attackTimer/5)], self.x+addX, self.y, 0, self.facing, 1)
+			else
+				love.graphics.draw(self.kickImages[5], self.x+addX, self.y, 0, self.facing, 1)
+			end
 		end
 		
 	
@@ -186,25 +195,37 @@ function Player:update(dt)
 		self.attackType = 1
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif not self.keyboard:isDown(self.PUNCHKEY) or self.attackTimer==25 then
+	elseif self.keyboard:isDown(self.KICKKEY) and self.attackTimer == 0 and self.onGround and self.dx==0  and self.coolDown == 0 then
+		self.attackType = 2
+		self.attackTimer = 1
+		self.isAttacking = true
+	elseif ( not self.keyboard:isDown(self.PUNCHKEY) and not self.keyboard:isDown(self.KICKKEY) ) or self.attackTimer==25 then
 		self.isAttacking = false
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+110, self.y+30, 70, 70, self.color, 10, self.facing, 20)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 1)
 			else
-				self.level.attacks:newAttack(self.x-60, self.y+30, 70, 70, self.color, 10, self.facing, 20)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 10, self.facing, 1)
+			end
+			self.coolDown = 50
+		elseif self.keyboard:isDown(self.KICKKEY) then
+			if self.facing==1 then
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 2)
+			else
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 10, self.facing, 2)
 			end
 			self.coolDown = 50
 		end
 	end
 	
+	
 	if self.isAttacking and self.attackTimer < 150 then
-		self.attackTimer = self.attackTimer + 2
+		self.attackTimer = self.attackTimer + 2/self.attackType
 	elseif self.attackTimer >= 150 then
 		self.attackTimer = 20
 		self.isAttacking = false
 	elseif not self.isAttacking  then
-		self.attackTimer = self.attackTimer - 2
+		self.attackTimer = self.attackTimer - 2/self.attackType
 	elseif not self.isAttacking then
 		self.attackTimer = 20
 	end

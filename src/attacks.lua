@@ -14,6 +14,13 @@ function Attacks:_init(level, players)
 	self.attacks = {}
 	-- {x, y, width, height, color, damage?, facing, time}
 	self.firstAttack = 1
+	
+	self.attackImages = {}
+	for i=1, 5, 1 do
+		self.attackImages[i] = love.graphics.newImage('images/attack-'..i..'.png')
+	end
+	
+	
 end
 
 function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHeight)
@@ -46,10 +53,14 @@ function Attacks:update(dt)
 end
 
 function Attacks:draw()
-	love.graphics.setColor(0, 0, 255)
+	love.graphics.setColor(255, 0, 0)
 	for i = self.firstAttack, #self.attacks, 1 do
 		local attack = self.attacks[i]
-		love.graphics.rectangle("fill", attack[1], attack[2], attack[3], attack[4])
+		if attack[8]>12 then
+			love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
+		else
+			love.graphics.draw(self.attackImages[5], attack[1], attack[2])
+		end
 	end
 end
 
