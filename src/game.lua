@@ -69,6 +69,7 @@ function Game:resize(w, h)
 	for i = 1, #self.screenStack, 1 do
 		self.screenStack[i]:resize(w, h)
 	end
+	self.level:resize(w, h)
 end
 
 function Game:keypressed(key, unicode)

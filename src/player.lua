@@ -139,11 +139,15 @@ function Player:update(dt)
 
 	-- then jump?
 
-	if (self.onGround and self.keyboard:isDown(self.UPKEY)) then
-		self.dy = -1000
-		self.onGround = false
+	if (self.onGround) then
+		if self.keyboard:isDown(self.UPKEY) then
+			self.dy = -1000
+			self.onGround = false
+		elseif self.keyboard:isDown(self.DOWNKEY) then
+			self.dy = 100
+			self.onGround = false
+		end
 	end
-	
 	--animations
 	self.anim = self.anim%40 + 1
 
