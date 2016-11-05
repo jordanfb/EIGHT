@@ -10,6 +10,8 @@ local game = Game()
 
 
 function love.load(args)
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
+	
 	game:load(args)
 	--local width, height = 512, 256
 	local width, height = 1920, 1080

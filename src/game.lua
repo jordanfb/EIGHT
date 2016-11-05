@@ -35,7 +35,7 @@ function Game:draw()
 	
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
-		love.graphics.print("FPS: "..love.timer.getFPS(), 10, 10)
+		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
 	end
 
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
