@@ -26,6 +26,7 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	
 	self.attackTimer = 0
 	self.attackType = 0
+	self.coolDown = 0
 	self.isAttacking = false
 	
 	self.color = color
@@ -181,7 +182,7 @@ function Player:update(dt)
 
 	--ATTACKS	----------------------------------------------------
 	
-	if self.keyboard:isDown(self.PUNCHKEY) and self.attackTimer == 0 and self.onGround and self.dx==0 then
+	if self.keyboard:isDown(self.PUNCHKEY) and self.attackTimer == 0 and self.onGround and self.dx==0  and self.coolDown == 0 then
 		self.attackType = 1
 		self.attackTimer = 1
 		self.isAttacking = true
@@ -193,16 +194,17 @@ function Player:update(dt)
 			else
 				self.level.attacks:newAttack(self.x-60, self.y+30, 70, 70, self.color, 10, self.facing, 20)
 			end
+			self.coolDown = 50
 		end
 	end
 	
 	if self.isAttacking and self.attackTimer < 150 then
-		self.attackTimer = self.attackTimer + 1
+		self.attackTimer = self.attackTimer + 2
 	elseif self.attackTimer >= 150 then
 		self.attackTimer = 20
 		self.isAttacking = false
 	elseif not self.isAttacking  then
-		self.attackTimer = self.attackTimer - 1
+		self.attackTimer = self.attackTimer - 2
 	elseif not self.isAttacking then
 		self.attackTimer = 20
 	end
@@ -213,6 +215,9 @@ function Player:update(dt)
 		self.attackTimer = 25
 	end
 		
+	if self.coolDown > 0 then
+		self.coolDown = self.coolDown - 1
+	end
 	
 	--if self.isAttacking
 	--
