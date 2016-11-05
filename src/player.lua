@@ -89,6 +89,9 @@ function Player:loadImages()
 end
 
 function Player:draw()
+	if self.health <= 0 then
+		return
+	end
 	--
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
 	
@@ -126,15 +129,18 @@ function Player:draw()
 		-- then run!
 		love.graphics.draw(self.runImages[math.ceil(self.runAnim/5)], self.x+addX, self.y, 0, self.facing, 1)
 	end
-	
-	if self.color==0 then
-		love.graphics.print(self.attackTimer, 100, 100)
-	end
-	
 end
 
 
 function Player:update(dt)
+	if self.health < 0 then
+		self.health = 0
+		return
+	end
+	if self.health == 0 then
+		return
+	end
+
 	local dx = 0
 	if (self.keyboard:isDown(self.LEFTKEY)) and self.attackTimer==0 then
 		dx = -1
