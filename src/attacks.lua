@@ -31,7 +31,7 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 			if playerY + playerHeight > attack[2] and playerY < attack[2]+attack[4] then
 				-- then it hits, so deal the damage.
 				-- plus possibly add lots of blood?
-				if player.color ~= attack[5] and not attack[9+player.color] then
+				if player.color%4 ~= attack[5]%4 and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
 					player.health = player.health - attack[6]
 					attack[9+player.color] = true
