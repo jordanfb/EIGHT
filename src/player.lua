@@ -72,6 +72,7 @@ function Player:loadImages()
 	end
 	
 	self.jumpImage = love.graphics.newImage('images/'..self.color..'-jump.png')
+	
 end
 
 function Player:draw()

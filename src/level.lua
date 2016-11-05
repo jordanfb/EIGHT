@@ -16,7 +16,7 @@ function Level:_init()
 	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(100, 100, "1", "2", "3", "4", "5", "6", 1)}
+	self.players = {Player(self, 100, 100, "1", "2", "3", "4", "5", "6", 1)}
 
 end
 
@@ -33,6 +33,8 @@ function Level:draw()
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
+	love.graphics.setColor(255, 0, 0)
+	
 	for i = 1, #self.platforms, 1 do
 		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
 	end
