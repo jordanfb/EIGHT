@@ -1,4 +1,7 @@
 
+require "level"
+
+
 
 require "class"
 
@@ -14,7 +17,8 @@ function Game:_init()
 	-- here are the actual variables
 	self.drawFPS = true
 
-	self.screenStack = {}
+	self.level = Level() -- we should have it load by filename or something.
+	self.screenStack = {self.level}
 end
 
 function Game:load(args)

@@ -12,7 +12,7 @@ local game = Game()
 function love.load(args)
 	game:load(args)
 	--local width, height = 512, 256
-	local width, height = 800, 600
+	local width, height = 1920, 1080
 	love.window.setMode(width, height, {resizable = true})
 	-- not much here
 end
@@ -31,6 +31,9 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
+	if key == "escape" then
+		love.event.quit()
+	end
 	game:keypressed(key, unicode)
 end
 
