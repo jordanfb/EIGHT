@@ -20,13 +20,13 @@ function Level:_init(keyboard)
 	-- {  {x, y, width, height}  }
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
-					Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 1),
-					Player(self, self.keyboard, 1920-200, 100, "q", "w", "e", "r", "t", "y", 2),
-					Player(self, self.keyboard, 1920-300, 100, "u", "i", "o", "p", "[", "]", 3),
+				--	Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 1),
+					--Player(self, self.keyboard, 1920-200, 100, "q", "w", "e", "r", "t", "y", 2),
+		---			Player(self, self.keyboard, 1920-300, 100, "u", "i", "o", "p", "[", "]", 3),
 					Player(self, self.keyboard, 1920-400, 100, "a", "s", "d", "f", "g", "h", 4),
-					Player(self, self.keyboard, 1920-500, 100, "j", "k", "l", ";", "'", "return", 5),
-					Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 6),
-					Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 7),
+			--		Player(self, self.keyboard, 1920-500, 100, "j", "k", "l", ";", "'", "return", 5),
+				--	Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 6),
+					--Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 7),
 					}
 	
 	self.attacks = Attacks(self, self.players)
@@ -57,6 +57,7 @@ end
 function Level:drawHealth()
 	love.graphics.setColor(255, 255, 255)
 	local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
+	local colorsText = {"Red", "Green", "Blue", "Purple"}
 	local y = 10
 	local healthText = {}
 	for i = 1, #self.players, 1 do
@@ -65,7 +66,26 @@ function Level:drawHealth()
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
-	love.graphics.printf(healthText, love.graphics.getWidth()/2*0, y, love.graphics.getWidth(), "center")
+	love.graphics.printf(healthText, 0, y, love.graphics.getWidth(), "center")
+	
+	--if (#self.players==1)
+	local gameOver = true
+	local winner = -1
+	for i = 1, #self.players, 1 do
+		if self.players[i].health>0 then
+			if winner == -1 then
+				winner = self.players[i].color
+			elseif winner%4 ~= self.players[i].color%4 then
+				gameOver = false
+			end
+		end
+	end
+	
+	if gameOver==true then
+		love.graphics.setColor(colors[winner+1])
+		love.graphics.print("TEAM "..colorsText[winner+1].." WINS!", 500, 100)
+	end
+	--end
 end
 
 function Level:update(dt)
