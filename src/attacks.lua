@@ -31,9 +31,10 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 			if playerY + playerHeight > attack[2] and playerY < attack[2]+attack[4] then
 				-- then it hits, so deal the damage.
 				-- plus possibly add lots of blood?
-				if player.color ~= attack[5] then
+				if player.color ~= attack[5] and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
 					player.health = player.health - attack[6]
+					attack[9+player.color] = true
 					-- add the knockback!!
 				end
 			end
@@ -67,5 +68,5 @@ function Attacks:draw()
 end
 
 function Attacks:newAttack(x, y, width, height, color, damage, facing, time)
-	self.attacks[#self.attacks+1] = {x, y, width, height, color, damage, facing, time}
+	self.attacks[#self.attacks+1] = {x, y, width, height, color, damage, facing, time, false, false, false, false, false, false, false, false}
 end
