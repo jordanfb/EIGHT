@@ -26,6 +26,7 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	
 	self.attackTimer = 0
 	self.attackType = 0
+	self.isAttacking = false
 	
 	self.color = color
 	self:loadImages()
@@ -60,29 +61,29 @@ function Player:loadImages()
 	-- load the correct images by appending things to the default filename
 	self.breathImages = {  }
 	for i = 1, 4, 1 do
-		self.breathImages[i] = love.graphics.newImage('images/'..self.color..'-breath-'..i..'.png')
+		self.breathImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-breath-'..i..'.png')
 	end 
 	
 	self.runImages = {}
 	for i = 1, 6, 1 do
-		self.runImages[i] = love.graphics.newImage('images/'..self.color..'-run-'..i..'.png')
+		self.runImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-run-'..i..'.png')
 	end
 	
 	self.hitImages = {}
 	for i = 1, 4, 1 do
-		self.hitImages[i] = love.graphics.newImage('images/'..self.color..'-hit-'..i..'.png')
+		self.hitImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-hit-'..i..'.png')
 	end
 	
 	self.kickImages = {}
 	for i = 1, 5, 1 do
-		self.kickImages[i] = love.graphics.newImage('images/'..self.color..'-kick-'..i..'.png')
+		self.kickImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-kick-'..i..'.png')
 	end
 	
-	self.duckImage = love.graphics.newImage('images/'..self.color..'-duck-1.png')
+	self.duckImage = love.graphics.newImage('images/'..(self.color%4+1)..'-duck-1.png')
 	
-	self.jumpImage = love.graphics.newImage('images/'..self.color..'-jump.png')
+	self.jumpImage = love.graphics.newImage('images/'..(self.color%4+1)..'-jump.png')
 	
-	self.pImage = love.graphics.newImage('images/'..self.color..'-p.png')
+	self.pImage = love.graphics.newImage('images/'..(self.color+1)..'-p.png')
 	
 end
 
@@ -100,26 +101,40 @@ function Player:draw()
 		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.keyboard:isDown(self.DOWNKEY) then
 		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
+	elseif self.attackTimer > 0 then
+		if self.attackTimer < 20 then
+			love.graphics.draw(self.hitImages[math.ceil(self.attackTimer/5)], self.x+addX, self.y, 0, self.facing, 1)
+		else
+			love.graphics.draw(self.hitImages[4], self.x+addX, self.y, 0, self.facing, 1)
+		end
+		
+	
+	
 	elseif self.dx == 0 then
 		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.dx ~= 0 then
 		-- then run!
 		love.graphics.draw(self.runImages[math.ceil(self.runAnim/5)], self.x+addX, self.y, 0, self.facing, 1)
 	end
+	
+	if self.color==0 then
+		love.graphics.print(self.attackTimer, 100, 100)
+	end
+	
 end
 
 
 function Player:update(dt)
 	local dx = 0
-	if (self.keyboard:isDown(self.LEFTKEY)) then
+	if (self.keyboard:isDown(self.LEFTKEY)) and self.attackTimer==0 then
 		dx = -1
 	end
-	if (self.keyboard:isDown(self.RIGHTKEY)) then
+	if (self.keyboard:isDown(self.RIGHTKEY)) and self.attackTimer==0 then
 		dx = dx + 1
 	end
 
 	-- check for switching directions:
-	if self.keyboard:isDown(self.LEFTKEY) and self.keyboard:isDown(self.RIGHTKEY) then
+	if self.keyboard:isDown(self.LEFTKEY) and self.keyboard:isDown(self.RIGHTKEY) and self.attackTimer==0 then
 		if not self.switchedDirections then
 			self.facing = -self.facing
 			self.switchedDirections = true
@@ -149,7 +164,7 @@ function Player:update(dt)
 	-- then check platforms of level
 	
 
-	if self.dy >= 0 and not self.keyboard:isDown(self.DOWNKEY) then
+	if self.dy >= 0 and not self.keyboard:isDown(self.DOWNKEY) and self.attackTimer==0 then
 		local change = self.level:downCollision(self.x, self.y, self.width, self.height, self.dy*dt)
 		if change[2] then
 			self.onGround = true
@@ -164,9 +179,45 @@ function Player:update(dt)
 	-- 	end
 	end
 
-	if self.keyboard:isDown(self.PUNCHKEY) then
+	--ATTACKS	----------------------------------------------------
 	
+	if self.keyboard:isDown(self.PUNCHKEY) and self.attackTimer == 0 and self.onGround and self.dx==0 then
+		self.attackType = 1
+		self.attackTimer = 1
+		self.isAttacking = true
+	elseif not self.keyboard:isDown(self.PUNCHKEY) or self.attackTimer==25 then
+		self.isAttacking = false
+		if self.keyboard:isDown(self.PUNCHKEY) then
+			if self.facing==1 then
+				self.level.attacks:newAttack(self.x+110, self.y+30, 70, 70, self.color, 10, self.facing, 20)
+			else
+				self.level.attacks:newAttack(self.x-60, self.y+30, 70, 70, self.color, 10, self.facing, 20)
+			end
+		end
 	end
+	
+	if self.isAttacking and self.attackTimer < 150 then
+		self.attackTimer = self.attackTimer + 1
+	elseif self.attackTimer >= 150 then
+		self.attackTimer = 20
+		self.isAttacking = false
+	elseif not self.isAttacking  then
+		self.attackTimer = self.attackTimer - 1
+	elseif not self.isAttacking then
+		self.attackTimer = 20
+	end
+	
+	if self.attackTimer < 0 then
+		self.attackTimer = 0
+	elseif self.attackTimer > 25 then
+		self.attackTimer = 25
+	end
+		
+	
+	--if self.isAttacking
+	--
+	----------------------------------------------------
+	
 	
 	if self.onGround then
 		self.ay = 0
@@ -183,7 +234,7 @@ function Player:update(dt)
 
 	-- then jump?
 
-	if self.onGround and self.keyboard:isDown(self.UPKEY) then
+	if self.onGround and self.keyboard:isDown(self.UPKEY)  and self.attackTimer==0 then
 		self.dy = -1000
 		self.onGround = false
 		self.onPlatform = false

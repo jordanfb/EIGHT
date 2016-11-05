@@ -19,14 +19,14 @@ function Level:_init(keyboard)
 	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 1),
-					Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 2),
-					Player(self, self.keyboard, 1920-200, 100, "q", "w", "e", "r", "t", "y", 3),
-					Player(self, self.keyboard, 1920-300, 100, "u", "i", "o", "p", "[", "]", 4),
-					Player(self, self.keyboard, 1920-400, 100, "a", "s", "d", "f", "g", "h", 1),
-					Player(self, self.keyboard, 1920-500, 100, "j", "k", "l", ";", "'", "return", 2),
-					Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 3),
-					Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 4),
+	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
+					Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 1),
+					Player(self, self.keyboard, 1920-200, 100, "q", "w", "e", "r", "t", "y", 2),
+					Player(self, self.keyboard, 1920-300, 100, "u", "i", "o", "p", "[", "]", 3),
+					Player(self, self.keyboard, 1920-400, 100, "a", "s", "d", "f", "g", "h", 4),
+					Player(self, self.keyboard, 1920-500, 100, "j", "k", "l", ";", "'", "return", 5),
+					Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 6),
+					Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 7),
 					}
 	
 	self.attacks = Attacks(self, self.players)
@@ -57,6 +57,7 @@ function Level:update(dt)
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
 	end
+	self.attacks:update(dt)
 end
 
 function Level:resize(w, h)
