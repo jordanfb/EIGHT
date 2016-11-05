@@ -48,7 +48,9 @@ function Attacks:update(dt)
 		if attack[8] <= 0 then
 			self.firstAttack = self.firstAttack +1
 		end
-		
+	end
+	for i = 1, #self.players, 1 do
+		self:checkCollisions(self.players[i], self.players[i].x, self.players[i].y, self.players[i].width, self.players[i].height)
 	end
 end
 
