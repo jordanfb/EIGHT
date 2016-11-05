@@ -20,12 +20,12 @@ function Level:_init(keyboard)
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 1),
 					Player(self, self.keyboard, 1920-100, 100, "7", "8", "9", "0", "-", "=", 2),
-					Player(self, self.keyboard, 1920-100, 100, "q", "w", "e", "r", "t", "y", 2),
-					Player(self, self.keyboard, 1920-100, 100, "u", "i", "o", "p", "[", "]", 2),
-					Player(self, self.keyboard, 1920-100, 100, "a", "s", "d", "f", "g", "h", 2),
-					Player(self, self.keyboard, 1920-100, 100, "j", "k", "l", ";", "'", "return", 2),
-					Player(self, self.keyboard, 1920-100, 100, "lshift", "z", "x", "c", "v", "b", 2),
-					Player(self, self.keyboard, 1920-100, 100, "n", "m", ",", ".", "/", "rshift", 2),
+					Player(self, self.keyboard, 1920-200, 100, "q", "w", "e", "r", "t", "y", 3),
+					Player(self, self.keyboard, 1920-300, 100, "u", "i", "o", "p", "[", "]", 4),
+					Player(self, self.keyboard, 1920-400, 100, "a", "s", "d", "f", "g", "h", 1),
+					Player(self, self.keyboard, 1920-500, 100, "j", "k", "l", ";", "'", "return", 2),
+					Player(self, self.keyboard, 1920-600, 100, "lshift", "z", "x", "c", "v", "b", 3),
+					Player(self, self.keyboard, 1920-700, 100, "n", "m", ",", ".", "/", "rshift", 4),
 					}
 
 end

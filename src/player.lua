@@ -80,10 +80,14 @@ function Player:draw()
 	--
 	--love.graphics.setColor(0, 255, 0)
 	--love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+	local addX = 0
+	if self.facing == -1 then
+		addX = self.width
+	end
 	if not self.onGround then--(self.offGroundTimer > .1) then
-		love.graphics.draw(self.jumpImage, self.x, self.y, 0, self.facing, 1)
+		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
 	else
-		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x, self.y, 0, self.facing, 1)
+		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
 	end
 end
 
@@ -102,8 +106,8 @@ function Player:update(dt)
 		if not self.switchedDirections then
 			self.facing = -self.facing
 			self.switchedDirections = true
-			self.x = self.x + self.width
-			self.width = -self.width
+			-- self.x = self.x + self.width
+			-- self.width = -self.width
 		end
 	else
 		self.switchedDirections = false
