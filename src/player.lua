@@ -7,7 +7,7 @@ Player = class()
 
 
 function Player:_init(x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY, color)
-	self.moveSpeed = 500
+	self.moveSpeed = 400
 
 	self.x = x
 	self.y = y
