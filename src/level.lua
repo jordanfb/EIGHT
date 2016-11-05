@@ -31,14 +31,13 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.setColor(255, 0, 0)
+	for i = 1, #self.platforms, 1 do
+		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
+	end
 	love.graphics.setColor(255, 255, 255)
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
-	end
-	love.graphics.setColor(255, 0, 0)
-	
-	for i = 1, #self.platforms, 1 do
-		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
 	end
 end
 

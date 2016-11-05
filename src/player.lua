@@ -18,6 +18,7 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self.facing = 1 -- 1 = right, -1 = left
 	self.anim = 1
 	self.onGround = false
+	self.onPlatform = false
 	
 	self.color = color
 	self:loadImages()
@@ -101,6 +102,7 @@ function Player:update(dt)
 	self.y = self.y + self.dy * dt
 
 	self.onGround = false
+	self.onPlatform = false
 
 	if (self.x + self.width >= self.SCREENWIDTH) then
 		self.x = self.SCREENWIDTH - self.width
@@ -115,10 +117,11 @@ function Player:update(dt)
 	-- then check platforms of level
 	
 
-	if self.dy > 0 then
+	if self.dy > 0 and not self.keyboard:isDown(self.DOWNKEY) then
 		local change = self.level:downCollision(self.x, self.y, self.width, self.height)
 		if change ~= self.y then
 			self.onGround = true
+			self.onPlatform = true
 			self.y = change
 		end
 	-- elseif self.dy == 0 then
@@ -134,19 +137,19 @@ function Player:update(dt)
 		self.dy = 0
 	else
 		self.ay = 40
+		if self.keyboard:isDown(self.DOWNKEY) then
+			self.ay = 80
+		end
 	end
 
 	-- then jump?
 
-	if (self.onGround) then
-		if self.keyboard:isDown(self.UPKEY) then
-			self.dy = -1000
-			self.onGround = false
-		elseif self.keyboard:isDown(self.DOWNKEY) then
-			self.dy = 100
-			self.onGround = false
-		end
+	if self.onGround and self.keyboard:isDown(self.UPKEY) then
+		self.dy = -1000
+		self.onGround = false
+		self.onPlatform = false
 	end
+
 	--animations
 	self.anim = self.anim%40 + 1
 
