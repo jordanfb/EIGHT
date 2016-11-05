@@ -6,7 +6,8 @@ Player = class()
 
 
 
-function Player:_init(x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY, color)
+function Player:_init(level, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY, color)
+	self.level = level
 	self.moveSpeed = 500
 
 	self.x = x
@@ -25,17 +26,24 @@ function Player:_init(x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY
 	self.LEFTKEY = LEFTKEY
 	self.RIGHTKEY = RIGHTKEY
 	self.UPKEY = UPKEY
+	self.DOWNKEY = DOWNKEY
 	self.PUNCHKEY = PUNCHKEY
 	self.KICKKEY = KICKKEY
 
 	-- animations:
 	-- punch, kick jump, duck, walking,
+	self.SCREENWIDTH = love.graphics.getWidth()
+	self.SCREENHEIGHT = love.graphics.getHeight()
+end
+
+function Player:resize(screenWidth, screenHeight)
+	self.SCREENWIDTH = screenWidth
+	self.SCREENHEIGHT = screenHeight
 end
 
 function Player:loadImages()
 	-- load the correct images by appending things to the default filename
 end
-
 
 function Player:draw()
 	--
@@ -59,28 +67,46 @@ function Player:update(dt)
 	self.x = self.x + self.dx * dt * self.moveSpeed
 	self.y = self.y + self.dy * dt
 
-	if (self.x + self.width >= love.graphics.getWidth()) then
-		self.x = love.graphics.getWidth() - self.width
+	self.onGround = false
+
+	if (self.x + self.width >= self.SCREENWIDTH) then
+		self.x = self.SCREENWIDTH - self.width
 	elseif (self.x < 0) then
 		self.x = 0
 	end
-	if (self.y + self.height > love.graphics.getHeight()) then
-		self.y = love.graphics.getHeight() - self.height
+	if not self.onGround and (self.y + self.height > self.SCREENHEIGHT) then
+		self.y = self.SCREENHEIGHT - self.height
 		self.onGround = true
+		self.dy = 0
 	end
 	-- then check platforms of level
+	
+
+	if self.dy > 0 then
+		local change = self.level:downCollision(self.x, self.y, self.width, self.height)
+		if change ~= self.y then
+			self.onGround = true
+			self.y = change
+		end
+	-- elseif self.dy == 0 then
+	-- 	if (self.dx < 0) then
+	-- 		self.x = self.level:leftCollision(self.x, self.y, self.width, self.height)
+	-- 	elseif (self.dx > 0) then
+	-- 		self.x = self.level:rightCollision(self.x, self.y, self.width, self.height)
+	-- 	end
+	end
 
 	if self.onGround then
 		self.ay = 0
 		self.dy = 0
 	else
-		self.ay = 9.8
+		self.ay = 40
 	end
 
 	-- then jump?
 
 	if (self.onGround and love.keyboard.isDown(self.UPKEY)) then
-		self.dy = -500
+		self.dy = -1000
 		self.onGround = false
 	end
 

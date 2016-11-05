@@ -14,7 +14,9 @@ function love.load(args)
 	--local width, height = 512, 256
 	local width, height = 1920, 1080
 	love.window.setMode(width, height, {resizable = true})
+	love.window.setFullscreen(true)
 	-- not much here
+	love.mouse.setVisible(false)
 end
 
 function love.resize(w, h)

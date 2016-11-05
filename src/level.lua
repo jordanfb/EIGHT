@@ -12,9 +12,11 @@ function Level:_init()
 	-- this is for the draw stack
 	self.drawUnder = false
 	self.updateUnder = false
+	-- 1920, 1080
+	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
+	-- {  {x, y, width, height}  }
 
-
-	self.players = {Player(100, 100, "1", "2", "3", "4", "5", "6", "blue")}
+	self.players = {Player(self, 100, 100, "1", "2", "3", "4", "5", "6", "blue")}
 end
 
 function Level:load()
@@ -29,6 +31,9 @@ function Level:draw()
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
+	for i = 1, #self.platforms, 1 do
+		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
+	end
 end
 
 function Level:update(dt)
@@ -38,7 +43,42 @@ function Level:update(dt)
 end
 
 function Level:resize(w, h)
-	--
+	for i = 1, #self.players, 1 do
+		self.players[i]:resize(w, h)
+	end
+end
+
+function Level:leftCollision(playerX, playerY, playerWidth, playerHeight)
+	for i = 1, #self.platforms, 1 do
+		if playerY < self.platforms[i][2]+self.platforms[i][4] and playerY + playerHeight > self.platforms[i][2] then
+			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
+				return self.platforms[i][1]+self.platforms[i][3]
+			end
+		end
+	end
+	return playerX
+end
+
+function Level:rightCollision(playerX, playerY, playerWidth, playerHeight)
+	for i = 1, #self.platforms, 1 do
+		if playerY < self.platforms[i][2]+self.platforms[i][4] and playerY + playerHeight > self.platforms[i][2] then
+			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
+				return self.platforms[i][1]-playerWidth
+			end
+		end
+	end
+	return playerX
+end
+
+function Level:downCollision(playerX, playerY, playerWidth, playerHeight)
+	for i = 1, #self.platforms, 1 do
+		if playerY+playerHeight-playerHeight/8 < self.platforms[i][2]+self.platforms[i][4] and playerY + playerHeight > self.platforms[i][2] then
+			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
+				return self.platforms[i][2]-playerHeight
+			end
+		end
+	end
+	return playerY
 end
 
 function Level:keypressed(key, unicode)
