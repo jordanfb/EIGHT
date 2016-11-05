@@ -61,8 +61,8 @@ function Level:drawHealth()
 	local y = 10
 	local healthText = {}
 	for i = 1, #self.players, 1 do
-		healthText[#healthText+1] = colors[(i-1)%4+1]
-		healthText[#healthText+1] = "P"..i..":"..self.players[i].health.."  "
+		healthText[#healthText+1] = colors[(self.players[i].color)%4+1]
+		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..self.players[i].health.."  "
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
