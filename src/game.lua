@@ -1,7 +1,6 @@
 
 require "level"
-
-
+require "keyboard"
 
 require "class"
 
@@ -17,7 +16,9 @@ function Game:_init()
 	-- here are the actual variables
 	self.drawFPS = true
 
-	self.level = Level() -- we should have it load by filename or something.
+	self.keyboard = Keyboard()
+
+	self.level = Level(self.keyboard) -- we should have it load by filename or something.
 	self.screenStack = {self.level}
 end
 
@@ -72,10 +73,12 @@ end
 
 function Game:keypressed(key, unicode)
 	self.screenStack[#self.screenStack]:keypressed(key, unicode)
+	self.keyboard:keypressed(key, unicode)
 end
 
 function Game:keyreleased(key, unicode)
 	self.screenStack[#self.screenStack]:keyreleased(key, unicode)
+	self.keyboard:keyreleased(key, unicode)
 end
 
 function Game:mousepressed(x, y, button)

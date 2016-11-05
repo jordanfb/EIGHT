@@ -20,6 +20,6 @@ function Keyboard:keyreleased(key, unicode)
 	self.keys[unicode] = false
 end
 
-function Keyboard.isDown(unicode)
+function Keyboard:isDown(unicode)
 	return self.keys[unicode]
 end

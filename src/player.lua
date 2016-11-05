@@ -6,8 +6,9 @@ Player = class()
 
 
 
-function Player:_init(level, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY, color)
+function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, KICKKEY, color)
 	self.level = level
+	self.keyboard = keyboard
 	self.moveSpeed = 500
 	self.x = x
 	self.y = y
@@ -21,7 +22,7 @@ function Player:_init(level, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, PUNCHKEY, 
 	self.color = color
 	self:loadImages()
 	self.width = 100
-	self.height = 130
+	self.height = 150
 
 	self.LEFTKEY = LEFTKEY
 	self.RIGHTKEY = RIGHTKEY
@@ -87,10 +88,10 @@ end
 
 function Player:update(dt)
 	local dx = 0
-	if (love.keyboard.isDown(self.LEFTKEY)) then
+	if (self.keyboard:isDown(self.LEFTKEY)) then
 		dx = -1
 	end
-	if (love.keyboard.isDown(self.RIGHTKEY)) then
+	if (self.keyboard:isDown(self.RIGHTKEY)) then
 		dx = dx + 1
 	end
 
@@ -138,7 +139,7 @@ function Player:update(dt)
 
 	-- then jump?
 
-	if (self.onGround and love.keyboard.isDown(self.UPKEY)) then
+	if (self.onGround and self.keyboard:isDown(self.UPKEY)) then
 		self.dy = -1000
 		self.onGround = false
 	end

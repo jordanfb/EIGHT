@@ -8,15 +8,17 @@ Level = class()
 
 -- _init, load, draw, update(dt), keypressed, keyreleased, mousepressed, mousereleased, resize, (drawUnder, updateUnder)
 
-function Level:_init()
+function Level:_init(keyboard)
 	-- this is for the draw stack
 	self.drawUnder = false
 	self.updateUnder = false
+
+	self.keyboard = keyboard
 	-- 1920, 1080
 	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, 100, 100, "1", "2", "3", "4", "5", "6", 1)}
+	self.players = {Player(self, self.keyboard, 100, 100, "1", "2", "3", "4", "5", "6", 1)}
 
 end
 
