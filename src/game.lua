@@ -20,6 +20,9 @@ function Game:_init()
 
 	self.level = Level(self.keyboard) -- we should have it load by filename or something.
 	self.screenStack = {self.level}
+	
+	self.bg = love.graphics.newImage('images/bg.png')
+	
 end
 
 function Game:load(args)
@@ -27,6 +30,9 @@ function Game:load(args)
 end
 
 function Game:draw()
+
+	love.graphics.draw(self.bg, 0, 0)
+	
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.print("FPS: "..love.timer.getFPS(), 10, 10)
