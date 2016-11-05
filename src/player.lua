@@ -174,7 +174,7 @@ function Player:update(dt)
 	-- then check platforms of level
 	
 
-	if self.dy >= 0 and not self.keyboard:isDown(self.DOWNKEY) and self.attackTimer==0 then
+	if self.dy >= 0 and not self.keyboard:isDown(self.DOWNKEY) then
 		local change = self.level:downCollision(self.x, self.y, self.width, self.height, self.dy*dt)
 		if change[2] then
 			self.onGround = true
@@ -203,16 +203,16 @@ function Player:update(dt)
 		self.isAttacking = false
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 0.1, self.facing, 20)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 0.1, self.facing, 20)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 	10, self.facing, 20)
 			end
 			self.coolDown = 50
 		elseif self.keyboard:isDown(self.KICKKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 0.5, self.facing, 20)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 25, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 0.5, self.facing, 20)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 25, self.facing, 20)
 			end
 			self.coolDown = 50
 		end
@@ -233,7 +233,7 @@ function Player:update(dt)
 	if self.attackTimer < 0 then
 		self.attackTimer = 0
 	elseif self.attackTimer > 25 then
-		self.attackTimer = 25
+		self.attackTimer = 24
 	end
 		
 	if self.coolDown > 0 then
@@ -260,7 +260,7 @@ function Player:update(dt)
 
 	-- then jump?
 
-	if self.onGround and self.keyboard:isDown(self.UPKEY)  and self.attackTimer==0 then
+	if self.onGround and self.keyboard:isDown(self.UPKEY) and self.attackTimer==0 then
 		self.dy = -1000
 		self.onGround = false
 		self.onPlatform = false

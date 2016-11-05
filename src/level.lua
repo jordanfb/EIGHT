@@ -16,7 +16,7 @@ function Level:_init(keyboard)
 
 	self.keyboard = keyboard
 	-- 1920, 1080
-	self.platforms = {{1920-200, 900, 200, 30}, {0, 900, 200, 30}}
+	self.platforms = {{100, 700, 200, 30}, {0, 900, 200, 30}}
 	-- {  {x, y, width, height}  }
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
