@@ -172,8 +172,8 @@ function Player:update(dt)
 	elseif (self.x < 0) then
 		self.x = 0
 	end
-	if (self.y + self.height >= self.SCREENHEIGHT) then
-		self.y = self.SCREENHEIGHT - self.height
+	if (self.y + self.height >= self.SCREENHEIGHT - 80) then
+		self.y = self.SCREENHEIGHT - self.height - 80
 		self.onGround = true
 		self.dy = 0
 	end
@@ -209,16 +209,16 @@ function Player:update(dt)
 		self.isAttacking = false
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 10, self.facing, 20)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 	10, self.facing, 20)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
 			end
 			self.coolDown = 50
 		elseif self.keyboard:isDown(self.KICKKEY) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 25, self.facing, 20)
+				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 40, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 25, self.facing, 20)
+				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 40, self.facing, 20)
 			end
 			self.coolDown = 50
 		end

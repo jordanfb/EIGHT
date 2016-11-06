@@ -32,6 +32,8 @@ function Level:_init(keyboard)
 	
 	self.attacks = Attacks(self, self.players)
 
+	self.grassImage = love.graphics.newImage('images/grass.png')
+
 end
 
 function Level:load()
@@ -51,6 +53,9 @@ function Level:draw()
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
+	for i = 0, 50, 1 do
+		love.graphics.draw(self.grassImage, i*80, love.graphics.getHeight()-80)
+	end
 	self.attacks:draw()
 	self:drawHealth()
 end
@@ -63,7 +68,7 @@ function Level:drawHealth()
 	local healthText = {}
 	for i = 1, #self.players, 1 do
 		healthText[#healthText+1] = colors[(self.players[i].color)%4+1]
-		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..self.players[i].health.."  "
+		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..math.max(0, self.players[i].health).."  "
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
@@ -84,7 +89,7 @@ function Level:drawHealth()
 	
 	if gameOver==true then
 		love.graphics.setColor(colors[winner+1])
-		love.graphics.print("TEAM "..colorsText[winner+1].." WINS!", 500, 100)
+		love.graphics.print("TEAM "..colorsText[winner+1].." WINS!", 600, 100)
 	end
 	--end
 end

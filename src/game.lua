@@ -14,7 +14,7 @@ function Game:_init()
 	self.updateUnder = false
 
 	-- here are the actual variables
-	self.drawFPS = true
+	self.drawFPS = false
 
 	self.keyboard = Keyboard()
 
@@ -32,11 +32,6 @@ end
 function Game:draw()
 
 	love.graphics.draw(self.bg, 0, 0)
-	
-	if (self.drawFPS) then
-		love.graphics.setColor(255, 0, 0)
-		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
-	end
 
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
@@ -49,6 +44,11 @@ function Game:draw()
 	for i = thingsToDraw, #self.screenStack, 1 do
 		self.screenStack[i]:draw()
 	end
+	if (self.drawFPS) then
+		love.graphics.setColor(255, 0, 0)
+		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
+	end
+
 end
 
 function Game:update(dt)
