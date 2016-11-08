@@ -36,9 +36,6 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
-	if key == "f20" then
-		love.event.quit()
-	end
 	if key == "escape" then
 		love.event.quit()
 	end

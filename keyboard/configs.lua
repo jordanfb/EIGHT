@@ -5,92 +5,147 @@ lmc_assign_keyboard('FOUR');
 
 lmc_set_handler('ONE', function(button, direction)
 	if (direction == 1) then -- it's a key press
-		if (button == string.byte('A')) then lmc_send_keys('f1')
-		elseif (button == string.byte('W')) then lmc_send_keys('f2')
-		elseif (button == string.byte('D')) then lmc_send_keys('f2')
-		elseif (button == string.byte('S')) then lmc_send_keys('f3')
-		elseif (button == string.byte('C')) then lmc_send_keys('f4')
-	        elseif (button == string.byte('V')) then lmc_send_keys('f5')
-
-		elseif (button == string.byte('J')) then lmc_send_keys('f6')
-		elseif (button == string.byte('I')) then lmc_send_keys('f7')
-		elseif (button == string.byte('L')) then lmc_send_keys('f8')
-		elseif (button == string.byte('O')) then lmc_send_keys('f9')
-		elseif (button == string.byte('P')) then lmc_send_keys('f20')
-                end
-		return
-	else
 		if (button == string.byte('A')) then lmc_send_keys('`')
-		elseif (button == string.byte('W')) then lmc_send_keys('1')
-		elseif (button == string.byte('D')) then lmc_send_keys('2')
+		elseif (button == string.byte('D')) then lmc_send_keys('1')
+		elseif (button == string.byte('W')) then lmc_send_keys('2')
 		elseif (button == string.byte('S')) then lmc_send_keys('3')
 		elseif (button == string.byte('C')) then lmc_send_keys('4')
-		elseif (button == string.byte('V')) then lmc_send_keys('5')
+	    elseif (button == string.byte('V')) then lmc_send_keys('5')
 
-		elseif (button == string.byte('J')) then lmc_send_keys('6')
-		elseif (button == string.byte('I')) then lmc_send_keys('7')
+		elseif (button == string.byte('J')) then lmc_send_keys('7')
 		elseif (button == string.byte('L')) then lmc_send_keys('8')
-		elseif (button == string.byte('O')) then lmc_send_keys('9')
-		elseif (button == string.byte('P')) then lmc_send_keys('0')
+		elseif (button == string.byte('I')) then lmc_send_keys('9')
+		elseif (button == string.byte('K')) then lmc_send_keys('0')
+		elseif (button == 190) then lmc_send_keys('-')
+        elseif (button == 191) then lmc_send_keys('=')
+        elseif (button == 27) then lmc_send_keys('{ESC}')
+        end
+		return
+	else
+		if (button == string.byte('A')) then lmc_send_keys('{UP}`')
+		elseif (button == string.byte('D')) then lmc_send_keys('{UP}1')
+		elseif (button == string.byte('W')) then lmc_send_keys('{UP}2')
+		elseif (button == string.byte('S')) then lmc_send_keys('{UP}3')
+		elseif (button == string.byte('C')) then lmc_send_keys('{UP}4')
+	    elseif (button == string.byte('V')) then lmc_send_keys('{UP}5')
 
-		else print('invalid')
+		elseif (button == string.byte('J')) then lmc_send_keys('{UP}7')
+		elseif (button == string.byte('L')) then lmc_send_keys('{UP}8')
+		elseif (button == string.byte('I')) then lmc_send_keys('{UP}9')
+		elseif (button == string.byte('K')) then lmc_send_keys('{UP}0')
+		elseif (button == 190) then lmc_send_keys('{UP}-')
+        elseif (button == 191) then lmc_send_keys('{UP}=')
 		end
 	end
 end)
 
 
 
-
 lmc_set_handler('TWO', function(button, direction)
-	if (button == string.byte('A')) then lmc_send_keys('Q')
-	elseif (button == string.byte('W')) then lmc_send_keys('W')
-	elseif (button == string.byte('D')) then lmc_send_keys('E')
-	elseif (button == string.byte('C')) then lmc_send_keys('R')
-	elseif (button == string.byte('V')) then lmc_send_keys('T')
+	if (direction == 1) then -- it's a key press
+		if (button == string.byte('A')) then lmc_send_keys('q')
+		elseif (button == string.byte('D')) then lmc_send_keys('w')
+		elseif (button == string.byte('W')) then lmc_send_keys('e')
+		elseif (button == string.byte('S')) then lmc_send_keys('r')
+		elseif (button == string.byte('C')) then lmc_send_keys('t')
+	    elseif (button == string.byte('V')) then lmc_send_keys('y')
 
-	elseif (button == string.byte('J')) then lmc_send_keys('Y')
-	elseif (button == string.byte('I')) then lmc_send_keys('U')
-	elseif (button == string.byte('L')) then lmc_send_keys('I')
-	elseif (button == string.byte('O')) then lmc_send_keys('O')
-	elseif (button == string.byte('P')) then lmc_send_keys('P')
+		elseif (button == string.byte('J')) then lmc_send_keys('u')
+		elseif (button == string.byte('L')) then lmc_send_keys('i')
+		elseif (button == string.byte('I')) then lmc_send_keys('o')
+		elseif (button == string.byte('K')) then lmc_send_keys('p')
+		elseif (button == 190) then lmc_send_keys('[')
+        elseif (button == 191) then lmc_send_keys(']')
+        elseif (button == 27) then lmc_send_keys('{ESC}')
+        end
+		return
+	else
+		if (button == string.byte('A')) then lmc_send_keys('{UP}q')
+		elseif (button == string.byte('D')) then lmc_send_keys('{UP}w')
+		elseif (button == string.byte('W')) then lmc_send_keys('{UP}e')
+		elseif (button == string.byte('S')) then lmc_send_keys('{UP}r')
+		elseif (button == string.byte('C')) then lmc_send_keys('{UP}t')
+	    elseif (button == string.byte('V')) then lmc_send_keys('{UP}y')
 
-	else print('invalid')
+		elseif (button == string.byte('J')) then lmc_send_keys('{UP}u')
+		elseif (button == string.byte('L')) then lmc_send_keys('{UP}i')
+		elseif (button == string.byte('I')) then lmc_send_keys('{UP}o')
+		elseif (button == string.byte('K')) then lmc_send_keys('{UP}p')
+		elseif (button == 190) then lmc_send_keys('{UP}[')
+        elseif (button == 191) then lmc_send_keys('{UP}]')
+		end
 	end
 end)
 
-
 lmc_set_handler('THREE', function(button, direction)
-	if (button == string.byte('A')) then lmc_send_keys('A')
-	elseif (button == string.byte('W')) then lmc_send_keys('S')
-	elseif (button == string.byte('D')) then lmc_send_keys('D')
-	elseif (button == string.byte('C')) then lmc_send_keys('F')
-	elseif (button == string.byte('V')) then lmc_send_keys('G')
+	if (direction == 1) then -- it's a key press
+		if (button == string.byte('A')) then lmc_send_keys('a')
+		elseif (button == string.byte('D')) then lmc_send_keys('s')
+		elseif (button == string.byte('W')) then lmc_send_keys('d')
+		elseif (button == string.byte('S')) then lmc_send_keys('f')
+		elseif (button == string.byte('C')) then lmc_send_keys('g')
+	    elseif (button == string.byte('V')) then lmc_send_keys('h')
 
-	elseif (button == string.byte('J')) then lmc_send_keys('H')
-	elseif (button == string.byte('I')) then lmc_send_keys('J')
-	elseif (button == string.byte('L')) then lmc_send_keys('K')
-	elseif (button == string.byte('O')) then lmc_send_keys('L')
-	elseif (button == string.byte('P')) then lmc_send_keys(';')
+		elseif (button == string.byte('J')) then lmc_send_keys('j')
+		elseif (button == string.byte('L')) then lmc_send_keys('k')
+		elseif (button == string.byte('I')) then lmc_send_keys('l')
+		elseif (button == string.byte('K')) then lmc_send_keys(';')
+		elseif (button == 190) then lmc_send_keys('\'')
+        elseif (button == 191) then lmc_send_keys('{ENTER}')
+        elseif (button == 27) then lmc_send_keys('{ESC}')
+        end
+		return
+	else
+		if (button == string.byte('A')) then lmc_send_keys('{UP}a')
+		elseif (button == string.byte('D')) then lmc_send_keys('{UP}s')
+		elseif (button == string.byte('W')) then lmc_send_keys('{UP}d')
+		elseif (button == string.byte('S')) then lmc_send_keys('{UP}f')
+		elseif (button == string.byte('C')) then lmc_send_keys('{UP}g')
+	    elseif (button == string.byte('V')) then lmc_send_keys('{UP}h')
 
-	else print('invalid')
+		elseif (button == string.byte('J')) then lmc_send_keys('{UP}j')
+		elseif (button == string.byte('L')) then lmc_send_keys('{UP}k')
+		elseif (button == string.byte('I')) then lmc_send_keys('{UP}l')
+		elseif (button == string.byte('K')) then lmc_send_keys('{UP};')
+		elseif (button == 190) then lmc_send_keys('{UP}\'')
+        elseif (button == 191) then lmc_send_keys('{UP}{ENTER}')
+		end
 	end
 end)
 
 
 lmc_set_handler('FOUR', function(button, direction)
-	if (button == string.byte('A')) then lmc_send_keys('Z')
-	elseif (button == string.byte('W')) then lmc_send_keys('X')
-	elseif (button == string.byte('D')) then lmc_send_keys('C')
-	elseif (button == string.byte('C')) then lmc_send_keys('V')
-	elseif (button == string.byte('V')) then lmc_send_keys('B')
+	if (direction == 1) then -- it's a key press
+		if (button == string.byte('A')) then lmc_send_keys('6')
+		elseif (button == string.byte('D')) then lmc_send_keys('z')
+		elseif (button == string.byte('W')) then lmc_send_keys('x')
+		elseif (button == string.byte('S')) then lmc_send_keys('c')
+		elseif (button == string.byte('C')) then lmc_send_keys('v')
+	    elseif (button == string.byte('V')) then lmc_send_keys('b')
 
-	elseif (button == string.byte('J')) then lmc_send_keys('N')
-	elseif (button == string.byte('I')) then lmc_send_keys('M')
-	elseif (button == string.byte('L')) then lmc_send_keys(',')
-	elseif (button == string.byte('O')) then lmc_send_keys('.')
-	elseif (button == string.byte('P')) then lmc_send_keys('/')
+		elseif (button == string.byte('J')) then lmc_send_keys('n')
+		elseif (button == string.byte('L')) then lmc_send_keys('m')
+		elseif (button == string.byte('I')) then lmc_send_keys(',')
+		elseif (button == string.byte('K')) then lmc_send_keys('.')
+		elseif (button == 190) then lmc_send_keys('/')
+        elseif (button == 191) then lmc_send_keys('\\')
+        elseif (button == 27) then lmc_send_keys('{ESC}')
+        end
+		return
+	else
+		if (button == string.byte('A')) then lmc_send_keys('{UP}6')
+		elseif (button == string.byte('D')) then lmc_send_keys('{UP}z')
+		elseif (button == string.byte('W')) then lmc_send_keys('{UP}x')
+		elseif (button == string.byte('S')) then lmc_send_keys('{UP}c')
+		elseif (button == string.byte('C')) then lmc_send_keys('{UP}v')
+	    elseif (button == string.byte('V')) then lmc_send_keys('{UP}b')
 
-	else print('invalid')
+		elseif (button == string.byte('J')) then lmc_send_keys('{UP}n')
+		elseif (button == string.byte('L')) then lmc_send_keys('{UP}m')
+		elseif (button == string.byte('I')) then lmc_send_keys('{UP},')
+		elseif (button == string.byte('K')) then lmc_send_keys('{UP}.')
+		elseif (button == 190) then lmc_send_keys('{UP}/')
+        elseif (button == 191) then lmc_send_keys('{UP}\\')
+		end
 	end
 end)
-
