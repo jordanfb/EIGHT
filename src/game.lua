@@ -23,6 +23,12 @@ function Game:_init()
 	
 	self.bg = love.graphics.newImage('images/bg.png')
 	
+	bgm = love.audio.newSource("music/battlemusic.mp3")
+	bgm:setVolume(0.9) -- 90% of ordinary volume
+	bgm:setLooping( true )
+	bgm:play()
+
+	
 end
 
 function Game:load(args)
