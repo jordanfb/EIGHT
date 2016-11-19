@@ -18,9 +18,7 @@ function Attacks:_init(level, players)
 	self.attackImages = {}
 	for i=1, 5, 1 do
 		self.attackImages[i] = love.graphics.newImage('images/attack-'..i..'.png')
-	end
-	
-	
+	end	
 end
 
 function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHeight)
@@ -34,6 +32,7 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 				if player.color%4 ~= attack[5]%4 and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
 					player.health = player.health - attack[6]
+					player.attackedTimer = 10
 					attack[9+player.color] = true
 					-- add the knockback!!
 				end

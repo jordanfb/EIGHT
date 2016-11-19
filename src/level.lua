@@ -36,13 +36,16 @@ function Level:_init(keyboard)
 	end
 	
 	self.attacks = Attacks(self, self.players)
-
+	
 	self.grassImage = love.graphics.newImage('images/grass.png')
+	self.bg = love.graphics.newImage('images/bg.png')
 
 end
 
 function Level:load()
 	-- run when the level is given control
+	love.mouse.setVisible(false)
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 end
 
 function Level:leave()
@@ -50,6 +53,7 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.draw(self.bg, 0, 0)
 	love.graphics.setColor(255, 0, 0)
 	for i = 1, #self.platforms, 1 do
 		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
