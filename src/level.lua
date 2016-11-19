@@ -2,6 +2,7 @@
 
 require "player"
 require "attacks"
+require "projectile"
 
 require "class"
 
@@ -36,6 +37,7 @@ function Level:_init(keyboard)
 	end
 	
 	self.attacks = Attacks(self, self.players)
+	self.projectiles = {}
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
@@ -63,6 +65,9 @@ function Level:draw()
 	love.graphics.setColor(255, 255, 255)
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
+	end
+	for i = 1, #self.projectiles, 1 do
+		self.projectiles[i]:draw()
 	end
 	for i = 0, 50, 1 do
 		love.graphics.draw(self.grassImage, i*80, love.graphics.getHeight()-80)
@@ -109,7 +114,11 @@ function Level:update(dt)
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
 	end
+	for i = 1, #self.projectiles, 1 do
+		self.projectiles[i]:update(dt)
+	end
 	self.attacks:update(dt)
+	
 end
 
 function Level:resize(w, h)

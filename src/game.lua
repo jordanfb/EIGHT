@@ -1,6 +1,7 @@
 
 require "level"
 require "keyboard"
+require "projectile"
 
 require "class"
 

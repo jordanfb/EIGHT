@@ -13,6 +13,9 @@ function Projectile:_init(type, x, y, direction)
 	self.y = y 
 	self.type = type
 	self.ded = false
+	self.direction = direction
+	self.dx = 0
+	self.damage = 0
 
 	if self.type == "fireball" then
 		if direction ==  1 then
@@ -20,16 +23,19 @@ function Projectile:_init(type, x, y, direction)
 		else
 			self.dx = -1 * self.fireballDX
 		end 
-	self.damage = self.fireballDamage
+		self.damage = self.fireballDamage
 	
-
 	elseif self.type == "knife" then
 		if direction ==  1 then
 			self.dx = self.knifeDX
 		else
 			self.dx = -1 * self.knifeDX
 		end 
-	self.damage = self.knifeDamage
+		self.damage = self.knifeDamage
+	end
+	
+	self.images = {love.graphics.newImage('images/fireball-1.png'),
+				   love.graphics.newImage('images/fireball-2.png')}
 end
 
 function Projectile:update(dt)
@@ -37,6 +43,11 @@ function Projectile:update(dt)
 	if self.x < 0 or self.x > love.graphics.getWidth() then
 		self.ded = true
 	end
+end
+
+function Projectile:draw()
+	error(1)
+	love.graphics.draw(self.images[1], self.x, self.y)--, 0, self.direction, 1)
 end
 
 function Projectile:checkCollisions(player, playerX, playerY, playerWidth, playerHeight)

@@ -1,5 +1,3 @@
-
-
 require "class"
 
 Player = class()
@@ -221,6 +219,7 @@ function Player:update(dt)
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
 				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
+				table.insert(self.level.projectiles, Projectile(self.x+100, self.y+20, 1))
 			else
 				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
 			end
