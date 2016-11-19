@@ -21,23 +21,31 @@ function Level:_init(keyboard)
 	-- {  {x, y, width, height}  }
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
-					Player(self, self.keyboard, 300+25, 100, "7", "8", "9", "0", "-", "=", 1),
-					Player(self, self.keyboard, 500+50, 100, "q", "w", "e", "r", "t", "y", 2),
-					Player(self, self.keyboard, 700+75, 100, "u", "i", "o", "p", "[", "]", 3),
-					Player(self, self.keyboard, 900+100, 100, "a", "s", "d", "f", "g", "h", 4),
-					Player(self, self.keyboard, 1100+125, 100, "j", "k", "l", ";", "'", "return", 5),
-					Player(self, self.keyboard, 1300+150, 100, "lshift", "z", "x", "c", "v", "b", 6),
-					Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7),
+					Player(self, self.keyboard, 900+100, 100, "7", "8", "9", "0", "-", "=", 4),
+					Player(self, self.keyboard, 300+25, 100, "q", "w", "e", "r", "t", "y", 1),
+					Player(self, self.keyboard, 1100+125, 100, "u", "i", "o", "p", "[", "]", 5),
+					Player(self, self.keyboard, 500+50, 100, "a", "s", "d", "f", "g", "h", 2),
+					Player(self, self.keyboard, 1300+150, 100, "j", "k", "l", ";", "'", "return", 6),
 					}
+	if self.keyboard.wasd then -- then it's using the wasd translator, hopefully
+		self.players[7] = Player(self, self.keyboard, 700+75, 100, "6", "z", "x", "c", "v", "b", 3)
+		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "\\", 7)
+	else
+		self.players[7] = Player(self, self.keyboard, 700+75, 100, "lshift", "z", "x", "c", "v", "b", 3)
+		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
+	end
 	
 	self.attacks = Attacks(self, self.players)
-
+	
 	self.grassImage = love.graphics.newImage('images/grass.png')
+	self.bg = love.graphics.newImage('images/bg.png')
 
 end
 
 function Level:load()
 	-- run when the level is given control
+	love.mouse.setVisible(false)
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 end
 
 function Level:leave()
@@ -45,6 +53,7 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.draw(self.bg, 0, 0)
 	love.graphics.setColor(255, 0, 0)
 	for i = 1, #self.platforms, 1 do
 		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)

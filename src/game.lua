@@ -22,7 +22,6 @@ function Game:_init()
 	self.screenStack = {self.level}
 	
 	self.bg = love.graphics.newImage('images/bg.png')
-	
 end
 
 function Game:load(args)
@@ -30,9 +29,6 @@ function Game:load(args)
 end
 
 function Game:draw()
-
-	love.graphics.draw(self.bg, 0, 0)
-
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
 		thingsToDraw = i
@@ -48,7 +44,6 @@ function Game:draw()
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
 	end
-
 end
 
 function Game:update(dt)
