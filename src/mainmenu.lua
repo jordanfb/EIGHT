@@ -189,7 +189,6 @@ function MainMenu:keypressed(key, unicode)
 		for j = 1, #self.playerKeys[i], 1 do
 			if self.playerKeys[i][j] == key then
 				-- player i join the game!
-				print("GOT HERE")
 				for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
 					if self.playingPlayers[k].color == self.players[i].color then
 						return
@@ -204,7 +203,6 @@ function MainMenu:keypressed(key, unicode)
 					end
 					table.insert(self.playingPlayers, k, self.players[i])
 				end
-				print("GOt OUT")
 			end
 		end
 	end
