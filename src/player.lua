@@ -52,11 +52,14 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self.SCREENHEIGHT = love.graphics.getHeight()
 
 	self.switchedDirections = false
+	self:resize(0, 0)
 end
 
 function Player:resize(screenWidth, screenHeight)
-	self.SCREENWIDTH = screenWidth
-	self.SCREENHEIGHT = screenHeight
+	-- self.SCREENWIDTH = screenWidth
+	-- self.SCREENHEIGHT = screenHeight
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
 end
 
 function Player:loadImages()

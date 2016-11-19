@@ -36,10 +36,13 @@ end
 
 function love.keypressed(key, unicode)
 	if key == "escape" then
-		love.event.quit()
+		if #game.screenStack == 1 then
+			love.event.quit()
+		else
+			game:popScreenStack() -- this is temporary, in reality it should bring up a pause menu if you're in level.
+		end
 	end
 	game:keypressed(key, unicode)
-	print("KEYPRESSED:"..key.."UNICODE"..unicode)
 end
 
 function love.keyreleased(key, unicode)

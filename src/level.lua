@@ -9,7 +9,7 @@ Level = class()
 
 -- _init, load, draw, update(dt), keypressed, keyreleased, mousepressed, mousereleased, resize, (drawUnder, updateUnder)
 
-function Level:_init(keyboard)
+function Level:_init(keyboard, setPlayers)
 	-- this is for the draw stack
 	self.drawUnder = false
 	self.updateUnder = false
@@ -34,6 +34,10 @@ function Level:_init(keyboard)
 		self.players[7] = Player(self, self.keyboard, 700+75, 100, "lshift", "z", "x", "c", "v", "b", 3)
 		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
 	end
+
+	if setPlayers ~= nil then
+		self.players = setPlayers
+	end
 	
 	self.attacks = Attacks(self, self.players)
 	
@@ -41,6 +45,10 @@ function Level:_init(keyboard)
 	self.platformImage = love.graphics.newImage('images/platform.png')
 	self.bg = love.graphics.newImage('images/bg.png')
 
+
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
+	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 end
 
 function Level:load()
@@ -54,6 +62,10 @@ function Level:leave()
 end
 
 function Level:draw()
+	-- this resizes everything on screen to the correct size, but may be super inefficient...
+	love.graphics.setCanvas(self.fullCanvas)
+	-- everything to be drawn in the draw function should be beneath this
+
 	love.graphics.draw(self.bg, 0, 0)
 	for i = 1, #self.platforms, 1 do
 		for x = 0, self.platforms[i][3], 1 do
@@ -65,10 +77,15 @@ function Level:draw()
 		self.players[i]:draw()
 	end
 	for i = 0, 50, 1 do
-		love.graphics.draw(self.grassImage, i*80, love.graphics.getHeight()-80)
+		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 	end
 	self.attacks:draw()
 	self:drawHealth()
+
+
+	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
+	love.graphics.setCanvas()
+	love.graphics.draw(self.fullCanvas, 0, 0, 0, love.graphics.getWidth()/1920, love.graphics.getHeight()/1080)
 end
 
 function Level:drawHealth()
@@ -83,7 +100,7 @@ function Level:drawHealth()
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
-	love.graphics.printf(healthText, 0, y, love.graphics.getWidth(), "center")
+	love.graphics.printf(healthText, 0, y, self.SCREENWIDTH, "center")
 	
 	--if (#self.players==1)
 	local gameOver = true

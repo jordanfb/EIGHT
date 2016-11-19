@@ -15,7 +15,7 @@ function Game:_init()
 	self.updateUnder = false
 
 	-- here are the actual variables
-	self.drawFPS = false
+	self.drawFPS = true
 
 	self.keyboard = Keyboard()
 
@@ -39,7 +39,7 @@ end
 
 function Game:draw()
 
-	love.graphics.draw(self.bg, 0, 0)
+	-- love.graphics.draw(self.bg, 0, 0)
 
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
@@ -55,8 +55,8 @@ function Game:draw()
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
+		love.graphics.setColor(255, 255, 255)
 	end
-
 end
 
 function Game:update(dt)
@@ -75,6 +75,9 @@ function Game:popScreenStack()
 end
 
 function Game:addToScreenStack(newScreen)
+	if self.screenStack[#self.screenStack] ~= nil then
+		self.screenStack[#self.screenStack]:leave()
+	end
 	self.screenStack[#self.screenStack+1] = newScreen
 	newScreen:load()
 end
