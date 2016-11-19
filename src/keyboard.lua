@@ -18,7 +18,7 @@ function Keyboard:keypressed(key, unicode)
 	if not self.wasd then
 		self.keys[key] = true
 	else -- deal with the pain
-		if key == "up" then
+		if key == "space" then
 			self.mode = false -- not pressed
 		else -- I think it only sends it once when it's released, so we save more keys this way.
 			self.keys[key] = self.mode
