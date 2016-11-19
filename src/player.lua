@@ -16,15 +16,17 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self.dy = 0
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
+	
 	self.anim = 1
 	self.runAnim = 1
 	self.hitAnim = 1
 	self.kickAnim = 1
-	self.runanim = 1
+	
 	self.onGround = false
 	self.onPlatform = false
 	
 	self.attackTimer = 0
+	self.attackedTimer = 0
 	self.attackType = 0
 	self.coolDown = 0
 	self.isAttacking = false
@@ -89,11 +91,17 @@ function Player:loadImages()
 end
 
 function Player:draw()
+
 	if self.health <= 0 then
 		return
 	end
 	--
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
+	
+	
+	if self.attackedTimer > 0 then
+		love.graphics.setColor(255, 0, 0)
+	end
 	
 	--love.graphics.setColor(0, 255, 0)
 	--love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
@@ -129,6 +137,9 @@ function Player:draw()
 		-- then run!
 		love.graphics.draw(self.runImages[math.ceil(self.runAnim/5)], self.x+addX, self.y, 0, self.facing, 1)
 	end
+	
+	love.graphics.setColor(255, 255, 255)
+	
 end
 
 
@@ -279,6 +290,10 @@ function Player:update(dt)
 	
 	if self.dx==0 then
 		self.runAnim = 1
+	end
+	
+	if self.attackedTimer > 0 then
+		self.attackedTimer = self.attackedTimer - 1
 	end
 	
 end
