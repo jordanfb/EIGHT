@@ -1,6 +1,7 @@
 
 require "level"
 require "keyboard"
+require "mainmenu"
 
 require "class"
 
@@ -19,7 +20,8 @@ function Game:_init()
 	self.keyboard = Keyboard()
 
 	self.level = Level(self.keyboard) -- we should have it load by filename or something.
-	self.screenStack = {self.level}
+	self.mainMenu = MainMenu(self)
+	self.screenStack = {}
 	
 	self.bg = love.graphics.newImage('images/bg.png')
 	
@@ -28,7 +30,7 @@ function Game:_init()
 	bgm:setLooping( true )
 	bgm:play()
 
-	
+	self:addToScreenStack(self.mainMenu)
 end
 
 function Game:load(args)

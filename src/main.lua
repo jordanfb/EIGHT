@@ -10,7 +10,6 @@ local game = Game()
 
 
 function love.load(args)
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	
 	game:load(args)
 	--local width, height = 512, 256
@@ -40,6 +39,7 @@ function love.keypressed(key, unicode)
 		love.event.quit()
 	end
 	game:keypressed(key, unicode)
+	print("KEYPRESSED:"..key.."UNICODE"..unicode)
 end
 
 function love.keyreleased(key, unicode)
