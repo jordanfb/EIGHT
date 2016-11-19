@@ -38,6 +38,7 @@ function Level:_init(keyboard)
 	self.attacks = Attacks(self, self.players)
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
+	self.platformImage = love.graphics.newImage('images/platform.png')
 	self.bg = love.graphics.newImage('images/bg.png')
 
 end
@@ -54,9 +55,10 @@ end
 
 function Level:draw()
 	love.graphics.draw(self.bg, 0, 0)
-	love.graphics.setColor(255, 0, 0)
 	for i = 1, #self.platforms, 1 do
-		love.graphics.rectangle("fill", self.platforms[i][1], self.platforms[i][2], self.platforms[i][3], self.platforms[i][4], 5, 5)
+		for x = 0, self.platforms[i][3], 1 do
+			love.graphics.draw(self.platformImage, self.platforms[i][1] + x, self.platforms[i][2])
+		end
 	end
 	love.graphics.setColor(255, 255, 255)
 	for i = 1, #self.players, 1 do
