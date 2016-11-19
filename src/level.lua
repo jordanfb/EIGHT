@@ -9,11 +9,12 @@ Level = class()
 
 -- _init, load, draw, update(dt), keypressed, keyreleased, mousepressed, mousereleased, resize, (drawUnder, updateUnder)
 
-function Level:_init(keyboard, setPlayers)
+function Level:_init(keyboard, setPlayers, game)
 	-- this is for the draw stack
 	self.drawUnder = false
 	self.updateUnder = false
 
+	self.game = game
 	self.keyboard = keyboard
 	-- 1920, 1080
 	self.platforms = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
@@ -27,6 +28,7 @@ function Level:_init(keyboard, setPlayers)
 					Player(self, self.keyboard, 500+50, 100, "a", "s", "d", "f", "g", "h", 2),
 					Player(self, self.keyboard, 1300+150, 100, "j", "k", "l", ";", "'", "return", 6),
 					}
+	-- self.players = {}
 	if self.keyboard.wasd then -- then it's using the wasd translator, hopefully
 		self.players[7] = Player(self, self.keyboard, 700+75, 100, "6", "z", "x", "c", "v", "b", 3)
 		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "\\", 7)
@@ -55,6 +57,11 @@ function Level:load()
 	-- run when the level is given control
 	love.mouse.setVisible(false)
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
+	for i = 1, #self.players, 1 do
+		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
+		self.players[i].y = 100
+	end
+	self.attacks.players = self.players
 end
 
 function Level:leave()
@@ -116,10 +123,15 @@ function Level:drawHealth()
 	end
 	
 	if gameOver==true then
-		love.graphics.setColor(colors[winner+1])
-		love.graphics.print("TEAM "..colorsText[winner+1].." WINS!", 600, 100)
+		if winner == -1 then
+			print("WINNER IS -1!!!!!")
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.print("NO TEAM WINS", 600, 100)
+		else
+			love.graphics.setColor(colors[winner%4+1])
+			love.graphics.print("TEAM "..colorsText[winner%4+1].." WINS!", 600, 100)
+		end
 	end
-	--end
 end
 
 function Level:update(dt)
@@ -170,6 +182,9 @@ end
 
 function Level:keypressed(key, unicode)
 	--
+	if key == "escape" then
+		self.game:popScreenStack()
+	end
 end
 
 function Level:keyreleased(key, unicode)
