@@ -9,7 +9,7 @@ Keyboard = class()
 
 function Keyboard:_init()
 	self.keys = {}
-	self.wasd = true
+	self.wasd = false
 	self.mode = true
 end
 
