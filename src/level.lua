@@ -60,6 +60,7 @@ function Level:load()
 	for i = 1, #self.players, 1 do
 		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
 		self.players[i].y = 100
+		self.players[i].health = 100
 	end
 	self.attacks.players = self.players
 	-- for k, v in pairs(self.keyboard.keys) do
