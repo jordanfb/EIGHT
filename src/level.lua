@@ -1,7 +1,7 @@
-
-
 require "player"
 require "attacks"
+require "projectile"
+require "item"
 
 require "class"
 
@@ -47,7 +47,12 @@ function Level:_init(keyboard, setPlayers, game)
 		self.players = setPlayers
 	end
 	
+	if setPlayers ~= nil then
+		self.players = setPlayers
+	end
 	self.attacks = Attacks(self, self.players)
+	self.projectiles = {}
+	self.items = {}
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
@@ -101,12 +106,17 @@ function Level:draw()
 	for i = 1, #self.players, 1 do
 		self.players[i]:draw()
 	end
+	for i = 1, #self.projectiles, 1 do
+		self.projectiles[i]:draw()
+	end
+	for i = 1, #self.items, 1 do
+		self.items[i]:draw()
+	end
 	for i = 0, 50, 1 do
 		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 	end
 	self.attacks:draw()
 	self:drawHealth()
-
 
 	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
 	love.graphics.setCanvas()
@@ -156,7 +166,20 @@ function Level:update(dt)
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
 	end
+	for i = 1, #self.projectiles, 1 do
+		self.projectiles[i]:update(dt)
+	end
+	for i = 1, #self.items, 1 do
+		self.items[i]:update(dt)
+	end
+	if math.random(1, 500)==500 then
+		table.insert(self.items, Item("health", -50, love.graphics.getHeight()*(2/3), 1, 1))
+	end
+	if math.random(1, 500)==500 then
+		table.insert(self.items, Item("health", love.graphics.getWidth(), love.graphics.getHeight()*(2/3), -1, 1))
+	end
 	self.attacks:update(dt)
+	
 end
 
 function Level:resize(w, h)
@@ -199,7 +222,6 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 end
 
 function Level:keypressed(key, unicode)
-	--
 	if key == "escape" then
 		self.game:popScreenStack()
 	end

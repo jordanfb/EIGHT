@@ -1,5 +1,3 @@
-
-
 require "class"
 
 MainMenu = class()
@@ -104,7 +102,7 @@ function MainMenu:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 64))
-	love.graphics.printf("Controls are wasd+cv or ijkl+,.", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+	love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
 	love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
 	love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")
 
@@ -122,7 +120,10 @@ function MainMenu:draw()
 	love.graphics.setColor(255, 255, 255)
 
 	love.graphics.draw(self.bg)
-	love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/1920, self.zoom*love.graphics.getHeight()/1080, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+	love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/self.SCREENWIDTH, self.zoom*love.graphics.getHeight()/self.SCREENHEIGHT, self.SCREENWIDTH/2, self.SCREENHEIGHT/2)
+
+	-- love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/self.SCREENWIDTH, self.zoom*love.graphics.getHeight()/self.SCREENHEIGHT, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+
 	-- love.graphics.draw(self.menuCanvas, 0, 0, 0, self.zoom*love.graphics.getWidth()/1920, self.zoom*love.graphics.getHeight()/1080)
 end
 

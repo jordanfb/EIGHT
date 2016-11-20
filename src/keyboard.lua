@@ -1,5 +1,3 @@
-
-
 require "class"
 
 Keyboard = class()
@@ -9,7 +7,7 @@ Keyboard = class()
 
 function Keyboard:_init()
 	self.keys = {}
-	self.wasd = false
+	self.wasd = true
 	self.mode = true
 	self.unpress = {
 		f1 = "`",

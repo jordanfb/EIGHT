@@ -1,5 +1,3 @@
-
-
 require "class"
 
 Player = class()
@@ -48,11 +46,10 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	-- animations:
 	-- punch, kick jump, duck, walking,
 	self:loadImages()
-	self.SCREENWIDTH = love.graphics.getWidth()
-	self.SCREENHEIGHT = love.graphics.getHeight()
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
 
 	self.switchedDirections = false
-	self:resize(0, 0)
 end
 
 function Player:resize(screenWidth, screenHeight)
@@ -90,7 +87,6 @@ function Player:loadImages()
 	self.jumpImage = love.graphics.newImage('images/'..(self.color%4+1)..'-jump.png')
 	
 	self.pImage = love.graphics.newImage('images/'..(self.color+1)..'-p.png')
-	
 end
 
 function Player:draw()
@@ -131,8 +127,6 @@ function Player:draw()
 				love.graphics.draw(self.kickImages[5], self.x+addX, self.y, 0, self.facing, 1)
 			end
 		end
-		
-	
 	
 	elseif self.dx == 0 then
 		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
@@ -224,8 +218,10 @@ function Player:update(dt)
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
 				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
+				table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
 			else
-				self.level.attacks:newAttack(self.x-50, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
+				self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
+				table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
 			end
 			self.coolDown = 50
 		elseif self.keyboard:isDown(self.KICKKEY) then
@@ -287,6 +283,32 @@ function Player:update(dt)
 		self.y = self.y - 1
 	end
 	
+	--projectile damage
+	for i = 1, #self.level.projectiles, 1 do
+		removed = false
+		if self.level.projectiles[i] then
+			if self.x + self.width - 10 > self.level.projectiles[i].x and self.x + 10 < self.level.projectiles[i].x + self.level.projectiles[i].width then
+				if self.y + self.height > self.level.projectiles[i].y and self.y < self.level.projectiles[i].y + self.level.projectiles[i].height then
+					if self.color%4 ~= self.level.projectiles[i].color%4 then
+						self.health = self.health - 30
+						self.attackedTimer = 20
+						table.remove(self.level.projectiles, i)
+						i = #self.level.projectiles+10
+						removed = true
+					end
+				end
+			end
+		end
+	end
+	for i = 1, #self.level.projectiles, 1 do
+		if self.level.projectiles[i] then
+			if self.level.projectiles[i].x + self.level.projectiles[i].width < 0 or self.level.projectiles[i].x > love.graphics.getWidth() then
+				table.remove(self.level.projectiles, i)
+				i = #self.level.projectiles+10
+			end
+		end
+	end
+
 	--animations
 	self.anim = self.anim%40 + 1
 	self.runAnim = self.runAnim%30 + 1
@@ -298,6 +320,8 @@ function Player:update(dt)
 	if self.attackedTimer > 0 then
 		self.attackedTimer = self.attackedTimer - 1
 	end
+	
+
 	
 end
 
