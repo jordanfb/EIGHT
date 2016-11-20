@@ -16,9 +16,15 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.game = game
 	self.keyboard = keyboard
+	math.randomseed(os.time())
+	self.level = math.random(1,2)
+	print(self.level)
 	-- 1920, 1080
-	self.platforms = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
+	self.allLevels = {}
+	self.allLevels[1] = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
+	self.allLevels[2] = {{100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
 
+	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
@@ -28,12 +34,17 @@ function Level:_init(keyboard, setPlayers, game)
 					Player(self, self.keyboard, 500+50, 100, "a", "s", "d", "f", "g", "h", 2),
 					Player(self, self.keyboard, 1300+150, 100, "j", "k", "l", ";", "'", "return", 6),
 					}
+	-- self.players = {}
 	if self.keyboard.wasd then -- then it's using the wasd translator, hopefully
 		self.players[7] = Player(self, self.keyboard, 700+75, 100, "6", "z", "x", "c", "v", "b", 3)
 		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "\\", 7)
 	else
 		self.players[7] = Player(self, self.keyboard, 700+75, 100, "lshift", "z", "x", "c", "v", "b", 3)
 		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
+	end
+
+	if setPlayers ~= nil then
+		self.players = setPlayers
 	end
 	
 	if setPlayers ~= nil then
@@ -45,7 +56,11 @@ function Level:_init(keyboard, setPlayers, game)
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
-	self.bg = love.graphics.newImage('images/bg.png')
+	if self.level == 1 then
+		self.bg = love.graphics.newImage('images/bg.png')
+	elseif self.level == 2 then
+		self.bg = love.graphics.newImage('images/bg-2.png')
+	end
 
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
@@ -120,7 +135,7 @@ function Level:drawHealth()
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
-	love.graphics.printf(healthText, 0, y, love.graphics.getWidth(), "center")
+	love.graphics.printf(healthText, 0, y, self.SCREENWIDTH, "center")
 	
 	--if (#self.players==1)
 	local gameOver = true
@@ -137,6 +152,7 @@ function Level:drawHealth()
 	
 	if gameOver==true then
 		if winner == -1 then
+			print("WINNER IS -1!!!!!")
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
@@ -206,7 +222,9 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 end
 
 function Level:keypressed(key, unicode)
-	self.game:popScreenStack()
+	if key == "escape" then
+		self.game:popScreenStack()
+	end
 end
 
 function Level:keyreleased(key, unicode)
