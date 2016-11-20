@@ -1,12 +1,6 @@
-
-
 require "class"
 
-
 Attacks = class()
-
-
-
 
 function Attacks:_init(level, players)
 	self.level = level
@@ -51,6 +45,26 @@ function Attacks:update(dt)
 	end
 	for i = 1, #self.players, 1 do
 		self:checkCollisions(self.players[i], self.players[i].x, self.players[i].y, self.players[i].width, self.players[i].height)
+	end
+	for i = 1, #self.level.items, 1 do
+		for j = self.firstAttack, #self.attacks, 1 do
+			local attack = self.attacks[j]
+			if self.level.items[i] then
+				if attack[1] + attack[3] > self.level.items[i].x and attack[1] < self.level.items[i].x + self.level.items[i].width then
+					if attack[2] + attack[4] > self.level.items[i].y and attack[2] < self.level.items[i].y + self.level.items[i].height then
+						for k = 1, #self.level.players, 1 do
+							if (self.level.players[k].color==attack[5]) then
+								self.level.players[k].health = self.level.players[k].health + 30
+								if self.level.players[k].health > 100 then
+									self.level.players[k].health = 100
+								end
+								table.remove(self.level.items, i)
+							end
+						end
+					end
+				end
+			end
+		end
 	end
 end
 

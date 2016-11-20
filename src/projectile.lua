@@ -4,63 +4,51 @@ Projectile = class()
 
 --TUNE ALL OF THESE VALUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function Projectile:_init(type, x, y, direction)
-	self.fireballDX = 10
-	self.knifeDX = 15
-	self.fireballDamage = 30
-	self.knifeDamage = 30
+function Projectile:_init(projectType, x, y, direction, color)
 	self.x = x
 	self.y = y 
-	self.type = type
+	self.width = 30
+	self.height = 10
+	self.projectType = projectType
 	self.ded = false
 	self.direction = direction
 	self.dx = 0
 	self.damage = 0
+	self.animation = 0
+	self.color = color
 
-	if self.type == "fireball" then
-		if direction ==  1 then
-			self.dx = self.fireballDX
-		else
-			self.dx = -1 * self.fireballDX
-		end 
-		self.damage = self.fireballDamage
+	if self.projectType == "fireball" then
+		self.dx = 2000 * direction
+		self.damage = 30
+		self.width = 30
+		self.height = 30
 	
-	elseif self.type == "knife" then
-		if direction ==  1 then
-			self.dx = self.knifeDX
-		else
-			self.dx = -1 * self.knifeDX
-		end 
-		self.damage = self.knifeDamage
+	elseif self.projectType == "knife" then
+		self.dx = 1500 * direction
+		self.damage = 30
+		self.width = 30
+		self.height = 10
 	end
-	
-	self.images = {love.graphics.newImage('images/fireball-1.png'),
-				   love.graphics.newImage('images/fireball-2.png')}
+
+	self.fireBallImages = {love.graphics.newImage('images/fireball-1.png'),
+						   love.graphics.newImage('images/fireball-2.png')}
+				   
+	self.knifeImage = love.graphics.newImage('images/knife.png')
 end
 
 function Projectile:update(dt)
 	self.x = self.x + self.dx * dt
-	if self.x < 0 or self.x > love.graphics.getWidth() then
-		self.ded = true
-	end
+	self.animation = self.animation + 1
 end
 
 function Projectile:draw()
-	error(1)
-	love.graphics.draw(self.images[1], self.x, self.y)--, 0, self.direction, 1)
-end
+		love.graphics.draw(self.knifeImage, self.x, self.y, 0, self.direction, 1)
 
-function Projectile:checkCollisions(player, playerX, playerY, playerWidth, playerHeight)
-	if self.x > playerX and self.x < playerX + playerWidth then
-		if self.y > playerY and self.y < playerY + playerHeight then
-			player.health = player.health - self.damage
-			if self.type == "knife" then
-				self.ded = true
-			end
-		end
+--[[
+	if self.animation%2==0 then
+		love.graphics.draw(self.images[1], self.x, self.y, 0, self.direction, 1)
+	else
+		love.graphics.draw(self.images[2], self.x, self.y, 0, self.direction, 1)
 	end
-end
-
-function isDead( )
-	return self.ded
+]]--
 end
