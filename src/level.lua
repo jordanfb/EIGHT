@@ -1,5 +1,3 @@
-
-
 require "player"
 require "attacks"
 require "projectile"
@@ -11,11 +9,12 @@ Level = class()
 
 -- _init, load, draw, update(dt), keypressed, keyreleased, mousepressed, mousereleased, resize, (drawUnder, updateUnder)
 
-function Level:_init(keyboard)
+function Level:_init(keyboard, setPlayers, game)
 	-- this is for the draw stack
 	self.drawUnder = false
 	self.updateUnder = false
 
+	self.game = game
 	self.keyboard = keyboard
 	-- 1920, 1080
 	self.platforms = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
@@ -37,6 +36,9 @@ function Level:_init(keyboard)
 		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
 	end
 	
+	if setPlayers ~= nil then
+		self.players = setPlayers
+	end
 	self.attacks = Attacks(self, self.players)
 	self.projectiles = {}
 	self.items = {}
@@ -45,12 +47,29 @@ function Level:_init(keyboard)
 	self.platformImage = love.graphics.newImage('images/platform.png')
 	self.bg = love.graphics.newImage('images/bg.png')
 
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
+	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 end
 
 function Level:load()
 	-- run when the level is given control
 	love.mouse.setVisible(false)
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
+	for i = 1, #self.players, 1 do
+		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
+		self.players[i].y = 100
+		self.players[i].health = 100
+		if self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2 < self.SCREENWIDTH/2 then
+			self.players[i].facing = 1
+		else
+			self.players[i].facing = -1
+		end
+	end
+	self.attacks.players = self.players
+	-- for k, v in pairs(self.keyboard.keys) do
+	-- 	self.keyboard.keys[k] = false
+	-- end
 end
 
 function Level:leave()
@@ -58,6 +77,10 @@ function Level:leave()
 end
 
 function Level:draw()
+	-- this resizes everything on screen to the correct size, but may be super inefficient...
+	love.graphics.setCanvas(self.fullCanvas)
+	-- everything to be drawn in the draw function should be beneath this
+
 	love.graphics.draw(self.bg, 0, 0)
 	for i = 1, #self.platforms, 1 do
 		for x = 0, self.platforms[i][3], 1 do
@@ -75,10 +98,14 @@ function Level:draw()
 		self.items[i]:draw()
 	end
 	for i = 0, 50, 1 do
-		love.graphics.draw(self.grassImage, i*80, love.graphics.getHeight()-80)
+		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 	end
 	self.attacks:draw()
 	self:drawHealth()
+
+	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
+	love.graphics.setCanvas()
+	love.graphics.draw(self.fullCanvas, 0, 0, 0, love.graphics.getWidth()/1920, love.graphics.getHeight()/1080)
 end
 
 function Level:drawHealth()
@@ -109,10 +136,14 @@ function Level:drawHealth()
 	end
 	
 	if gameOver==true then
-		love.graphics.setColor(colors[winner+1])
-		love.graphics.print("TEAM "..colorsText[winner+1].." WINS!", 600, 100)
+		if winner == -1 then
+			love.graphics.setColor(255, 255, 255)
+			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
+		else
+			love.graphics.setColor(colors[winner%4+1])
+			love.graphics.printf("TEAM "..colorsText[winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
+		end
 	end
-	--end
 end
 
 function Level:update(dt)
@@ -175,7 +206,7 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 end
 
 function Level:keypressed(key, unicode)
-	--
+	self.game:popScreenStack()
 end
 
 function Level:keyreleased(key, unicode)

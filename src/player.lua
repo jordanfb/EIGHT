@@ -46,15 +46,17 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	-- animations:
 	-- punch, kick jump, duck, walking,
 	self:loadImages()
-	self.SCREENWIDTH = love.graphics.getWidth()
-	self.SCREENHEIGHT = love.graphics.getHeight()
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
 
 	self.switchedDirections = false
 end
 
 function Player:resize(screenWidth, screenHeight)
-	self.SCREENWIDTH = screenWidth
-	self.SCREENHEIGHT = screenHeight
+	-- self.SCREENWIDTH = screenWidth
+	-- self.SCREENHEIGHT = screenHeight
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
 end
 
 function Player:loadImages()
@@ -85,7 +87,6 @@ function Player:loadImages()
 	self.jumpImage = love.graphics.newImage('images/'..(self.color%4+1)..'-jump.png')
 	
 	self.pImage = love.graphics.newImage('images/'..(self.color+1)..'-p.png')
-	
 end
 
 function Player:draw()
