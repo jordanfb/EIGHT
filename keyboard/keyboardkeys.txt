@@ -1,0 +1,22 @@
+
+
+47 regular
+19 f keys
+15 numpad keys
+
+home
+pg up
+
+insert
+pg down
+delete
+end
+lalt (%)
+
+delete
+enter
+4 arrow keys
+-- this is 92 keys so far
+tab
+lshift (+)
+lctrl (^)

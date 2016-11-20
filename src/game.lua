@@ -1,6 +1,8 @@
 
 require "level"
 require "keyboard"
+require "mainmenu"
+require "countdown"
 
 require "class"
 
@@ -14,14 +16,23 @@ function Game:_init()
 	self.updateUnder = false
 
 	-- here are the actual variables
-	self.drawFPS = false
+	self.drawFPS = true
 
 	self.keyboard = Keyboard()
 
-	self.level = Level(self.keyboard) -- we should have it load by filename or something.
-	self.screenStack = {self.level}
+	self.countdownScreen = CountdownScreen(self)
+	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
+	self.mainMenu = MainMenu(self)
+	self.screenStack = {}
 	
 	self.bg = love.graphics.newImage('images/bg.png')
+	
+	bgm = love.audio.newSource("music/battlemusic.mp3")
+	bgm:setVolume(0.9) -- 90% of ordinary volume
+	bgm:setLooping( true )
+	bgm:play()
+
+	self:addToScreenStack(self.mainMenu)
 end
 
 function Game:load(args)
@@ -29,6 +40,9 @@ function Game:load(args)
 end
 
 function Game:draw()
+
+	-- love.graphics.draw(self.bg, 0, 0)
+
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
 		thingsToDraw = i
@@ -39,17 +53,21 @@ function Game:draw()
 	-- this is so that the things earlier in the screen stack get drawn first, so that things like pause menus get drawn on top.
 	for i = thingsToDraw, #self.screenStack, 1 do
 		self.screenStack[i]:draw()
+		-- if i ~= 1 then
+		-- 	print("DRAWING "..i)
+		-- end
 	end
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
 		love.graphics.print("FPS: "..love.timer.getFPS(), 10, love.graphics.getHeight()-45)
+		love.graphics.setColor(255, 255, 255)
 	end
 end
 
 function Game:update(dt)
 	for i = #self.screenStack, 1, -1 do
 		self.screenStack[i]:update(dt)
-		if not self.screenStack[i].updateUnder then
+		if self.screenStack[i] and not self.screenStack[i].updateUnder then
 			break
 		end
 	end
@@ -62,6 +80,9 @@ function Game:popScreenStack()
 end
 
 function Game:addToScreenStack(newScreen)
+	if self.screenStack[#self.screenStack] ~= nil then
+		self.screenStack[#self.screenStack]:leave()
+	end
 	self.screenStack[#self.screenStack+1] = newScreen
 	newScreen:load()
 end

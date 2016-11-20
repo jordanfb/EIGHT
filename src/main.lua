@@ -10,7 +10,6 @@ local game = Game()
 
 
 function love.load(args)
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	
 	game:load(args)
 	--local width, height = 512, 256
@@ -37,7 +36,11 @@ end
 
 function love.keypressed(key, unicode)
 	if key == "escape" then
-		love.event.quit()
+		if #game.screenStack == 1 then
+			love.event.quit()
+		-- else
+		-- 	game:popScreenStack() -- this is temporary, in reality it should bring up a pause menu if you're in level.
+		end
 	end
 	game:keypressed(key, unicode)
 end
