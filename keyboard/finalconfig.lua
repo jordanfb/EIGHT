@@ -19,6 +19,7 @@ lmc_set_handler('ONE', function(button, direction)
 		elseif (button == 190) then lmc_send_keys('-')
         elseif (button == 191) then lmc_send_keys('=')
         elseif (button == 27) then lmc_send_keys('{ESC}')
+        elseif (button == string.byte(' ')) then lmc_send_keys(' ')
         end
 		return
 	else
@@ -57,6 +58,7 @@ lmc_set_handler('TWO', function(button, direction)
 		elseif (button == 190) then lmc_send_keys('[')
         elseif (button == 191) then lmc_send_keys(']')
         elseif (button == 27) then lmc_send_keys('{ESC}')
+        elseif (button == string.byte(' ')) then lmc_send_keys(' ')
         end
 		return
 	else
@@ -93,6 +95,7 @@ lmc_set_handler('THREE', function(button, direction)
 		elseif (button == 190) then lmc_send_keys('\'')
         elseif (button == 191) then lmc_send_keys('{ENTER}')
         elseif (button == 27) then lmc_send_keys('{ESC}')
+        elseif (button == string.byte(' ')) then lmc_send_keys(' ')
         end
 		return
 	else
@@ -130,6 +133,7 @@ lmc_set_handler('FOUR', function(button, direction)
 		elseif (button == 190) then lmc_send_keys('/')
         elseif (button == 191) then lmc_send_keys('\\')
         elseif (button == 27) then lmc_send_keys('{ESC}')
+        elseif (button == string.byte(' ')) then lmc_send_keys(' ')
         end
 		return
 	else

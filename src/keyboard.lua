@@ -81,7 +81,7 @@ end
 
 
 function Keyboard:keypressed(key, unicode)
-	print("KEYPRESSED:"..key.."UNICODE"..unicode)
+	-- print("KEYPRESSED:"..key.."UNICODE"..unicode)
 	if not self.wasd then
 		self.keys[key] = true
 	else -- deal with the pain

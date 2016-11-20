@@ -185,6 +185,19 @@ function MainMenu:resize(w, h)
 end
 
 function MainMenu:keypressed(key, unicode)
+	if key == "space" then
+		if self.keyboard.wasd then
+			-- add the level to the game as a quick default
+			if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
+				self.game:addToScreenStack(self.game.level)
+				self.game:addToScreenStack(self.game.countdownScreen)
+			else
+				print("NOT ENOUGH PLAYERS!")
+			end
+		else
+			self.game:addToScreenStack(self.game.level)
+		end
+	end
 	for i = 1, #self.playerKeys, 1 do
 		for j = 1, #self.playerKeys[i], 1 do
 			if self.playerKeys[i][j] == key then
@@ -213,15 +226,22 @@ function MainMenu:keyreleased(key, unicode)
 end
 
 function MainMenu:mousepressed(x, y, button)
-	if not self.keyboard.wasd then
-		-- add the level to the game as a quick default
-		if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
-			self.game:addToScreenStack(self.game.level)
-		else
-			print("NOT ENOUGH PLAYERS!")
-		end
-	else
+	-- if not self.keyboard.wasd then
+	-- 	-- add the level to the game as a quick default
+	-- 	self.game:addToScreenStack(self.game.level)
+	-- else
+		
+	-- end
+	if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
 		self.game:addToScreenStack(self.game.level)
+		-- if self.game.countdownScreen then
+		-- 	print("is not nil!")
+		-- else
+		-- 	print("is nil")
+		-- end
+		self.game:addToScreenStack(self.game.countdownScreen)
+	else
+		print("NOT ENOUGH PLAYERS!")
 	end
 end
 

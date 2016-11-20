@@ -61,6 +61,11 @@ function Level:load()
 		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
 		self.players[i].y = 100
 		self.players[i].health = 100
+		if self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2 < self.SCREENWIDTH/2 then
+			self.players[i].facing = 1
+		else
+			self.players[i].facing = -1
+		end
 	end
 	self.attacks.players = self.players
 	-- for k, v in pairs(self.keyboard.keys) do
@@ -130,10 +135,10 @@ function Level:drawHealth()
 		if winner == -1 then
 			print("WINNER IS -1!!!!!")
 			love.graphics.setColor(255, 255, 255)
-			love.graphics.print("NO TEAM WINS", 600, 100)
+			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
 			love.graphics.setColor(colors[winner%4+1])
-			love.graphics.print("TEAM "..colorsText[winner%4+1].." WINS!", 600, 100)
+			love.graphics.printf("TEAM "..colorsText[winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 		end
 	end
 end

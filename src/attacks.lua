@@ -12,7 +12,7 @@ function Attacks:_init(level, players)
 	self.level = level
 	self.players = players
 	self.attacks = {}
-	-- {x, y, width, height, color, damage?, facing, time}
+	-- {x, y, width, height, color, damage, facing, time}
 	self.firstAttack = 1
 	
 	self.attackImages = {}

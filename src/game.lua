@@ -2,6 +2,7 @@
 require "level"
 require "keyboard"
 require "mainmenu"
+require "countdown"
 
 require "class"
 
@@ -19,6 +20,7 @@ function Game:_init()
 
 	self.keyboard = Keyboard()
 
+	self.countdownScreen = CountdownScreen(self)
 	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
 	self.mainMenu = MainMenu(self)
 	self.screenStack = {}
@@ -51,6 +53,9 @@ function Game:draw()
 	-- this is so that the things earlier in the screen stack get drawn first, so that things like pause menus get drawn on top.
 	for i = thingsToDraw, #self.screenStack, 1 do
 		self.screenStack[i]:draw()
+		-- if i ~= 1 then
+		-- 	print("DRAWING "..i)
+		-- end
 	end
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
@@ -62,7 +67,7 @@ end
 function Game:update(dt)
 	for i = #self.screenStack, 1, -1 do
 		self.screenStack[i]:update(dt)
-		if not self.screenStack[i].updateUnder then
+		if self.screenStack[i] and not self.screenStack[i].updateUnder then
 			break
 		end
 	end
