@@ -27,14 +27,14 @@ function Game:_init()
 			punching = true,
 			kicking = true,
 			instantKill = false,
-			lifeSteal = true, -- harming other people gives you health
-			poisonMode = true,
+			lifeSteal = false, -- harming other people gives you health
+			poisonMode = false,
 			regen = false,
 			suddenDeathOnNumberOfPeople = false,
 			noItemsAtNumberOfPeople = false,
 			noHealthAtNumberOfPeople = false,
 			takeFallingOutOfWorldDamage = true,
-			healthGainOnKill = true,
+			healthGainOnKill = false,
 		}
 	self.gameSettingRates = {
 			knife = 0.5,

@@ -26,7 +26,7 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 				-- plus possibly add lots of blood?
 				if player.color%4 ~= attack[5]%4 and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
-					player.health = math.min(player.health - attack[6], 0)
+					player.health = math.max(player.health - attack[6], 0)
 					if self.game.gameSettings.instantKill then
 						player.health = 0
 					else
