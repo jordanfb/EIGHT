@@ -14,6 +14,10 @@ function Item:_init(itemType, x, y, dX, dY)
 	self.dy = dY*50
 	
 	self.image = love.graphics.newImage('images/health-item.png')
+
+	if self.itemType == "knife" then
+		self.image = love.graphics.newImage('images/knife-item.png')
+	end
 	
 end
 

@@ -14,6 +14,7 @@ function Player:_init(level, keyboard, x, y, LEFTKEY, RIGHTKEY, UPKEY, DOWNKEY, 
 	self.dy = 0
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
+	self.hasKnife = false
 	
 	self.anim = 1
 	self.runAnim = 1
@@ -180,10 +181,11 @@ function Player:update(dt)
 	elseif (self.x < 0) then
 		self.x = 0
 	end
-	if (self.y + self.height >= self.SCREENHEIGHT - 80) then
-		self.y = self.SCREENHEIGHT - self.height - 80
-		self.onGround = true
+	if (self.y >= self.SCREENHEIGHT) then
+		self.y = -100
+		self.dx = 0
 		self.dy = 0
+		self.health = self.health - 40
 	end
 	-- then check platforms of level
 	
@@ -218,10 +220,16 @@ function Player:update(dt)
 		if self.keyboard:isDown(self.PUNCHKEY) then
 			if self.facing==1 then
 				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
-				table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
+				if self.hasKnife then
+					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
+					self.hasKnife = false
+				end
 			else
 				self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
-				table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
+				if self.hasKnife then
+					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
+					self.hasKnife = false
+				end
 			end
 			self.coolDown = 50
 		elseif self.keyboard:isDown(self.KICKKEY) then

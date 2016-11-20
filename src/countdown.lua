@@ -34,6 +34,7 @@ function CountdownScreen:leave()
 end
 
 function CountdownScreen:draw()
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 72))
 	love.graphics.setColor(0, 0, 0, 100)
 	love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	love.graphics.setColor(255, 255, 255, 255)

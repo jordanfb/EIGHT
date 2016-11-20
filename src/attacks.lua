@@ -54,10 +54,15 @@ function Attacks:update(dt)
 					if attack[2] + attack[4] > self.level.items[i].y and attack[2] < self.level.items[i].y + self.level.items[i].height then
 						for k = 1, #self.level.players, 1 do
 							if (self.level.players[k].color==attack[5]) then
-								self.level.players[k].health = self.level.players[k].health + 30
-								if self.level.players[k].health > 100 then
-									self.level.players[k].health = 100
+								if self.level.items[i].itemType == "health" then
+									self.level.players[k].health = self.level.players[k].health + 30
+									if self.level.players[k].health > 100 then
+										self.level.players[k].health = 100
+									end
+								else
+									self.level.players[k].hasKnife = true
 								end
+								
 								table.remove(self.level.items, i)
 							end
 						end

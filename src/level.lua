@@ -17,13 +17,14 @@ function Level:_init(keyboard, setPlayers, game)
 	self.game = game
 	self.keyboard = keyboard
 	math.randomseed(os.time())
-	self.level = math.random(1,2)
-	print(self.level)
 	-- 1920, 1080
 	self.allLevels = {}
-	self.allLevels[1] = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
-	self.allLevels[2] = {{100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
+	self.allLevels[1] = {{0, 1000, 1920, 80}, {100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
+	self.allLevels[2] = {{0, 1000, 1920, 80}, {100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
 
+	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {100, 500, 50, 30}, {1920 - 700, 500, 50, 30}, {0, 700, 1920, 30}, {150, 850, 20, 30}, {1920 - 350, 850, 20, 30}, {500, 320, 920, 30}, {1920/2, 1080/2, 50, 30}}
+
+	self.level = 3--math.random(1,2)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
@@ -60,6 +61,8 @@ function Level:_init(keyboard, setPlayers, game)
 		self.bg = love.graphics.newImage('images/bg.png')
 	elseif self.level == 2 then
 		self.bg = love.graphics.newImage('images/bg-2.png')
+	elseif self.level == 3 then
+		self.bg = love.graphics.newImage('images/bg-3.png')
 	end
 
 	self.SCREENWIDTH = 1920
@@ -69,6 +72,15 @@ end
 
 function Level:load()
 	-- run when the level is given control
+	self.level = 3--math.random(1,2)
+	self.platforms = self.allLevels[self.level]
+	if self.level == 1 then
+		self.bg = love.graphics.newImage('images/bg.png')
+	elseif self.level == 2 then
+		self.bg = love.graphics.newImage('images/bg-2.png')
+	elseif self.level == 3 then
+		self.bg = love.graphics.newImage('images/bg-3.png')
+	end
 	love.mouse.setVisible(false)
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	for i = 1, #self.players, 1 do
@@ -92,14 +104,21 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	-- this resizes everything on screen to the correct size, but may be super inefficient...
 	love.graphics.setCanvas(self.fullCanvas)
 	-- everything to be drawn in the draw function should be beneath this
 
 	love.graphics.draw(self.bg, 0, 0)
 	for i = 1, #self.platforms, 1 do
-		for x = 0, self.platforms[i][3], 1 do
-			love.graphics.draw(self.platformImage, self.platforms[i][1] + x, self.platforms[i][2])
+		if self.platforms[i][4]==80 then
+			for x = 0, self.platforms[i][3], 80 do
+				love.graphics.draw(self.grassImage, self.platforms[i][1] + x, self.platforms[i][2])
+			end
+		else
+			for x = 0, self.platforms[i][3], 1 do
+				love.graphics.draw(self.platformImage, self.platforms[i][1] + x, self.platforms[i][2])
+			end
 		end
 	end
 	love.graphics.setColor(255, 255, 255)
@@ -112,9 +131,9 @@ function Level:draw()
 	for i = 1, #self.items, 1 do
 		self.items[i]:draw()
 	end
-	for i = 0, 50, 1 do
-		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
-	end
+--	for i = 0, 50, 1 do
+--		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
+--	end
 	self.attacks:draw()
 	self:drawHealth()
 
@@ -172,11 +191,17 @@ function Level:update(dt)
 	for i = 1, #self.items, 1 do
 		self.items[i]:update(dt)
 	end
-	if math.random(1, 500)==500 then
-		table.insert(self.items, Item("health", -50, love.graphics.getHeight()*(2/3), 1, 1))
+	if math.random(1, 3000 )==500 then
+		table.insert(self.items, Item("health", -50, self.SCREENWIDTH*(2/3), 1, 1))
 	end
-	if math.random(1, 500)==500 then
-		table.insert(self.items, Item("health", love.graphics.getWidth(), love.graphics.getHeight()*(2/3), -1, 1))
+	if math.random(1, 3000 )==500 then
+		table.insert(self.items, Item("health", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1))
+	end
+	if math.random(1, 1000)==500 then
+		table.insert(self.items, Item("knife", -50, self.SCREENWIDTH*(2/3), 1, 1))
+	end
+	if math.random(1, 1000)==500 then
+		table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1))
 	end
 	self.attacks:update(dt)
 	
