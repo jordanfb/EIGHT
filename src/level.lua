@@ -16,9 +16,15 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.game = game
 	self.keyboard = keyboard
+	math.randomseed(os.time())
+	self.level = math.random(1,2)
+	print(self.level)
 	-- 1920, 1080
-	self.platforms = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
+	self.allLevels = {}
+	self.allLevels[1] = {{100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
+	self.allLevels[2] = {{100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
 
+	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
 	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
@@ -45,8 +51,11 @@ function Level:_init(keyboard, setPlayers, game)
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
-	self.bg = love.graphics.newImage('images/bg.png')
-
+	if self.level == 1 then
+		self.bg = love.graphics.newImage('images/bg.png')
+	elseif self.level == 2 then
+		self.bg = love.graphics.newImage('images/bg-2.png')
+	end
 
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
