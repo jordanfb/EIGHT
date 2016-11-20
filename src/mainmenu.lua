@@ -122,7 +122,7 @@ function MainMenu:draw()
 	love.graphics.setColor(255, 255, 255)
 
 	love.graphics.draw(self.bg)
-	love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2.6, love.graphics.getHeight()/2.6, 0, self.zoom*love.graphics.getWidth()/1920, self.zoom*love.graphics.getHeight()/1080, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+	love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/1920, self.zoom*love.graphics.getHeight()/1080, love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	-- love.graphics.draw(self.menuCanvas, 0, 0, 0, self.zoom*love.graphics.getWidth()/1920, self.zoom*love.graphics.getHeight()/1080)
 end
 

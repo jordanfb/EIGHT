@@ -62,6 +62,9 @@ function Level:load()
 		self.players[i].y = 100
 	end
 	self.attacks.players = self.players
+	-- for k, v in pairs(self.keyboard.keys) do
+	-- 	self.keyboard.keys[k] = false
+	-- end
 end
 
 function Level:leave()
