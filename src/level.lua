@@ -51,7 +51,7 @@ function Level:_init(keyboard, setPlayers, game)
 	if setPlayers ~= nil then
 		self.players = setPlayers
 	end
-	self.attacks = Attacks(self, self.players)
+	self.attacks = Attacks(self, self.players, self.game)
 	self.projectiles = {}
 	self.items = {}
 	
@@ -94,6 +94,8 @@ function Level:load()
 		end
 	end
 	self.attacks.players = self.players
+	self.gameOver = false
+	self.winner = -1
 	-- for k, v in pairs(self.keyboard.keys) do
 	-- 	self.keyboard.keys[k] = false
 	-- end
@@ -150,33 +152,34 @@ function Level:drawHealth()
 	local healthText = {}
 	for i = 1, #self.players, 1 do
 		healthText[#healthText+1] = colors[(self.players[i].color)%4+1]
-		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..math.max(0, self.players[i].health).."  "
+		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..math.max(0, math.floor(self.players[i].health)).."  "
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
 	love.graphics.printf(healthText, 0, y, self.SCREENWIDTH, "center")
 	
 	--if (#self.players==1)
-	local gameOver = true
-	local winner = -1
-	for i = 1, #self.players, 1 do
-		if self.players[i].health>0 then
-			if winner == -1 then
-				winner = self.players[i].color
-			elseif winner%4 ~= self.players[i].color%4 then
-				gameOver = false
+	if not self.gameOver then
+		self.gameOver = true
+		self.winner = -1
+		for i = 1, #self.players, 1 do
+			if self.players[i].health>0 then
+				if self.winner == -1 then
+					self.winner = self.players[i].color
+				elseif self.winner%4 ~= self.players[i].color%4 then
+					self.gameOver = false
+				end
 			end
 		end
 	end
 	
-	if gameOver==true then
-		if winner == -1 then
-			print("WINNER IS -1!!!!!")
+	if self.gameOver==true then
+		if self.winner == -1 then
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
-			love.graphics.setColor(colors[winner%4+1])
-			love.graphics.printf("TEAM "..colorsText[winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
+			love.graphics.setColor(colors[self.winner%4+1])
+			love.graphics.printf("TEAM "..colorsText[self.winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 		end
 	end
 end
@@ -184,7 +187,18 @@ end
 function Level:update(dt)
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
+		if self.game.gameSettings.poisonMode and not self.gameOver then -- do poison
+			-- do damage per second
+			self.players[i].health = self.players[i].health - self.game.gameSettingRates.poisonRate*dt
+		end
+		if self.game.gameSettings.regen then -- do regen
+			-- do damage per second
+			if self.players[i].health > 1 then -- because otherwise it will show zero health, which will make people sad.
+				self.players[i].health = math.min(self.players[i].health + self.game.gameSettingRates.regenRate*dt, 100)
+			end
+		end
 	end
+
 	for i = 1, #self.projectiles, 1 do
 		self.projectiles[i]:update(dt)
 	end
@@ -204,7 +218,6 @@ function Level:update(dt)
 		table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1))
 	end
 	self.attacks:update(dt)
-	
 end
 
 function Level:resize(w, h)

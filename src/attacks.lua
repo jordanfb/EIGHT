@@ -2,7 +2,8 @@ require "class"
 
 Attacks = class()
 
-function Attacks:_init(level, players)
+function Attacks:_init(level, players, game)
+	self.game = game
 	self.level = level
 	self.players = players
 	self.attacks = {}
@@ -25,10 +26,29 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 				-- plus possibly add lots of blood?
 				if player.color%4 ~= attack[5]%4 and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
-					player.health = player.health - attack[6]
+					player.health = math.min(player.health - attack[6], 0)
+					if self.game.gameSettings.instantKill then
+						player.health = 0
+					else
+						player.health = player.health - attack[6]
+					end
+					if self.game.gameSettings.lifeSteal or self.game.gameSettings.healthGainOnKill then
+						-- steal life for the player who did the attack.
+						for k, v in pairs(self.players) do
+							if v.color == attack[5] then
+								-- give that person the life!
+								if self.game.gameSettings.lifeSteal then
+									v.health = math.min(v.health + attack[6]*self.game.gameSettingRates.lifeStealPercent/100, 100)
+								end
+								if self.game.gameSettings.healthGainOnKill then
+									v.heatlh = math.min(v.health + self.game.gameSettingRates.healthGainOnKillAmount, 100)
+								end
+								break
+							end
+						end
+					end
 					player.attackedTimer = 10
 					attack[9+player.color] = true
-					-- add the knockback!!
 				end
 			end
 		end

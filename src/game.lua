@@ -20,6 +20,41 @@ function Game:_init()
 
 	self.keyboard = Keyboard()
 
+	self.gameSettings = {
+			infiniteKnives = false,
+			healthspawn = true,
+			knifespawn = true,
+			punching = true,
+			kicking = true,
+			instantKill = false,
+			lifeSteal = true, -- harming other people gives you health
+			poisonMode = true,
+			regen = false,
+			suddenDeathOnNumberOfPeople = false,
+			noItemsAtNumberOfPeople = false,
+			noHealthAtNumberOfPeople = false,
+			takeFallingOutOfWorldDamage = true,
+			healthGainOnKill = true,
+		}
+	self.gameSettingRates = {
+			knife = 0.5,
+			health = 0.5,
+			punchTime = 1,
+			kickTime = 1,
+			knifeTime = 1,
+			punchDamage = 1,
+			kickDamage = 1,
+			knifeDamage = 1,
+			lifeStealPercent = 10, -- the percentage of life stolen, out of 100
+			poisonRate = 1, -- per second
+			regenRate = 1,
+			suddenDeathOnNumberOfPeople = 2,
+			noItemsAtNumberOfPeople = 2,
+			noHealthAtNumberOfPeople = 2,
+			fallingOutOfWorldDamage = 40,
+			healthGainOnKillAmount = 20,
+		} -- jumping?
+
 	self.countdownScreen = CountdownScreen(self)
 	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
 	self.mainMenu = MainMenu(self)

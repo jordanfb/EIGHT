@@ -197,6 +197,7 @@ function MainMenu:keypressed(key, unicode)
 			end
 		else
 			self.game:addToScreenStack(self.game.level)
+			self.game:addToScreenStack(self.game.countdownScreen)
 		end
 	end
 	for i = 1, #self.playerKeys, 1 do
