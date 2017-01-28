@@ -197,13 +197,25 @@ function Player:update(dt)
 			self.onPlatform = true
 			self.y = change[1]
 		end
+	end
+
+	for i = 1, #self.level.platforms, 1 do
+		if self.level.platforms[i][4]==80 then
+			if self.y < self.level.platforms[i][2]+self.level.platforms[i][4] and self.y + self.height > self.level.platforms[i][2] then
+				if self.x < self.level.platforms[i][1]+self.level.platforms[i][3] and self.x + self.width > self.level.platforms[i][1] then
+					self.onGround = true
+					self.y = self.level.platforms[i][2] - self.height + .01
+				end
+			end
+		end
+	end
 	-- elseif self.dy == 0 then
 	-- 	if (self.dx < 0) then
 	-- 		self.x = self.level:leftCollision(self.x, self.y, self.width, self.height)
 	-- 	elseif (self.dx > 0) then
 	-- 		self.x = self.level:rightCollision(self.x, self.y, self.width, self.height)
 	-- 	end
-	end
+
 
 	--ATTACKS	----------------------------------------------------
 	

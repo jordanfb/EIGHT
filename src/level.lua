@@ -24,7 +24,7 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {100, 500, 50, 30}, {1920 - 700, 500, 50, 30}, {0, 700, 1920, 30}, {150, 850, 20, 30}, {1920 - 350, 850, 20, 30}, {500, 320, 920, 30}, {1920/2, 1080/2, 50, 30}}
 
-	self.level = 3--math.random(1,2)
+	self.level = math.random(1,2)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
@@ -72,7 +72,7 @@ end
 
 function Level:load()
 	-- run when the level is given control
-	self.level = 3--math.random(1,2)
+	self.level = math.random(1,2)
 	self.platforms = self.allLevels[self.level]
 	if self.level == 1 then
 		self.bg = love.graphics.newImage('images/bg.png')
@@ -239,7 +239,7 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	for i = 1, #self.platforms, 1 do
 		if playerY+playerHeight <= self.platforms[i][2] and playerY + playerHeight + dy >= self.platforms[i][2] then
 			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
-				return {self.platforms[i][2]-playerHeight, true}
+				return {self.platforms[i][2]-playerHeight, true, (self.platforms[i].h==80)}
 			end
 		end
 	end
