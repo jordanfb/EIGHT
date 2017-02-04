@@ -20,7 +20,6 @@ function CountdownScreen:_init(game, countdownTimer)
 		self.countdownTimer = 3
 		self.maxCountdownTimer = 3
 	end
-	print("I EXIST!")
 end
 
 function CountdownScreen:load()

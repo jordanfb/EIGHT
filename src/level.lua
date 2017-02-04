@@ -24,7 +24,7 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {100, 500, 50, 30}, {1920 - 700, 500, 50, 30}, {0, 700, 1920, 30}, {150, 850, 20, 30}, {1920 - 350, 850, 20, 30}, {500, 320, 920, 30}, {1920/2, 1080/2, 50, 30}}
 
-	self.level = math.random(1,2)
+	self.level = math.random(1,3)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
@@ -92,6 +92,9 @@ function Level:load()
 		else
 			self.players[i].facing = -1
 		end
+		self.players[i].dy = 0
+		self.players[i].dx = 0
+		self.players[i].ay = 0
 	end
 	self.attacks.players = self.players
 	-- for k, v in pairs(self.keyboard.keys) do
@@ -171,7 +174,7 @@ function Level:drawHealth()
 	
 	if gameOver==true then
 		if winner == -1 then
-			print("WINNER IS -1!!!!!")
+			-- print("WINNER IS -1!!!!!")
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
