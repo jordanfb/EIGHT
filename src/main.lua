@@ -1,6 +1,6 @@
 io.stdout:setvbuf("no") -- this is so that sublime will print things when they come (rather than buffering).
 
-
+local debug = false
 
 require "game"
 require "class"
@@ -10,6 +10,8 @@ local game = Game()
 
 
 function love.load(args)
+
+	love.filesystem.setIdentity('EIGHT_Screenshots')
 	
 	game:load(args)
 	--local width, height = 512, 256
@@ -35,6 +37,10 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
+	if debug == true and key == "space" then
+		local screenshot = love.graphics.newScreenshot()
+		screenshot:encode('png', os.time()..'.png')
+	end
 	if key == "escape" then
 		if #game.screenStack == 1 then
 			love.event.quit()

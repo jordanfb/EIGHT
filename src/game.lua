@@ -16,7 +16,7 @@ function Game:_init()
 	self.updateUnder = false
 
 	-- here are the actual variables
-	self.drawFPS = true
+	self.drawFPS = false
 
 	self.keyboard = Keyboard()
 
