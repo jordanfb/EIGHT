@@ -37,7 +37,7 @@ function love.update(dt)
 end
 
 function love.keypressed(key, unicode)
-	if debug == true and key == "space" then
+	if debug == true and key == "F3" then
 		local screenshot = love.graphics.newScreenshot()
 		screenshot:encode('png', os.time()..'.png')
 	end
