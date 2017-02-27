@@ -8,7 +8,11 @@ Keyboard = class()
 function Keyboard:_init()
 	self.keyboardType = 0 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
 
-	self.playerMappings = {} -- a table of playernum to inputnum
+	-- self.playerMappings = {1, 2, 3, 1, 2, 3, 1, 2} -- a table of playernum to inputnum
+	-- self.playerKeys = {}
+	-- for i = 1, 8 do
+	-- 	self.playerKeys[i] = {}
+	-- end
 
 	self.keySets = {}
 	for i = 1, 16 do -- make 8 for keyboards, then 8 for joysticks
@@ -22,12 +26,12 @@ function Keyboard:_init()
 	local punch = 5
 	local kick = 6
 	self.fourBasic = {
-		w = 0*6+left, d = 0*6+right, w = 0*6+up, s = 0*6+down, c = 0*6+punch, v = 0*6+kick,
+		a = 0*6+left, d = 0*6+right, w = 0*6+up, s = 0*6+down, c = 0*6+punch, v = 0*6+kick,
 		f = 1*6+left, h = 1*6+right, t = 1*6+up, g = 1*6+down, n = 1*6+punch, m = 1*6+kick,
 		j = 2*6+left, l = 2*6+right, i = 2*6+up, k = 2*6+down
 	}
-	self.fourBasic[","] = 2*6+punch
-	self.fourBasic["."] = 2*6+kick
+	self.fourBasic["."] = 2*6+punch
+	self.fourBasic["/"] = 2*6+kick
 
 
 	self.eightStandard = {
@@ -129,14 +133,23 @@ function Keyboard:keypressed(key, unicode)
 	end
 
 	if keyValue ~= nil then
-		inputNum = math.floor(keyValue/6)+1
-		keyType = keyValue % 6
+		inputNum = math.floor((keyValue-1)/6)+1
+		keyType = ((keyValue-1) % 6) + 1
+		-- if keyType == 0 then keyType = 6 end
 		if inputNum ~= nil and inputNum ~= 0 then
-			if press then
+			if self:keyNumToType(keyType) == nil then
+				return
+			elseif press then
 				self.keySets[inputNum][self:keyNumToType(keyType)] = 1
+				-- if self.playerMappings[inputNum] then
+				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 1
+				-- end
 			else
 				-- just to deal with the legacy 4 keyboard system
 				self.keySets[inputNum][self:keyNumToType(keyType)] = 0
+				-- if self.playerMappings[inputNum] then
+				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 0
+				-- end
 			end
 		end
 	end
@@ -152,10 +165,16 @@ function Keyboard:keyreleased(key, unicode)
 	end
 
 	if keyValue ~= nil then
-		inputNum = math.floor(keyValue/6)+1
-		keyType = keyValue % 6
+		inputNum = math.floor((keyValue-1)/6)+1
+		keyType = ((keyValue-1) % 6) + 1
+		-- if keyType == 0 then keyType = 6 end
 		if inputNum ~= nil and inputNum ~= 0 then
-			self.keySets[inputNum][self:keyNumToType(keyType)] = 0
+			if self:keyNumToType(keyType) ~= nil then
+				self.keySets[inputNum][self:keyNumToType(keyType)] = 0
+				-- if self.playerMappings[inputNum] then
+				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 1
+				-- end
+			end
 		end
 	end
 end
@@ -174,16 +193,14 @@ function Keyboard:getInputForPlayernum(playerNumber)
 end
 
 function Keyboard:keyState(playerNumber, keyType)
-	local inputNum = self:getInputForPlayernum(playerNumber)
-	if inputNum == 0 then
+	-- local inputNum = self:getInputForPlayernum(playerNumber)
+	if playerNumber == 0 then
 		return 0
 	end
-	if self.keySets[inputNum][keyType] == nil then
+	if self.keySets[playerNumber][keyType] == nil then
 		return 0
 	end
-	return self.keySets[inputNum][keyType]
+	return self.keySets[playerNumber][keyType]
 end
-
-
 
 

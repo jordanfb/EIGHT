@@ -245,11 +245,12 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	for i = 1, #self.platforms, 1 do
 		if playerY+playerHeight <= self.platforms[i][2] and playerY + playerHeight + dy >= self.platforms[i][2] then
 			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
-				return {self.platforms[i][2]-playerHeight, true}
+				return {self.platforms[i][2]-playerHeight, true, self.platforms[i][4] == 80}
+				-- the last one is if it's ground, in which case don't drop through
 			end
 		end
 	end
-	return {playerY, false}
+	return {playerY, false, false}
 end
 
 function Level:keypressed(key, unicode)

@@ -4,7 +4,7 @@ Player = class()
 
 
 
-function Player:_init(level, keyboard, x, y, playernumber, color)
+function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.level = level
 	self.keyboard = keyboard
 	self.moveSpeed = 500
@@ -29,20 +29,15 @@ function Player:_init(level, keyboard, x, y, playernumber, color)
 	self.attackType = 0
 	self.coolDown = 0
 	self.isAttacking = false
-	
+
 	self.color = color
+	self.colorTable = {{255, 255, 255}, {0, 0, 0}, {255, 255, 255}, {0, 255, 0}}
 	self:loadImages()
 	self.width = 100
 	self.height = 150
 
-	self.playerNumber = playernumber
-
-	-- self.LEFTKEY = LEFTKEY
-	-- self.RIGHTKEY = RIGHTKEY
-	-- self.UPKEY = UPKEY
-	-- self.DOWNKEY = DOWNKEY
-	-- self.PUNCHKEY = PUNCHKEY
-	-- self.KICKKEY = KICKKEY
+	self.playerNumber = playerNumber
+	self.inputNumber = playerNumber % 4
 
 	self.health = 100
 
@@ -97,9 +92,9 @@ function Player:draw()
 	if self.health <= 0 then
 		return
 	end
-	--
+	love.graphics.setColor(self.colorTable[self.color % 4 + 1])
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
-	
+	love.graphics.setColor(255, 255, 255, 255)
 	
 	if self.attackedTimer > 0 then
 		love.graphics.setColor(255, 0, 0)
@@ -113,7 +108,7 @@ function Player:draw()
 	end
 	if not self.onGround then
 		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
-	elseif self.keyboard:keyState(self.playerNumber, "down") > 0 and self.dx==0 then
+	elseif (self.keyboard:keyState(self.inputNumber, "down") > 0) and self.dx==0 then
 		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.attackTimer > 0 then
 	
@@ -139,7 +134,6 @@ function Player:draw()
 	end
 	
 	love.graphics.setColor(255, 255, 255)
-	
 end
 
 
@@ -154,12 +148,12 @@ function Player:update(dt)
 
 	local dx = 0
 	if self.attackTimer==0 then
-		dx = -self.keyboard:keyState(self.playerNumber, "left")
-		dx = dx + self.keyboard:keyState(self.playerNumber, "right")
+		dx = -self.keyboard:keyState(self.inputNumber, "left")
+		dx = dx + self.keyboard:keyState(self.inputNumber, "right")
 	end
 
 	-- check for switching directions:
-	if self.keyboard:keyState(self.playerNumber, "swapdirections") > 0 and self.attackTimer==0 then
+	if self.keyboard:keyState(self.inputNumber, "swapdirections") > 0 and self.attackTimer==0 then
 		if not self.switchedDirections then
 			self.facing = -self.facing
 			self.switchedDirections = true
@@ -190,12 +184,18 @@ function Player:update(dt)
 	-- then check platforms of level
 	
 
-	if self.dy >= 0 and not self.keyboard:keyState(self.playerNumber, "down") == 1 then
+	if self.dy >= 0 then
+		-- and not (self.keyboard:keyState(self.inputNumber, "down") > 0)
 		local change = self.level:downCollision(self.x, self.y, self.width, self.height, self.dy*dt)
 		if change[2] then
-			self.onGround = true
-			self.onPlatform = true
-			self.y = change[1]
+			if not change[3] and (self.keyboard:keyState(self.inputNumber, "down") > 0) then
+				-- continue falling
+			else
+			-- if change[2] then
+				self.onGround = change[3]
+				self.onPlatform = true
+				self.y = change[1]
+			end
 		end
 	-- elseif self.dy == 0 then
 	-- 	if (self.dx < 0) then
@@ -207,17 +207,17 @@ function Player:update(dt)
 
 	--ATTACKS	----------------------------------------------------
 	
-	if self.keyboard:keyState(self.playerNumber, "punch") > 0 and self.attackTimer == 0 and self.onGround and self.dx==0  and self.coolDown == 0 then
+	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
 		self.attackType = 1
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif self.keyboard:keyState(self.playerNumber, "kick") > 0 and self.attackTimer == 0 and self.onGround and self.dx==0  and self.coolDown == 0 then
+	elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
 		self.attackType = 2
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif ( not (self.keyboard:keyState(self.playerNumber, "punch") > 0) and not (self.keyboard:keyState(self.playerNumber, "kick") > 0 )) or self.attackTimer==25 then
+	elseif ( not (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 )) or self.attackTimer==25 then
 		self.isAttacking = false
-		if self.keyboard:keyState(self.playerNumber, "punch") > 0 then
+		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) then
 			if self.facing==1 then
 				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
 				if self.hasKnife then
@@ -232,7 +232,7 @@ function Player:update(dt)
 				end
 			end
 			self.coolDown = 50
-		elseif self.keyboard:keyState(self.playerNumber, "kick") > 0 then
+		elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) then
 			if self.facing==1 then
 				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, 40, self.facing, 20)
 			else
@@ -269,12 +269,12 @@ function Player:update(dt)
 	----------------------------------------------------
 	
 	
-	if self.onGround then
+	if self.onPlatform then
 		self.ay = 0
 		self.dy = 0
 	else
 		self.ay = 40
-		if self.keyboard:keyState(self.playerNumber, "down") > 0 then
+		if (self.keyboard:keyState(self.inputNumber, "down") > 0) then
 			self.ay = 80
 		end
 	end
@@ -284,7 +284,7 @@ function Player:update(dt)
 
 	-- then jump?
 
-	if self.onGround and self.keyboard:keyState(self.playerNumber, "up") > 0 and self.attackTimer==0 then
+	if self.onPlatform and (self.keyboard:keyState(self.inputNumber, "up") > 0) and self.attackTimer==0 then
 		self.dy = -1000
 		self.onGround = false
 		self.onPlatform = false
