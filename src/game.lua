@@ -35,6 +35,7 @@ function Game:_init()
 			noHealthAtNumberOfPeople = false,
 			takeFallingOutOfWorldDamage = true,
 			healthGainOnKill = false,
+			playMusic = false
 		}
 	self.gameSettingRates = {
 			knife = 0.5,
@@ -65,7 +66,9 @@ function Game:_init()
 	bgm = love.audio.newSource("music/battlemusic.mp3")
 	bgm:setVolume(0.9) -- 90% of ordinary volume
 	bgm:setLooping( true )
-	bgm:play()
+	if self.gameSettings.playMusic then
+		bgm:play()
+	end
 
 	self:addToScreenStack(self.mainMenu)
 end

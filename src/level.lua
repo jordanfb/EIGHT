@@ -21,28 +21,21 @@ function Level:_init(keyboard, setPlayers, game)
 	self.allLevels = {}
 	self.allLevels[1] = {{0, 1000, 1920, 80}, {100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
 	self.allLevels[2] = {{0, 1000, 1920, 80}, {100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
-
 	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {100, 500, 50, 30}, {1920 - 700, 500, 50, 30}, {0, 700, 1920, 30}, {150, 850, 20, 30}, {1920 - 350, 850, 20, 30}, {500, 320, 920, 30}, {1920/2, 1080/2, 50, 30}}
 
-	self.level = 3--math.random(1,2)
+	self.level = math.random(1,3)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
-					Player(self, self.keyboard, 900+100, 100, "7", "8", "9", "0", "-", "=", 4),
-					Player(self, self.keyboard, 300+25, 100, "q", "w", "e", "r", "t", "y", 1),
-					Player(self, self.keyboard, 1100+125, 100, "u", "i", "o", "p", "[", "]", 5),
-					Player(self, self.keyboard, 500+50, 100, "a", "s", "d", "f", "g", "h", 2),
-					Player(self, self.keyboard, 1300+150, 100, "j", "k", "l", ";", "'", "return", 6),
+	self.players = {Player(self, self.keyboard, 100, 100, 1, 0),
+					Player(self, self.keyboard, 900+100, 100, 5, 4),
+					Player(self, self.keyboard, 300+25, 100, 2, 1),
+					Player(self, self.keyboard, 1100+125, 100, 6, 5),
+					Player(self, self.keyboard, 500+50, 100, 3, 2),
+					Player(self, self.keyboard, 1300+150, 100, 7, 6),
+					Player(self, self.keyboard, 700+75, 100, 4, 3),
+					Player(self, self.keyboard, 1500+175, 100, 8, 7),
 					}
-	-- self.players = {}
-	if self.keyboard.wasd then -- then it's using the wasd translator, hopefully
-		self.players[7] = Player(self, self.keyboard, 700+75, 100, "6", "z", "x", "c", "v", "b", 3)
-		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "\\", 7)
-	else
-		self.players[7] = Player(self, self.keyboard, 700+75, 100, "lshift", "z", "x", "c", "v", "b", 3)
-		self.players[8] = Player(self, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
-	end
 
 	if setPlayers ~= nil then
 		self.players = setPlayers

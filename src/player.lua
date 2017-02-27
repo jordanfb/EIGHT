@@ -215,7 +215,7 @@ function Player:update(dt)
 		self.attackType = 2
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif ( not self.keyboard:keyState(self.playerNumber, "punch") > 0 and not self.keyboard:keyState(self.playerNumber, "kick") > 0 ) or self.attackTimer==25 then
+	elseif ( not (self.keyboard:keyState(self.playerNumber, "punch") > 0) and not (self.keyboard:keyState(self.playerNumber, "kick") > 0 )) or self.attackTimer==25 then
 		self.isAttacking = false
 		if self.keyboard:keyState(self.playerNumber, "punch") > 0 then
 			if self.facing==1 then
