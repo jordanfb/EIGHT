@@ -25,10 +25,10 @@ function PauseMenu:leave()
 end
 
 function PauseMenu:draw()
-	love.graphics.setColor(0, 0, 0, 100)
-	love.graphics.rectangle("fill", 0, 0, 1920, 1080)
+	love.graphics.setColor(255, 255, 255, 100)
+	love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	love.graphics.setColor(0, 0, 0)
-	love.graphics.printf("Click, Space, or Play to continue, Escape or Back to exit", 1920/2-500, 1080/2, 1000, "center")
+	love.graphics.printf("Click, Space, or Play to continue, Escape or Back to exit", 0, love.graphics.getHeight()/3, love.graphics.getWidth(), "center")
 end
 
 function PauseMenu:update(dt)

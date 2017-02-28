@@ -16,7 +16,7 @@ function Game:_init()
 	self.updateUnder = false
 
 	-- here are the actual variables
-	self.drawFPS = true
+	self.drawFPS = false
 
 	self.keyboard = Keyboard()
 	self.pauseMenu = PauseMenu(self)
@@ -44,12 +44,12 @@ function Game:_init()
 			punchTime = 1,
 			kickTime = 1,
 			knifeTime = 1,
-			punchDamage = 1,
-			kickDamage = 1,
-			knifeDamage = 1,
+			punchDamage = 20,
+			kickDamage = 40,
+			knifeDamage = 30,
 			lifeStealPercent = 10, -- the percentage of life stolen, out of 100
 			poisonRate = 1, -- per second
-			regenRate = 1,
+			regenRate = 1, -- per second
 			suddenDeathOnNumberOfPeople = 2,
 			noItemsAtNumberOfPeople = 2,
 			noHealthAtNumberOfPeople = 2,
@@ -132,10 +132,12 @@ function Game:update(dt)
 	end
 end
 
-function Game:popScreenStack()
+function Game:popScreenStack(loadNext)
 	self.screenStack[#self.screenStack]:leave()
 	self.screenStack[#self.screenStack] = nil
-	self.screenStack[#self.screenStack]:load()
+	if loadNext == nil or loadNext then
+		self.screenStack[#self.screenStack]:load()
+	end
 end
 
 function Game:addToScreenStack(newScreen)

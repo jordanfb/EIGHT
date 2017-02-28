@@ -182,7 +182,7 @@ function Player:update(dt)
 		self.y = -100
 		self.dx = 0
 		self.dy = 0
-		self.health = self.health - 40
+		self.health = self.health - self.game.gameSettingRates.fallingOutOfWorldDamage
 		self.attackedTimer = 50
 	end
 	-- then check platforms of level

@@ -36,27 +36,19 @@ function Level:_init(keyboard, setPlayers, game)
 					Player(self, self.keyboard, 700+75, 100, 4, 3),
 					Player(self, self.keyboard, 1500+175, 100, 8, 7),
 					}
-
-	if setPlayers ~= nil then
-		self.players = setPlayers
-	end
 	
-	if setPlayers ~= nil then
-		self.players = setPlayers
-	end
+	self.players = setPlayers or self.players -- if setPlayers == nil then set it to self.players
+
 	self.attacks = Attacks(self, self.players, self.game)
 	self.projectiles = {}
 	self.items = {}
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
-	if self.level == 1 then
-		self.bg = love.graphics.newImage('images/bg.png')
-	elseif self.level == 2 then
-		self.bg = love.graphics.newImage('images/bg-2.png')
-	elseif self.level == 3 then
-		self.bg = love.graphics.newImage('images/bg-3.png')
-	end
+
+	self.backgroundImages = {love.graphics.newImage('images/bg.png'), love.graphics.newImage('images/bg-2.png'),
+						love.graphics.newImage('images/bg-3.png')}
+	self.bg = self.backgroundImages[self.level]
 
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
@@ -64,25 +56,6 @@ function Level:_init(keyboard, setPlayers, game)
 end
 
 function Level:resetPlayers()
-	for k, v in pairs(self.players) do
-		v.attackedTimer = 0
-	end
-end
-
-function Level:load()
-	-- run when the level is given control
-	self.level = math.random(1,3)
-	self:resetPlayers()
-	self.platforms = self.allLevels[self.level]
-	if self.level == 1 then
-		self.bg = love.graphics.newImage('images/bg.png')
-	elseif self.level == 2 then
-		self.bg = love.graphics.newImage('images/bg-2.png')
-	elseif self.level == 3 then
-		self.bg = love.graphics.newImage('images/bg-3.png')
-	end
-	love.mouse.setVisible(false)
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	for i = 1, #self.players, 1 do
 		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
 		self.players[i].y = 100
@@ -92,7 +65,20 @@ function Level:load()
 		else
 			self.players[i].facing = -1
 		end
+		self.players[i].attackedTimer = 0
 	end
+end
+
+function Level:load()
+	-- run when the level is given control
+	self.level = math.random(1,3)
+	self:resetPlayers()
+	self.platforms = self.allLevels[self.level]
+	self.bg = self.backgroundImages[self.level]
+
+	love.mouse.setVisible(false)
+	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
+	
 	self.attacks.players = self.players
 	self.gameOver = false
 	self.winner = -1

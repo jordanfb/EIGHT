@@ -48,7 +48,7 @@ end
 function CountdownScreen:update(dt)
 	self.countdownTimer = self.countdownTimer - dt
 	if self.countdownTimer <= 1 then
-		self.game:popScreenStack()
+		self.game:popScreenStack(false) -- don't load the next screen, since it will then reload the level
 	end
 end
 
