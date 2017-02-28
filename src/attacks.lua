@@ -28,19 +28,24 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 					-- then it's not the same color, so do damage
 					if player.health ~= 0 then
 						-- otherwise ignore it, since it's already dead
-						if self.game.gameSettings.instantKill then
-							player.health = 0
-							self.game:startScreenshake(.25, 10)
-						else
+						if attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching then -- a punch
+							self.game:startScreenshake(.15, 2)
 							player.health = math.max(player.health - attack[6], 0)
-							if attack[6] == 20 then -- a punch
-								self.game:startScreenshake(.15, 2)
-							else -- a kick
-								self.game:startScreenshake(.15, 5)
-							end
-							if player.health <= 0 then
+							if self.game.gameSettings.instantKill then
+								player.health = 0
 								self.game:startScreenshake(.25, 10)
 							end
+							player.attackedTimer = 10
+							attack[9+player.color] = true
+						elseif attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking then -- a kick
+							self.game:startScreenshake(.15, 5)
+							player.health = math.max(player.health - attack[6], 0)
+							if self.game.gameSettings.instantKill then
+								player.health = 0
+								self.game:startScreenshake(.25, 10)
+							end
+							player.attackedTimer = 10
+							attack[9+player.color] = true
 						end
 						if self.game.gameSettings.lifeSteal or self.game.gameSettings.healthGainOnKill then
 							-- steal life for the player who did the attack.
@@ -57,8 +62,6 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 								end
 							end
 						end
-						player.attackedTimer = 10
-						attack[9+player.color] = true
 					end
 				end
 			end
@@ -108,10 +111,12 @@ function Attacks:draw()
 	love.graphics.setColor(255, 0, 0)
 	for i = self.firstAttack, #self.attacks, 1 do
 		local attack = self.attacks[i]
-		if attack[8]>12 then
-			love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
-		else
-			love.graphics.draw(self.attackImages[5], attack[1], attack[2])
+		if (attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching) or (attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking) then
+			if attack[8]>12 then
+				love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
+			else
+				love.graphics.draw(self.attackImages[5], attack[1], attack[2])
+			end
 		end
 	end
 end

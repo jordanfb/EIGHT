@@ -40,6 +40,7 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.inputNumber = playerNumber % 4
 
 	self.health = 100
+	self.dead = false
 
 	-- animations:
 	-- punch, kick jump, duck, walking,
@@ -136,8 +137,17 @@ function Player:draw()
 	love.graphics.setColor(255, 255, 255)
 end
 
+function Player:onPlayerDeath()
+	self.level.game:startScreenshake(.5, 10)
+	print("player died")
+end
 
 function Player:update(dt)
+	if self.health == 0 and not self.dead then
+		self.dead = true
+		-- CAUSE EXCITEMENT TO HAPPEN!
+		self:onPlayerDeath()
+	end
 	if self.health < 0 then
 		self.health = 0
 		return
@@ -182,7 +192,9 @@ function Player:update(dt)
 		self.y = -100
 		self.dx = 0
 		self.dy = 0
-		self.health = self.health - self.game.gameSettingRates.fallingOutOfWorldDamage
+		if self.level.game.gameSettings.takeFallingOutOfWorldDamage then
+			self.health = math.max(self.health - self.level.game.gameSettingRates.fallingOutOfWorldDamage, 0)
+		end
 		self.attackedTimer = 50
 	end
 	-- then check platforms of level
@@ -227,24 +239,26 @@ function Player:update(dt)
 		self.isAttacking = false
 		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, 20, self.facing, 20)
-				if self.hasKnife then
+				if self.hasKnife or self.level.game.gameSettings.infiniteKnives then
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
 					self.hasKnife = false
+				else
+					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
 				end
 			else
-				self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	20, self.facing, 20)
-				if self.hasKnife then
+				if self.hasKnife or self.level.game.gameSettings.infiniteKnives then
 					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
 					self.hasKnife = false
+				else
+					self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20)
 				end
 			end
 			self.coolDown = 50
 		elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, 40, self.facing, 20)
+				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
 			else
-				self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, 40, self.facing, 20)
+				self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
 			end
 			self.coolDown = 50
 		end
@@ -309,6 +323,7 @@ function Player:update(dt)
 						self.health = self.health - 30
 						self.attackedTimer = 20
 						table.remove(self.level.projectiles, i)
+						self.level.game:startScreenshake(.15, 4)
 						i = #self.level.projectiles+10
 						removed = true
 					end
