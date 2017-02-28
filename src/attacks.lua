@@ -28,16 +28,15 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 					-- then it's not the same color, so do damage
 					if player.health ~= 0 then
 						-- otherwise ignore it, since it's already dead
-						player.health = math.max(player.health - attack[6], 0)
 						if self.game.gameSettings.instantKill then
 							player.health = 0
 							self.game:startScreenshake(.25, 10)
 						else
-							player.health = player.health - attack[6]
+							player.health = math.max(player.health - attack[6], 0)
 							if attack[6] == 20 then -- a punch
-								self.game:startScreenshake(.25, 2)
+								self.game:startScreenshake(.15, 2)
 							else -- a kick
-								self.game:startScreenshake(.25, 5)
+								self.game:startScreenshake(.15, 5)
 							end
 							if player.health <= 0 then
 								self.game:startScreenshake(.25, 10)

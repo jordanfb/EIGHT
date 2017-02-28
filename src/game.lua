@@ -83,7 +83,11 @@ function Game:startScreenshake(time, intensity)
 end
 
 function Game:load(args)
-	--
+	if self.gameSettings.playMusic then
+		bgm:play()
+	else
+		bgm:stop()
+	end
 end
 
 function Game:draw()
@@ -140,6 +144,9 @@ function Game:addToScreenStack(newScreen)
 	end
 	self.screenStack[#self.screenStack+1] = newScreen
 	newScreen:load()
+	if self.gameSettings.playMusic then
+		bgm:play()
+	end
 end
 
 function Game:resize(w, h)
