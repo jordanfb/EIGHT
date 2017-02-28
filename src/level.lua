@@ -63,9 +63,16 @@ function Level:_init(keyboard, setPlayers, game)
 	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 end
 
+function Level:resetPlayers()
+	for k, v in pairs(self.players) do
+		v.attackedTimer = 0
+	end
+end
+
 function Level:load()
 	-- run when the level is given control
-	self.level = 3--math.random(1,2)
+	self.level = math.random(1,3)
+	self:resetPlayers()
 	self.platforms = self.allLevels[self.level]
 	if self.level == 1 then
 		self.bg = love.graphics.newImage('images/bg.png')
@@ -255,7 +262,11 @@ end
 
 function Level:keypressed(key, unicode)
 	if key == "escape" then
-		self.game:popScreenStack()
+		if self.gameOver then
+			self.game:popScreenStack()
+		else
+			self.game:addToScreenStack(self.game.pauseMenu)
+		end
 	end
 end
 

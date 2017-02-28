@@ -146,14 +146,17 @@ function Player:update(dt)
 		return
 	end
 
-	local dx = 0
+	local leftMove = 0
+	local rightMove = 0
 	if self.attackTimer==0 then
-		dx = -self.keyboard:keyState(self.inputNumber, "left")
-		dx = dx + self.keyboard:keyState(self.inputNumber, "right")
+		leftMove = self.keyboard:keyState(self.inputNumber, "left")
+		rightMove = self.keyboard:keyState(self.inputNumber, "right")
 	end
+	local dx = rightMove - leftMove
 
 	-- check for switching directions:
-	if self.keyboard:keyState(self.inputNumber, "swapdirections") > 0 and self.attackTimer==0 then
+	--self.keyboard:keyState(self.inputNumber, "swapdirections") > 0
+	if leftMove > 0 and rightMove > 0 and self.attackTimer==0 then
 		if not self.switchedDirections then
 			self.facing = -self.facing
 			self.switchedDirections = true

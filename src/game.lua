@@ -3,7 +3,7 @@ require "level"
 require "keyboard"
 require "mainmenu"
 require "countdown"
-
+require "pausemenu"
 require "class"
 
 Game = class()
@@ -19,6 +19,7 @@ function Game:_init()
 	self.drawFPS = true
 
 	self.keyboard = Keyboard()
+	self.pauseMenu = PauseMenu(self)
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye

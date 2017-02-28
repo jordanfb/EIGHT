@@ -35,7 +35,7 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 						else
 							player.health = player.health - attack[6]
 							if attack[6] == 20 then -- a punch
-								self.game:startScreenshake(.15, 2)
+								self.game:startScreenshake(.25, 2)
 							else -- a kick
 								self.game:startScreenshake(.25, 5)
 							end
