@@ -21,12 +21,12 @@ function Game:_init()
 	self.keyboard = Keyboard()
 
 	self.gameSettings = {
-			infiniteKnives = false,
-			healthspawn = true,
-			knifespawn = true,
-			punching = true,
-			kicking = true,
-			instantKill = false,
+			infiniteKnives = false, --I Miss the Old Kanye
+			healthspawn = true, --Straight from the Go Kayne
+			knifespawn = true, --Set on his goals Kayne
+			punching = true, -- I hate the new Kayne
+			kicking = true, --What if Kayne wrote a song about Kayne
+			instantKill = false, --Man that'd be so Kayne
 			lifeSteal = false, -- harming other people gives you health
 			poisonMode = false,
 			regen = false,
@@ -71,6 +71,14 @@ function Game:_init()
 	end
 
 	self:addToScreenStack(self.mainMenu)
+
+	self.screenshakeDuration = 0
+	self.screenshakeMagnitude = 0
+end
+
+function Game:startScreenshake(time, intensity)
+	self.screenshakeDuration = time
+	self.screenshakeMagnitude = intensity
 end
 
 function Game:load(args)
@@ -80,6 +88,11 @@ end
 function Game:draw()
 
 	-- love.graphics.draw(self.bg, 0, 0)
+	if self.screenshakeDuration > 0 then
+		local dx = love.math.random(-self.screenshakeMagnitude, self.screenshakeMagnitude)
+        local dy = love.math.random(-self.screenshakeMagnitude, self.screenshakeMagnitude)
+        love.graphics.translate(dx, dy)
+    end
 
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
@@ -103,6 +116,9 @@ function Game:draw()
 end
 
 function Game:update(dt)
+	if self.screenshakeDuration > 0 then
+		self.screenshakeDuration = self.screenshakeDuration - dt
+	end
 	for i = #self.screenStack, 1, -1 do
 		self.screenStack[i]:update(dt)
 		if self.screenStack[i] and not self.screenStack[i].updateUnder then

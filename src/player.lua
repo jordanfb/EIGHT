@@ -106,7 +106,7 @@ function Player:draw()
 	if self.facing == -1 then
 		addX = self.width
 	end
-	if not self.onGround then
+	if not self.onPlatform then
 		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif (self.keyboard:keyState(self.inputNumber, "down") > 0) and self.dx==0 then
 		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
@@ -180,6 +180,7 @@ function Player:update(dt)
 		self.dx = 0
 		self.dy = 0
 		self.health = self.health - 40
+		self.attackedTimer = 50
 	end
 	-- then check platforms of level
 	
@@ -188,13 +189,17 @@ function Player:update(dt)
 		-- and not (self.keyboard:keyState(self.inputNumber, "down") > 0)
 		local change = self.level:downCollision(self.x, self.y, self.width, self.height, self.dy*dt)
 		if change[2] then
-			if not change[3] and (self.keyboard:keyState(self.inputNumber, "down") > 0) then
-				-- continue falling
-			else
-			-- if change[2] then
+			if change[3] then
 				self.onGround = change[3]
 				self.onPlatform = true
 				self.y = change[1]
+			elseif not (self.keyboard:keyState(self.inputNumber, "down") > 0) then
+				self.onGround = change[3]
+				self.onPlatform = true
+				self.y = change[1]
+			-- else
+			-- -- if change[2] then
+				
 			end
 		end
 	-- elseif self.dy == 0 then
@@ -310,7 +315,7 @@ function Player:update(dt)
 	end
 	for i = 1, #self.level.projectiles, 1 do
 		if self.level.projectiles[i] then
-			if self.level.projectiles[i].x + self.level.projectiles[i].width < 0 or self.level.projectiles[i].x > love.graphics.getWidth() then
+			if self.level.projectiles[i].x + self.level.projectiles[i].width < 0 or self.level.projectiles[i].x > self.SCREENWIDTH then
 				table.remove(self.level.projectiles, i)
 				i = #self.level.projectiles+10
 			end
@@ -328,9 +333,6 @@ function Player:update(dt)
 	if self.attackedTimer > 0 then
 		self.attackedTimer = self.attackedTimer - 1
 	end
-	
-
-	
 end
 
 function Player:isColliding(x, y, width, height)
