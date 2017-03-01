@@ -18,7 +18,7 @@ function Game:_init()
 	-- here are the actual variables
 	self.drawFPS = false
 
-	self.keyboard = Keyboard()
+	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
 
 	self.gameSettings = {
@@ -183,4 +183,24 @@ end
 
 function Game:quit()
 	--
+end
+
+function Game:joystickadded(joystick)
+	self.keyboard:joystickadded(joystick)
+end
+
+function Game:joystickremoved(joystick)
+	self.keyboard:joystickremoved(joystick)
+end
+
+function Game:gamepadpressed(gamepad, button)
+	self.keyboard:gamepadpressed(gamepad, button)
+end
+
+function Game:gamepadreleased(gamepad, button)
+	self.keyboard:gamepadreleased(gamepad, button)
+end
+
+function Game:gamepadaxis(gamepad, axis, value)
+	self.keyboard:gamepadaxis(gamepad, axis, value)
 end
