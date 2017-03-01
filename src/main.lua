@@ -67,3 +67,23 @@ end
 function love.quit()
 	game:quit()
 end
+
+function love.joystickadded(joystick)
+	game:joystickadded(joystick)
+end
+
+function love.joystickremoved(joystick)
+	game:joystickremoved(joystick)
+end
+
+function love.gamepadpressed(gamepad, button)
+	game:gamepadpressed(gamepad, button)
+end
+
+function love.gamepadreleased(gamepad, button)
+	game:gamepadreleased(gamepad, button)
+end
+
+function love.gamepadaxis( joystick, axis, value )
+	game:gamepadaxis(joystick, axis, value)
+end

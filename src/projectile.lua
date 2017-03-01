@@ -22,7 +22,6 @@ function Projectile:_init(projectType, x, y, direction, color)
 		self.damage = 30
 		self.width = 30
 		self.height = 30
-	
 	elseif self.projectType == "knife" then
 		self.dx = 1500 * direction
 		self.damage = 10

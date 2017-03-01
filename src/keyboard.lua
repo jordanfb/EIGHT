@@ -5,9 +5,13 @@ Keyboard = class()
 
 
 
-function Keyboard:_init()
+function Keyboard:_init(game)
+	self.game = game
 	self.keyboardType = 0 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
-
+	self.gamepads = {}
+	for i = 1, 8 do
+		self.gamepads[i] = {gamepad = nil, mode = 0, hasGamepad = false} -- 0 is jordan one per, 1 is martin's gameboy method, 2 is two per
+	end
 	-- self.playerMappings = {1, 2, 3, 1, 2, 3, 1, 2} -- a table of playernum to inputnum
 	-- self.playerKeys = {}
 	-- for i = 1, 8 do
@@ -32,7 +36,6 @@ function Keyboard:_init()
 	}
 	self.fourBasic["."] = 2*6+punch
 	self.fourBasic["/"] = 2*6+kick
-
 
 	self.eightStandard = {
 		q = 2*6+left, w = 2*6+right, e = 2*6+up, r = 2*6+down, t = 2*6+punch, y = 2*6+kick,
@@ -66,7 +69,6 @@ function Keyboard:_init()
 	self.eightStandard[","] = 7*6+up
 	self.eightStandard["."] = 7*6+down
 	self.eightStandard["/"] = 7*6+punch
-
 
 
 	self.eightWasdPress = {unpack(self.eightStandard)}
@@ -192,15 +194,90 @@ function Keyboard:getInputForPlayernum(playerNumber)
 	return 0
 end
 
-function Keyboard:keyState(playerNumber, keyType)
+function Keyboard:keyState(inputNumber, keyType)
 	-- local inputNum = self:getInputForPlayernum(playerNumber)
-	if playerNumber == 0 then
+	if inputNumber == 0 then
 		return 0
 	end
-	if self.keySets[playerNumber][keyType] == nil then
+	if self.keySets[inputNumber][keyType] == nil then
 		return 0
 	end
-	return self.keySets[playerNumber][keyType]
+	return self.keySets[inputNumber][keyType]
+end
+
+function Keyboard:getGamepadNumber(gamepad)
+	for k, v in pairs(self.gamepads) do
+		if gamepad == v.gamepad then
+			return k
+		end
+	end
+	return 0
+end
+
+function Keyboard:gamepadButtonToPress(gamepadID, button)
+	local gp = self.gamepads[gamepadID]
+	if gp.mode == 0 then -- it's one person per
+		local t = {a = "up", b = "down", x = "punch", y = "kick"}
+	elseif gp.mode == 1 then -- it's martin's method
+		local t = {a = "kick", b = "punch", x = "duck", y = "up"}
+	end
+end
+
+function Keyboard:joystickadded(gamepad)
+	if gamepad:isGamepad() then
+		for i = 1, #self.gamepads do
+			if not self.gamepads[i].hasGamepad then
+				self.gamepads[i].hasGamepad = true
+				self.gamepads[i].gamepad = gamepad
+				return true
+			end
+		end
+	end
+	return false -- because it didn't work!
+end
+
+function Keyboard:joystickremoved(gamepad)
+	if gamepad:isGamepad() then
+		for i = 1, #self.gamepads do
+			if self.gamepads[i].hasGamepad then
+				if self.gamepads[i].gamepad == gamepad then
+					self.gamepads[i].hasGamepad = false
+					self.gamepads[i].gamepad = nil
+					self.gamepads[i].mode = 0
+					return true
+				end
+			end
+		end
+	end
+	return false -- because it didn't work!
+end
+
+function Keyboard:gamepadpressed(gamepad, button)
+	-- local input = self:convertRawInput("joystick"..key)
+	local gamepadId = self:getGamepadNumber(gamepad)
+	if gamepadId == 0 then return end -- since it doesn't exist.
+	local inputSource = gamepadId + 8 -- past the possble 8 keyboard inputs
+
+
+
+	-- zero is not an input
+	-- if self:convertRawInput("joystick"..button) == nil then
+	-- 	return
+	-- end
+	-- for k, input in pairs(self:convertRawInput("joystick"..button)) do
+	-- 	if input ~= nil then
+	-- 		self.booleanValues[inputSource][input] = 1
+	-- 		self:distributeInputPressed(inputSource, input)
+	-- 	end
+	-- end
+end
+
+function Keyboard:gamepadreleased(gamepad, button)
+	--
+end
+
+function Keyboard:gamepadaxis(gamepad, axis, value)
+	--
 end
 
 
