@@ -231,11 +231,11 @@ function Player:update(dt)
 
 	--ATTACKS	----------------------------------------------------
 
-	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
+	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.onPlatform and self.coolDown == 0 then
 		self.attackType = 1
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
+	elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) and self.attackTimer == 0 and self.onPlatform and self.coolDown == 0 then
 		self.attackType = 2
 		self.attackTimer = 1
 		self.isAttacking = true

@@ -23,8 +23,8 @@ function Game:_init()
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
-			healthspawn = true, --Straight from the Go Kayne
-			knifespawn = true, --Set on his goals Kayne
+			healthSpawn = true, --Straight from the Go Kayne
+			knifeSpawn = true, --Set on his goals Kayne
 			punching = true, -- I hate the new Kayne
 			kicking = true, --What if Kayne wrote a song about Kayne
 			instantKill = false, --Man that'd be so Kayne
