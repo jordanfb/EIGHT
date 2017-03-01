@@ -2,7 +2,8 @@ require "class"
 
 Attacks = class()
 
-function Attacks:_init(level, players)
+function Attacks:_init(level, players, game)
+	self.game = game
 	self.level = level
 	self.players = players
 	self.attacks = {}
@@ -25,10 +26,43 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 				-- plus possibly add lots of blood?
 				if player.color%4 ~= attack[5]%4 and not attack[9+player.color] then
 					-- then it's not the same color, so do damage
-					player.health = player.health - attack[6]
-					player.attackedTimer = 10
-					attack[9+player.color] = true
-					-- add the knockback!!
+					if player.health ~= 0 then
+						-- otherwise ignore it, since it's already dead
+						if attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching then -- a punch
+							self.game:startScreenshake(.15, 2)
+							player.health = math.max(player.health - attack[6], 0)
+							if self.game.gameSettings.instantKill then
+								player.health = 0
+								self.game:startScreenshake(.25, 10)
+							end
+							player.attackedTimer = 10
+							attack[9+player.color] = true
+						elseif attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking then -- a kick
+							self.game:startScreenshake(.15, 5)
+							player.health = math.max(player.health - attack[6], 0)
+							if self.game.gameSettings.instantKill then
+								player.health = 0
+								self.game:startScreenshake(.25, 10)
+							end
+							player.attackedTimer = 10
+							attack[9+player.color] = true
+						end
+						if self.game.gameSettings.lifeSteal or self.game.gameSettings.healthGainOnKill then
+							-- steal life for the player who did the attack.
+							for k, v in pairs(self.players) do
+								if v.color == attack[5] then
+									-- give that person the life!
+									if self.game.gameSettings.lifeSteal then
+										v.health = math.min(v.health + attack[6]*self.game.gameSettingRates.lifeStealPercent/100, 100)
+									end
+									if self.game.gameSettings.healthGainOnKill then
+										v.heatlh = math.min(v.health + self.game.gameSettingRates.healthGainOnKillAmount, 100)
+									end
+									break
+								end
+							end
+						end
+					end
 				end
 			end
 		end
@@ -55,14 +89,14 @@ function Attacks:update(dt)
 						for k = 1, #self.level.players, 1 do
 							if (self.level.players[k].color==attack[5]) then
 								if self.level.items[i].itemType == "health" then
-									self.level.players[k].health = self.level.players[k].health + 30
-									if self.level.players[k].health > 100 then
-										self.level.players[k].health = 100
+									if self.game.gameSettings.noHealthLimit then
+										self.level.players[k].health = self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount
+									else
+										self.level.players[k].health = math.min(self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount, 100)
 									end
 								else
-									self.level.players[k].hasKnife = true
+									self.level.players[k].numKnives = self.level.players[k].numKnives + 1
 								end
-								
 								table.remove(self.level.items, i)
 							end
 						end
@@ -77,10 +111,12 @@ function Attacks:draw()
 	love.graphics.setColor(255, 0, 0)
 	for i = self.firstAttack, #self.attacks, 1 do
 		local attack = self.attacks[i]
-		if attack[8]>12 then
-			love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
-		else
-			love.graphics.draw(self.attackImages[5], attack[1], attack[2])
+		if (attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching) or (attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking) then
+			if attack[8]>12 then
+				love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
+			else
+				love.graphics.draw(self.attackImages[5], attack[1], attack[2])
+			end
 		end
 	end
 end

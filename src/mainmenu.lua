@@ -26,20 +26,16 @@ function MainMenu:_init(game)
 end
 
 function MainMenu:createDefaultPlayers()
-	self.players = {Player(self.game.level, self.keyboard, 100, 100,      "`", "1", "2", "3", "4", "5", 0),
-					Player(self.game.level, self.keyboard, 900+100, 100, "7", "8", "9", "0", "-", "=", 4),
-					Player(self.game.level, self.keyboard, 300+25, 100, "q", "w", "e", "r", "t", "y", 1),
-					Player(self.game.level, self.keyboard, 1100+125, 100, "u", "i", "o", "p", "[", "]", 5),
-					Player(self.game.level, self.keyboard, 500+50, 100, "a", "s", "d", "f", "g", "h", 2),
-					Player(self.game.level, self.keyboard, 1300+150, 100, "j", "k", "l", ";", "'", "return", 6),
+	self.players = {Player(self.game.level, self.keyboard, 100, 100, 1, 0),
+					Player(self.game.level, self.keyboard, 900+100, 100, 5, 4),
+					Player(self.game.level, self.keyboard, 300+25, 100, 2, 1),
+					Player(self.game.level, self.keyboard, 1100+125, 100, 6, 5),
+					Player(self.game.level, self.keyboard, 500+50, 100, 3, 2),
+					Player(self.game.level, self.keyboard, 1300+150, 100, 7, 6),
+					Player(self.game.level, self.keyboard, 700+75, 100, 4, 3),
+					Player(self.game.level, self.keyboard, 1500+175, 100, 8, 7),
 					}
-	if self.keyboard.wasd then -- then it's using the wasd translator, hopefully
-		self.players[7] = Player(self.game.level, self.keyboard, 700+75, 100, "6", "z", "x", "c", "v", "b", 3)
-		self.players[8] = Player(self.game.level, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "\\", 7)
-	else
-		self.players[7] = Player(self.game.level, self.keyboard, 700+75, 100, "lshift", "z", "x", "c", "v", "b", 3)
-		self.players[8] = Player(self.game.level, self.keyboard, 1500+175, 100, "n", "m", ",", ".", "/", "rshift", 7)
-	end
+
 	self.playerKeys = {{"`", "1", "2", "3", "4", "5"}, {"7", "8", "9", "0", "-", "="}, {"q", "w", "e", "r", "t", "y"}, {"u", "i", "o", "p", "[", "]"},
 						{"a", "s", "d", "f", "g", "h"}, {"j", "k", "l", ";", "'", "return"}}
 	if self.keyboard.wasd then
@@ -84,6 +80,10 @@ function MainMenu:load()
 		self.game.drawFPS = false
 	end
 	self.playingPlayers = {}
+	-- this is for resetting the rates at the end of each match, this is an absolutely horrible place to put it
+	-- but the code's already a mess...
+	self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
+	self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
 end
 
 function MainMenu:leave()
@@ -92,6 +92,16 @@ function MainMenu:leave()
 		self.game.drawFPS = true
 	end
 	self.game.level.players = self.playingPlayers -- just be a dick and overwrite it
+	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
+	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
+end
+
+function MainMenu:copyTable(t)
+	local newT = {}
+	for k, v in pairs(t) do
+		newT[k] = v
+	end
+	return newT
 end
 
 function MainMenu:draw()
@@ -197,6 +207,7 @@ function MainMenu:keypressed(key, unicode)
 			end
 		else
 			self.game:addToScreenStack(self.game.level)
+			self.game:addToScreenStack(self.game.countdownScreen)
 		end
 	end
 	for i = 1, #self.playerKeys, 1 do

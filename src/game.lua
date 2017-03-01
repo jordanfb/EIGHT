@@ -3,7 +3,7 @@ require "level"
 require "keyboard"
 require "mainmenu"
 require "countdown"
-
+require "pausemenu"
 require "class"
 
 Game = class()
@@ -19,6 +19,47 @@ function Game:_init()
 	self.drawFPS = false
 
 	self.keyboard = Keyboard()
+	self.pauseMenu = PauseMenu(self)
+
+	self.gameSettings = {
+			infiniteKnives = false, --I Miss the Old Kanye
+			healthspawn = true, --Straight from the Go Kayne
+			knifespawn = true, --Set on his goals Kayne
+			punching = true, -- I hate the new Kayne
+			kicking = true, --What if Kayne wrote a song about Kayne
+			instantKill = false, --Man that'd be so Kayne
+			lifeSteal = false, -- harming other people gives you health
+			poison = false,
+			regen = false,
+			suddenDeathOnNumberOfPeople = false,
+			noItemsAtNumberOfPeople = false,
+			noHealthAtNumberOfPeople = false,
+			takeFallingOutOfWorldDamage = true,
+			healthGainOnKill = true, -- I don't think this is functional
+			playMusic = false,
+			punchWhileThrowing = false,
+			noHealthLimit = false,
+			screenShake = true,
+		}
+	self.gameSettingRates = {
+			knife = 1,
+			health = 1,
+			punchTime = 1, -- I don't think this is functional
+			kickTime = 1, -- I don't think this is functional
+			knifeTime = 1,
+			punchDamage = 20,
+			kickDamage = 40,
+			knifeDamage = 30,
+			lifeStealPercent = 10, -- the percentage of life stolen, out of 100
+			poisonRate = 1, -- per second
+			regenRate = 1, -- per second
+			suddenDeathOnNumberOfPeople = 2,
+			noItemsAtNumberOfPeople = 2,
+			noHealthAtNumberOfPeople = 2,
+			fallingOutOfWorldDamage = 40,
+			healthGainOnKillAmount = 20,
+			healthPickupAmount = 30
+		} -- jumping?
 
 	self.countdownScreen = CountdownScreen(self)
 	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
@@ -30,18 +71,41 @@ function Game:_init()
 	bgm = love.audio.newSource("music/battlemusic.mp3")
 	bgm:setVolume(0.9) -- 90% of ordinary volume
 	bgm:setLooping( true )
-	bgm:play()
+	if self.gameSettings.playMusic then
+		bgm:play()
+	end
+
+	self.healthItemImage = love.graphics.newImage('images/health-item.png')
+	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
 
 	self:addToScreenStack(self.mainMenu)
+
+	self.screenshakeDuration = 0
+	self.screenshakeMagnitude = 0
+end
+
+function Game:startScreenshake(time, intensity)
+	if self.gameSettings.screenShake then
+		self.screenshakeDuration = time
+		self.screenshakeMagnitude = intensity
+	end
 end
 
 function Game:load(args)
-	--
+	if self.gameSettings.playMusic then
+		bgm:play()
+	else
+		bgm:stop()
+	end
 end
 
 function Game:draw()
-
 	-- love.graphics.draw(self.bg, 0, 0)
+	if self.screenshakeDuration > 0 then
+		local dx = love.math.random(-self.screenshakeMagnitude, self.screenshakeMagnitude)
+        local dy = love.math.random(-self.screenshakeMagnitude, self.screenshakeMagnitude)
+        love.graphics.translate(dx, dy)
+    end
 
 	local thingsToDraw = 1 -- this will become the index of the lowest item to draw
 	for i = #self.screenStack, 1, -1 do
@@ -53,9 +117,6 @@ function Game:draw()
 	-- this is so that the things earlier in the screen stack get drawn first, so that things like pause menus get drawn on top.
 	for i = thingsToDraw, #self.screenStack, 1 do
 		self.screenStack[i]:draw()
-		-- if i ~= 1 then
-		-- 	print("DRAWING "..i)
-		-- end
 	end
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
@@ -65,6 +126,9 @@ function Game:draw()
 end
 
 function Game:update(dt)
+	if self.screenshakeDuration > 0 then
+		self.screenshakeDuration = self.screenshakeDuration - dt
+	end
 	for i = #self.screenStack, 1, -1 do
 		self.screenStack[i]:update(dt)
 		if self.screenStack[i] and not self.screenStack[i].updateUnder then
@@ -73,10 +137,12 @@ function Game:update(dt)
 	end
 end
 
-function Game:popScreenStack()
+function Game:popScreenStack(loadBelow)
 	self.screenStack[#self.screenStack]:leave()
 	self.screenStack[#self.screenStack] = nil
-	self.screenStack[#self.screenStack]:load()
+	if loadBelow == nil or loadBelow then
+		self.screenStack[#self.screenStack]:load()
+	end
 end
 
 function Game:addToScreenStack(newScreen)
@@ -85,6 +151,9 @@ function Game:addToScreenStack(newScreen)
 	end
 	self.screenStack[#self.screenStack+1] = newScreen
 	newScreen:load()
+	if self.gameSettings.playMusic then
+		bgm:play()
+	end
 end
 
 function Game:resize(w, h)

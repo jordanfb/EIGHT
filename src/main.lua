@@ -21,6 +21,7 @@ function love.load(args)
 	-- not much here
 	game:resize(width, height)
 	love.mouse.setVisible(false)
+	math.randomseed(os.time())
 end
 
 function love.resize(w, h)

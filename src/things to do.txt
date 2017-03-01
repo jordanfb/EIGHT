@@ -1,0 +1,11 @@
+things to do:
+
+
+
+
+--fix the way damage is assigned so that it can be adjusted from game settings
+fix the way speed is done to fix my bug and also make it adjustable
+fix the way item spawning is done to make it adjustable
+--enable/disable kicking/punching/knives
+--enable/disable falling out of world damage
+create settings that disable/enable things on fewer than a certain number of people

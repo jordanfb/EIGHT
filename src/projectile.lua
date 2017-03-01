@@ -29,10 +29,10 @@ function Projectile:_init(projectType, x, y, direction, color)
 		self.width = 30
 		self.height = 10
 	end
-
+	
 	self.fireBallImages = {love.graphics.newImage('images/fireball-1.png'),
 						   love.graphics.newImage('images/fireball-2.png')}
-				   
+	
 	self.knifeImage = love.graphics.newImage('images/knife.png')
 end
 
