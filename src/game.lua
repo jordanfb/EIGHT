@@ -44,10 +44,10 @@ function Game:_init()
 			screenShake = true,
 		}
 	self.gameSettingRates = {
-			knife = 1,
+			knife = 3,
 			health = 1,
-			jump = 1,
-			speed = 2,
+			jump = 3,
+			speed = 3,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional

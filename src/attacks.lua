@@ -101,6 +101,7 @@ function Attacks:update(dt)
 								elseif self.level.items[i].itemType == "speed" then
 									self.level.players[k].speedUp = 500
 								end
+								self.game:startScreenshake(.15, 1)
 								table.remove(self.level.items, i)
 							end
 						end

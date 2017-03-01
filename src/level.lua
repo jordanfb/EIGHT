@@ -217,29 +217,29 @@ function Level:update(dt)
 		end
 	end
 	if self.game.gameSettings.knifeSpawn then
-		if math.random(1000/self.game.gameSettingRates.knife)==1 then
+		if math.random(3000/self.game.gameSettingRates.knife)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("knife", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
 		end
-		if math.random(1000/self.game.gameSettingRates.knife)==1 then
+		if math.random(3000/self.game.gameSettingRates.knife)==1 then
 			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.jumpSpawn then
-		if math.random(1000/self.game.gameSettingRates.jump)==1 then
+		if math.random(3000/self.game.gameSettingRates.jump)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("jump", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
 		end
-		if math.random(1000/self.game.gameSettingRates.jump)==1 then
+		if math.random(3000/self.game.gameSettingRates.jump)==1 then
 			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.speedSpawn then
-		if math.random(1000/self.game.gameSettingRates.speed)==1 then
+		if math.random(3000/self.game.gameSettingRates.speed)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("speed", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
 		end
-		if math.random(1000/self.game.gameSettingRates.speed)==1 then
+		if math.random(3000/self.game.gameSettingRates.speed)==1 then
 			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
 		end
 	end
