@@ -16,7 +16,7 @@ function love.load(args)
 	game:load(args)
 	--local width, height = 512, 256
 	local width, height = 1920, 1080
-	love.window.setMode(width, height, {resizable = true})
+	love.window.setMode(width/2, height/2, {resizable = true})
 	love.window.setFullscreen(true)
 	-- not much here
 	game:resize(width, height)
@@ -66,4 +66,24 @@ end
 
 function love.quit()
 	game:quit()
+end
+
+function love.joystickadded(joystick)
+	game:joystickadded(joystick)
+end
+
+function love.joystickremoved(joystick)
+	game:joystickremoved(joystick)
+end
+
+function love.gamepadpressed(gamepad, button)
+	game:gamepadpressed(gamepad, button)
+end
+
+function love.gamepadreleased(gamepad, button)
+	game:gamepadreleased(gamepad, button)
+end
+
+function love.gamepadaxis( joystick, axis, value )
+	game:gamepadaxis(joystick, axis, value)
 end

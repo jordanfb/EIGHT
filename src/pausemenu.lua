@@ -40,10 +40,10 @@ function PauseMenu:resize(w, h)
 end
 
 function PauseMenu:keypressed(key, unicode)
-	if key == "escape" then
+	if key == "escape" or key == "back" then
 		self.game:popScreenStack()
 		self.game:popScreenStack()
-	elseif key == "space" then
+	elseif key == "space" or key == "start" then
 		self.game:popScreenStack(false)
 	end
 end
