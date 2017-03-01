@@ -18,13 +18,13 @@ function Game:_init()
 	-- here are the actual variables
 	self.drawFPS = false
 
-	self.keyboard = Keyboard(self)
+	self.keyboard = Keyboard()
 	self.pauseMenu = PauseMenu(self)
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
-			healthSpawn = true, --Straight from the Go Kayne
-			knifeSpawn = true, --Set on his goals Kayne
+			healthspawn = true, --Straight from the Go Kayne
+			knifespawn = true, --Set on his goals Kayne
 			punching = true, -- I hate the new Kayne
 			kicking = true, --What if Kayne wrote a song about Kayne
 			instantKill = false, --Man that'd be so Kayne
@@ -183,24 +183,4 @@ end
 
 function Game:quit()
 	--
-end
-
-function Game:joystickadded(joystick)
-	self.keyboard:joystickadded(joystick)
-end
-
-function Game:joystickremoved(joystick)
-	self.keyboard:joystickremoved(joystick)
-end
-
-function Game:gamepadpressed(gamepad, button)
-	self.keyboard:gamepadpressed(gamepad, button)
-end
-
-function Game:gamepadreleased(gamepad, button)
-	self.keyboard:gamepadreleased(gamepad, button)
-end
-
-function Game:gamepadaxis(gamepad, axis, value)
-	self.keyboard:gamepadaxis(gamepad, axis, value)
 end
