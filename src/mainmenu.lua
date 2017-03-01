@@ -80,6 +80,10 @@ function MainMenu:load()
 		self.game.drawFPS = false
 	end
 	self.playingPlayers = {}
+	-- this is for resetting the rates at the end of each match, this is an absolutely horrible place to put it
+	-- but the code's already a mess...
+	self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
+	self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
 end
 
 function MainMenu:leave()
@@ -88,6 +92,16 @@ function MainMenu:leave()
 		self.game.drawFPS = true
 	end
 	self.game.level.players = self.playingPlayers -- just be a dick and overwrite it
+	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
+	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
+end
+
+function MainMenu:copyTable(t)
+	local newT = {}
+	for k, v in pairs(t) do
+		newT[k] = v
+	end
+	return newT
 end
 
 function MainMenu:draw()

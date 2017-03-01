@@ -29,20 +29,23 @@ function Game:_init()
 			kicking = true, --What if Kayne wrote a song about Kayne
 			instantKill = false, --Man that'd be so Kayne
 			lifeSteal = false, -- harming other people gives you health
-			poisonMode = false,
+			poison = false,
 			regen = false,
 			suddenDeathOnNumberOfPeople = false,
 			noItemsAtNumberOfPeople = false,
 			noHealthAtNumberOfPeople = false,
 			takeFallingOutOfWorldDamage = true,
-			healthGainOnKill = false,
-			playMusic = false
+			healthGainOnKill = true, -- I don't think this is functional
+			playMusic = false,
+			punchWhileThrowing = false,
+			noHealthLimit = false,
+			screenShake = true,
 		}
 	self.gameSettingRates = {
-			knife = 0.5,
-			health = 0.5,
-			punchTime = 1,
-			kickTime = 1,
+			knife = 1,
+			health = 1,
+			punchTime = 1, -- I don't think this is functional
+			kickTime = 1, -- I don't think this is functional
 			knifeTime = 1,
 			punchDamage = 20,
 			kickDamage = 40,
@@ -55,6 +58,7 @@ function Game:_init()
 			noHealthAtNumberOfPeople = 2,
 			fallingOutOfWorldDamage = 40,
 			healthGainOnKillAmount = 20,
+			healthPickupAmount = 30
 		} -- jumping?
 
 	self.countdownScreen = CountdownScreen(self)
@@ -71,6 +75,9 @@ function Game:_init()
 		bgm:play()
 	end
 
+	self.healthItemImage = love.graphics.newImage('images/health-item.png')
+	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
+
 	self:addToScreenStack(self.mainMenu)
 
 	self.screenshakeDuration = 0
@@ -78,8 +85,10 @@ function Game:_init()
 end
 
 function Game:startScreenshake(time, intensity)
-	self.screenshakeDuration = time
-	self.screenshakeMagnitude = intensity
+	if self.gameSettings.screenShake then
+		self.screenshakeDuration = time
+		self.screenshakeMagnitude = intensity
+	end
 end
 
 function Game:load(args)
@@ -91,7 +100,6 @@ function Game:load(args)
 end
 
 function Game:draw()
-
 	-- love.graphics.draw(self.bg, 0, 0)
 	if self.screenshakeDuration > 0 then
 		local dx = love.math.random(-self.screenshakeMagnitude, self.screenshakeMagnitude)
@@ -109,9 +117,6 @@ function Game:draw()
 	-- this is so that the things earlier in the screen stack get drawn first, so that things like pause menus get drawn on top.
 	for i = thingsToDraw, #self.screenStack, 1 do
 		self.screenStack[i]:draw()
-		-- if i ~= 1 then
-		-- 	print("DRAWING "..i)
-		-- end
 	end
 	if (self.drawFPS) then
 		love.graphics.setColor(255, 0, 0)
@@ -132,10 +137,10 @@ function Game:update(dt)
 	end
 end
 
-function Game:popScreenStack(loadNext)
+function Game:popScreenStack(loadBelow)
 	self.screenStack[#self.screenStack]:leave()
 	self.screenStack[#self.screenStack] = nil
-	if loadNext == nil or loadNext then
+	if loadBelow == nil or loadBelow then
 		self.screenStack[#self.screenStack]:load()
 	end
 end

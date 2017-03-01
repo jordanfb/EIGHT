@@ -4,7 +4,7 @@ Item = class()
 
 --TUNE ALL OF THESE VALUES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-function Item:_init(itemType, x, y, dX, dY)
+function Item:_init(itemType, x, y, dX, dY, game)
 	self.x = x
 	self.y = y 
 	self.width = 70
@@ -12,11 +12,14 @@ function Item:_init(itemType, x, y, dX, dY)
 	self.itemType = itemType
 	self.dx = dX*300
 	self.dy = dY*50
-	
-	self.image = love.graphics.newImage('images/health-item.png')
 
+	self.game = game
+	
+	self.image = nil --love.graphics.newImage('images/health-item.png')
 	if self.itemType == "knife" then
-		self.image = love.graphics.newImage('images/knife-item.png')
+		self.image = self.game.knifeItemImage
+	elseif self.itemType == "health" then
+		self.image = self.game.healthItemImage
 	end
 	
 end

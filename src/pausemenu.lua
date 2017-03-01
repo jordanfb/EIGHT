@@ -28,7 +28,7 @@ function PauseMenu:draw()
 	love.graphics.setColor(255, 255, 255, 100)
 	love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	love.graphics.setColor(0, 0, 0)
-	love.graphics.printf("Click, Space, or Play to continue, Escape or Back to exit", 0, love.graphics.getHeight()/3, love.graphics.getWidth(), "center")
+	love.graphics.printf("Click, Space, or Play to continue,\nEscape or Back to exit", 0, love.graphics.getHeight()/3, love.graphics.getWidth(), "center")
 end
 
 function PauseMenu:update(dt)
@@ -44,7 +44,7 @@ function PauseMenu:keypressed(key, unicode)
 		self.game:popScreenStack()
 		self.game:popScreenStack()
 	elseif key == "space" then
-		self.game:popScreenStack()
+		self.game:popScreenStack(false)
 	end
 end
 
@@ -53,7 +53,7 @@ function PauseMenu:keyreleased(key, unicode)
 end
 
 function PauseMenu:mousepressed(x, y, button)
-	self.game:popScreenStack()
+	self.game:popScreenStack(false)
 end
 
 function PauseMenu:mousereleased(x, y, button)

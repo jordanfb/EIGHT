@@ -14,7 +14,7 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.dy = 0
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
-	self.hasKnife = false
+	self.numKnives = 0
 	
 	self.anim = 1
 	self.runAnim = 1
@@ -59,7 +59,6 @@ function Player:resize(screenWidth, screenHeight)
 end
 
 function Player:loadImages()
-
 	-- load the correct images by appending things to the default filename
 	self.breathImages = {  }
 	for i = 1, 4, 1 do
@@ -89,7 +88,6 @@ function Player:loadImages()
 end
 
 function Player:draw()
-
 	if self.health <= 0 then
 		return
 	end
@@ -139,7 +137,8 @@ end
 
 function Player:onPlayerDeath()
 	self.level.game:startScreenshake(.5, 10)
-	print("player died")
+	self.level.numPlayersAlive = self.level.numPlayersAlive - 1
+	self.level:playerDied()
 end
 
 function Player:update(dt)
@@ -239,16 +238,22 @@ function Player:update(dt)
 		self.isAttacking = false
 		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) then
 			if self.facing==1 then
-				if self.hasKnife or self.level.game.gameSettings.infiniteKnives then
+				if self.numKnives > 0 or self.level.game.gameSettings.infiniteKnives then
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
-					self.hasKnife = false
+					self.numKnives = self.numKnives - 1
+					if self.level.game.gameSettings.punchWhileThrowing then
+						self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+					end
 				else
 					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
 				end
 			else
-				if self.hasKnife or self.level.game.gameSettings.infiniteKnives then
+				if self.numKnives > 0 or self.level.game.gameSettings.infiniteKnives then
 					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
-					self.hasKnife = false
+					self.numKnives = self.numKnives - 1
+					if self.level.game.gameSettings.punchWhileThrowing then
+						self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+					end
 				else
 					self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20)
 				end

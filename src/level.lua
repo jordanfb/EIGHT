@@ -16,7 +16,6 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.game = game
 	self.keyboard = keyboard
-	math.randomseed(os.time())
 	-- 1920, 1080
 	self.allLevels = {}
 	self.allLevels[1] = {{0, 1000, 1920, 80}, {100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
@@ -36,6 +35,7 @@ function Level:_init(keyboard, setPlayers, game)
 					Player(self, self.keyboard, 700+75, 100, 4, 3),
 					Player(self, self.keyboard, 1500+175, 100, 8, 7),
 					}
+	self.numPlayersAlive = 8
 	
 	self.players = setPlayers or self.players -- if setPlayers == nil then set it to self.players
 
@@ -66,13 +66,19 @@ function Level:resetPlayers()
 			self.players[i].facing = -1
 		end
 		self.players[i].attackedTimer = 0
+		self.players[i].dx = 0
+		self.players[i].dy = 0
 	end
+	self.numPlayersAlive = #self.players
 end
 
 function Level:load()
 	-- run when the level is given control
 	self.level = math.random(1,3)
 	self:resetPlayers()
+	self.items = {}
+	self.projectiles = {}
+	self.attacks = Attacks(self, self.players, self.game)
 	self.platforms = self.allLevels[self.level]
 	self.bg = self.backgroundImages[self.level]
 
@@ -92,6 +98,7 @@ function Level:leave()
 end
 
 function Level:draw()
+	love.graphics.setColor(255, 255, 255)
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 36))
 	-- this resizes everything on screen to the correct size, but may be super inefficient...
 	love.graphics.setCanvas(self.fullCanvas)
@@ -128,6 +135,12 @@ function Level:draw()
 	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
 	love.graphics.setCanvas()
 	love.graphics.draw(self.fullCanvas, 0, 0, 0, love.graphics.getWidth()/1920, love.graphics.getHeight()/1080)
+end
+
+function Level:playerDied()
+	if self.numPlayersAlive <= self.game.gameSettingRates.suddenDeathOnNumberOfPeople then
+		--
+	end
 end
 
 function Level:drawHealth()
@@ -173,12 +186,12 @@ end
 function Level:update(dt)
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
-		if self.game.gameSettings.poisonMode and not self.gameOver then -- do poison
+		if self.game.gameSettings.poison and not self.gameOver then -- do poison
 			-- do damage per second
 			self.players[i].health = self.players[i].health - self.game.gameSettingRates.poisonRate*dt
 		end
 		if self.game.gameSettings.regen then -- do regen
-			-- do damage per second
+			-- do health per second
 			if self.players[i].health > 1 then -- because otherwise it will show zero health, which will make people sad.
 				self.players[i].health = math.min(self.players[i].health + self.game.gameSettingRates.regenRate*dt, 100)
 			end
@@ -191,19 +204,30 @@ function Level:update(dt)
 	for i = 1, #self.items, 1 do
 		self.items[i]:update(dt)
 	end
-	if math.random(1, 3000 )==500 then
-		table.insert(self.items, Item("health", -50, self.SCREENWIDTH*(2/3), 1, 1))
+	if self.game.gameSettings.healthSpawn then
+		if math.random(3000/self.game.gameSettingRates.health)==1 then
+			table.insert(self.items, Item("health", -50, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+		end
+		if math.random(3000/self.game.gameSettingRates.health)==1 then
+			table.insert(self.items, Item("health", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+		end
 	end
-	if math.random(1, 3000 )==500 then
-		table.insert(self.items, Item("health", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1))
-	end
-	if math.random(1, 1000)==500 then
-		table.insert(self.items, Item("knife", -50, self.SCREENWIDTH*(2/3), 1, 1))
-	end
-	if math.random(1, 1000)==500 then
-		table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1))
+	if self.game.gameSettings.knifeSpawn then
+		if math.random(1000/self.game.gameSettingRates.knife)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("knife", 0, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+		end
+		if math.random(1000/self.game.gameSettingRates.knife)==1 then
+			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+		end
 	end
 	self.attacks:update(dt)
+
+	for k, v in pairs(self.projectiles) do
+		if v.x < -50 or v.y > 1200 or v.x > 1970 then
+			table.remove(self.projectiles, k)
+		end
+	end
 end
 
 function Level:resize(w, h)

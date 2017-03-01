@@ -89,14 +89,14 @@ function Attacks:update(dt)
 						for k = 1, #self.level.players, 1 do
 							if (self.level.players[k].color==attack[5]) then
 								if self.level.items[i].itemType == "health" then
-									self.level.players[k].health = self.level.players[k].health + 30
-									if self.level.players[k].health > 100 then
-										self.level.players[k].health = 100
+									if self.game.gameSettings.noHealthLimit then
+										self.level.players[k].health = self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount
+									else
+										self.level.players[k].health = math.min(self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount, 100)
 									end
 								else
-									self.level.players[k].hasKnife = true
+									self.level.players[k].numKnives = self.level.players[k].numKnives + 1
 								end
-								
 								table.remove(self.level.items, i)
 							end
 						end
