@@ -94,8 +94,12 @@ function Attacks:update(dt)
 									else
 										self.level.players[k].health = math.min(self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount, 100)
 									end
-								else
+								elseif self.level.items[i].itemType == "knife" then
 									self.level.players[k].numKnives = self.level.players[k].numKnives + 1
+								elseif self.level.items[i].itemType == "jump" then
+									self.level.players[k].superJumps = self.game.gameSettingRates.numberJumps
+								elseif self.level.items[i].itemType == "speed" then
+									self.level.players[k].speedUp = 500
 								end
 								table.remove(self.level.items, i)
 							end

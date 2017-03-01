@@ -68,6 +68,9 @@ function Level:resetPlayers()
 		self.players[i].dy = 0
 		self.players[i].dx = 0
 		self.players[i].ay = 0
+		self.players[i].speedUp = 0
+		self.players[i].numberJumps = 0
+		self.players[i].numKnives = 0
 		self.players[i].attackedTimer = 0
 	end
 	self.numPlayersAlive = #self.players
@@ -216,10 +219,28 @@ function Level:update(dt)
 	if self.game.gameSettings.knifeSpawn then
 		if math.random(1000/self.game.gameSettingRates.knife)==1 then
 		-- if math.random(100) == 1 then
-			table.insert(self.items, Item("knife", 0, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+			table.insert(self.items, Item("knife", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
 		end
 		if math.random(1000/self.game.gameSettingRates.knife)==1 then
 			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+		end
+	end
+	if self.game.gameSettings.jumpSpawn then
+		if math.random(1000/self.game.gameSettingRates.jump)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("jump", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+		end
+		if math.random(1000/self.game.gameSettingRates.jump)==1 then
+			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+		end
+	end
+	if self.game.gameSettings.speedSpawn then
+		if math.random(1000/self.game.gameSettingRates.speed)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("speed", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+		end
+		if math.random(1000/self.game.gameSettingRates.speed)==1 then
+			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
 		end
 	end
 	self.attacks:update(dt)
@@ -261,8 +282,12 @@ end
 
 function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	for i = 1, #self.platforms, 1 do
+		local addX = 0
+		if self.platforms[i][4]==80 then
+			addX = 30
+		end
 		if playerY+playerHeight <= self.platforms[i][2] and playerY + playerHeight + dy >= self.platforms[i][2] then
-			if playerX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
+			if playerX - addX < self.platforms[i][1]+self.platforms[i][3] and playerX + playerWidth > self.platforms[i][1] then
 				return {self.platforms[i][2]-playerHeight, true, self.platforms[i][4] == 80}
 				-- the last one is if it's ground, in which case don't drop through
 			end

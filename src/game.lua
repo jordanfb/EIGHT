@@ -23,8 +23,10 @@ function Game:_init()
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
-			healthspawn = true, --Straight from the Go Kayne
-			knifespawn = true, --Set on his goals Kayne
+			healthSpawn = true, --Straight from the Go Kayne
+			knifeSpawn = true, --Set on his goals Kayne
+			jumpSpawn = true, --Set on his goals Kayne
+			speedSpawn = true, --Set on his goals Kayne
 			punching = true, -- I hate the new Kayne
 			kicking = true, --What if Kayne wrote a song about Kayne
 			instantKill = false, --Man that'd be so Kayne
@@ -44,6 +46,9 @@ function Game:_init()
 	self.gameSettingRates = {
 			knife = 1,
 			health = 1,
+			jump = 1,
+			speed = 2,
+			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional
 			knifeTime = 1,
@@ -77,6 +82,8 @@ function Game:_init()
 
 	self.healthItemImage = love.graphics.newImage('images/health-item.png')
 	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
+	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
+	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
 
 	self:addToScreenStack(self.mainMenu)
 

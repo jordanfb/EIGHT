@@ -15,6 +15,13 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.ay = 1
 	self.facing = 1 -- 1 = right, -1 = left
 	self.numKnives = 0
+	self.superJumps = 0
+	self.speedUp = 0
+	self.jumpForce = -1000
+	
+	self.attackSpeed = 2
+	self.coolDownSpeed = 1
+	--self.airTime = 0
 	
 	self.anim = 1
 	self.runAnim = 1
@@ -91,12 +98,15 @@ function Player:draw()
 	if self.health <= 0 then
 		return
 	end
+		
 	love.graphics.setColor(self.colorTable[self.color % 4 + 1])
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
 	love.graphics.setColor(255, 255, 255, 255)
 	
 	if self.attackedTimer > 0 then
 		love.graphics.setColor(255, 0, 0)
+	elseif self.speedUp > 0 then
+		love.graphics.setColor(255, 155, 255)
 	end
 	
 	--love.graphics.setColor(0, 255, 0)
@@ -105,11 +115,7 @@ function Player:draw()
 	if self.facing == -1 then
 		addX = self.width
 	end
-	if not self.onPlatform then
-		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
-	elseif (self.keyboard:keyState(self.inputNumber, "down") > 0) and self.dx==0 then
-		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
-	elseif self.attackTimer > 0 then
+	if self.attackTimer > 0 then
 	
 		if self.attackType==1 then
 			if self.attackTimer < 20 then
@@ -124,7 +130,10 @@ function Player:draw()
 				love.graphics.draw(self.kickImages[5], self.x+addX, self.y, 0, self.facing, 1)
 			end
 		end
-	
+	elseif not self.onPlatform then
+		love.graphics.draw(self.jumpImage, self.x+addX, self.y, 0, self.facing, 1)
+	elseif (self.keyboard:keyState(self.inputNumber, "down") > 0) and self.dx==0 then
+		love.graphics.draw(self.duckImage, self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.dx == 0 then
 		love.graphics.draw(self.breathImages[math.ceil(self.anim/10)], self.x+addX, self.y, 0, self.facing, 1)
 	elseif self.dx ~= 0 then
@@ -142,6 +151,17 @@ function Player:onPlayerDeath()
 end
 
 function Player:update(dt)
+
+	if self.speedUp > 0 then
+		self.moveSpeed = 750
+		self.coolDownSpeed = 2
+		self.speedUp = self.speedUp - 1
+	else 
+		self.moveSpeed = 500
+		self.coolDownSpeed = 1
+	end
+
+
 	if self.health == 0 and not self.dead then
 		self.dead = true
 		-- CAUSE EXCITEMENT TO HAPPEN!
@@ -220,7 +240,7 @@ function Player:update(dt)
 
 	for i = 1, #self.level.platforms, 1 do
 		if self.level.platforms[i][4]==80 then
-			if self.y < self.level.platforms[i][2]+self.level.platforms[i][4] and self.y + self.height > self.level.platforms[i][2] then
+			if self.y + self.height + self.dy < self.level.platforms[i][2] and self.y + self.height > self.level.platforms[i][2] then
 				if self.x < self.level.platforms[i][1]+self.level.platforms[i][3] and self.x + self.width > self.level.platforms[i][1] then
 					self.onGround = true
 					self.y = self.level.platforms[i][2] - self.height + .01
@@ -238,11 +258,11 @@ function Player:update(dt)
 
 	--ATTACKS	----------------------------------------------------
 	
-	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
+	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.dx==0  and self.coolDown == 0 and self.onPlatform then
 		self.attackType = 1
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
+	elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) and self.attackTimer == 0 and self.dx==0  and self.coolDown == 0 and self.onPlatform then
 		self.attackType = 2
 		self.attackTimer = 1
 		self.isAttacking = true
@@ -283,12 +303,12 @@ function Player:update(dt)
 	
 	
 	if self.isAttacking and self.attackTimer < 150 then
-		self.attackTimer = self.attackTimer + 2/self.attackType
+		self.attackTimer = self.attackTimer + self.attackSpeed/self.attackType
 	elseif self.attackTimer >= 150 then
 		self.attackTimer = 20
 		self.isAttacking = false
 	elseif not self.isAttacking  then
-		self.attackTimer = self.attackTimer - 2/self.attackType
+		self.attackTimer = self.attackTimer - self.attackSpeed/self.attackType
 	elseif not self.isAttacking then
 		self.attackTimer = 20
 	end
@@ -300,7 +320,10 @@ function Player:update(dt)
 	end
 		
 	if self.coolDown > 0 then
-		self.coolDown = self.coolDown - 1
+		self.coolDown = self.coolDown - self.coolDownSpeed
+		if self.coolDown < 0 then
+			self.coolDown = 0
+		end
 	end
 	
 	--if self.isAttacking
@@ -322,12 +345,44 @@ function Player:update(dt)
 	self.y = self.y + self.dy * dt
 
 	-- then jump?
+	
+	--[[
+	if not self.onPlatform then
+		self.airTime = self.airTime + 1
+	else
+		self.airTime = 0
+	end
+	
+	if self.airTime > 15 then
+		self.jumpReset = false
+	end
+	
+	if (self.keyboard:keyState(self.inputNumber, "up") == 0) then
+		self.jumpReset = false
+		--if self.dy < 0 then
+		--	self.dy = 4*(self.dy/5)
+		--end
+	end
+	
+	if self.onPlatform then
+		self.jumpReset = true
+	end
+	]]--
+	
+	if self.dy < self.jumpForce*1.6 then
+		self.dy = self.jumpForce*1.6
+	end
 
-	if self.onPlatform and (self.keyboard:keyState(self.inputNumber, "up") > 0) and self.attackTimer==0 then
-		self.dy = -1000
+	if self.onPlatform and (self.keyboard:keyState(self.inputNumber, "up") > 0) then --and self.attackTimer==0 then
+		if self.superJumps > 0 then
+			self.superJumps = self.superJumps - 1
+			self.dy = self.dy + self.jumpForce*.6
+		end
+		self.dy = self.dy + self.jumpForce
 		self.onGround = false
 		self.onPlatform = false
 		self.y = self.y - 1
+		--self.doubleJump = false;
 	end
 	
 	--projectile damage

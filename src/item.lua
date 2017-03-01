@@ -20,6 +20,10 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.knifeItemImage
 	elseif self.itemType == "health" then
 		self.image = self.game.healthItemImage
+	elseif self.itemType == "jump" then
+		self.image = self.game.jumpItemImage
+	elseif self.itemType == "speed" then
+		self.image = self.game.speedItemImage
 	end
 	
 end
