@@ -11,12 +11,16 @@ function MainMenu:_init(game)
 
 	self.game = game
 	self.keyboard = self.game.keyboard
+	self.mapInputsToPlayers = {}
+	self.mapPlayersToInputs = {} -- the input num for the player num
+	for i = 1, 8 do
+		self.mapPlayersToInputs[i] = {connected = false, input = 0}
+	end
 
 	self.bg = love.graphics.newImage('images/bg.png')
-	self.i = 0
-	-- self:makeTitleImage()
 
 	self.zoom = 10
+	self.playingPlayers = {}
 
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
@@ -79,11 +83,13 @@ function MainMenu:load()
 		self.fpsWasOn = true
 		self.game.drawFPS = false
 	end
-	self.playingPlayers = {}
-	-- this is for resetting the rates at the end of each match, this is an absolutely horrible place to put it
+
+	-- this is for resetting the settings at the end of each match, this is an absolutely horrible place to put it
 	-- but the code's already a mess...
+	-- it needs to exist because of the way final showdowns (fewer than X players) are coded (by me, heh).
 	self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
 	self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
+	self.keyboard.mainmenuSubscribed = true -- starts the keyboard getting every input press
 end
 
 function MainMenu:leave()
@@ -94,6 +100,7 @@ function MainMenu:leave()
 	self.game.level.players = self.playingPlayers -- just be a dick and overwrite it
 	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
 	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
+	self.keyboard.mainmenuSubscribed = false -- stop the keyboard from sending this every keypress
 end
 
 function MainMenu:copyTable(t)
@@ -177,13 +184,6 @@ end
 -- end
 
 function MainMenu:update(dt)
-	--
-	-- if self.i < 1000-64 then
-	-- 	self.i = self.i + dt*100
-	-- elseif self.i > 1000-64 then
-	-- 	self.i = 1000-64
-	-- end
-
 	if self.zoom > 1 then
 		self.zoom = self.zoom - dt*10
 	elseif self.zoom < 1 then
@@ -195,42 +195,116 @@ function MainMenu:resize(w, h)
 	--
 end
 
-function MainMenu:keypressed(key, unicode)
-	if key == "space" then
-		if self.keyboard.wasd then
-			-- add the level to the game as a quick default
-			if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
-				self.game:addToScreenStack(self.game.level)
-				self.game:addToScreenStack(self.game.countdownScreen)
-			else
-				print("NOT ENOUGH PLAYERS!")
-			end
+function MainMenu:addInputToPlayerMap(inputNum)
+	if self.mapInputsToPlayers[inputNum] ~= nil then
+		if self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].input == inputNum then
+			-- then it hasn't been snapped up yet, so take it!
+			self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].connected = true
+			self:addPlayerToGame(inputNum, self.mapInputsToPlayers[inputNum])
+			print("connected an input to its previous player")
+			return true
+		end
+		self.mapInputsToPlayers[inputNum] = nil
+		print("unable to connect an input to its previous player")
+	end
+	for k, v in pairs(self.mapPlayersToInputs) do
+		if not v.connected then
+			-- it's free for the taking
+			v.connected = true
+			v.input = inputNum
+			self.mapInputsToPlayers[inputNum] = k
+			self:addPlayerToGame(inputNum, k)
+			print("connected an input to a new player")
+			return true
+		end
+	end
+	print("Unable to connect an input to a player")
+	return false
+end
+
+function MainMenu:inputMade(inputNum, input, pressValue)
+	if pressValue > 0 then
+		if input == "disconected" and self.mapInputsToPlayers[inputNum] ~= nil then
+			self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].connected = false
+			self:removePlayerFromGame(self.mapInputsToPlayers[inputNum])
+			-- self.mapInputsToPlayers[inputNum] == nil -- not actually certain if this line should exist...
+			print("disconected a player because joystick is gone. inputNum: "..inputNum)
+			return
+		end
+		print("input source "..inputNum)
+		if self.mapInputsToPlayers[inputNum] == nil then
+			-- it's a new player! yay!
+			-- print("found new input source")
+			self:addInputToPlayerMap(inputNum)
 		else
+			-- print("previously connected input")
+		end
+		-- print("did stuff "..input)
+	end
+end
+
+function MainMenu:addPlayerToGame(inputNum, playerNum)
+	print("PLAYER NUMBER IS "..tostring(playerNum))
+	for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
+		if self.playingPlayers[k].playerNumber == playerNum then
+			-- print("EXITED EARLY")
+			return
+		end
+	end
+	local k = 1
+	self.players[playerNum].inputNumber = inputNum
+	if #self.playingPlayers == 0 then
+		-- print("ADDED AT 1")
+		table.insert(self.playingPlayers, self.players[playerNum])
+	else
+		while k <= #self.playingPlayers and self.playingPlayers[k].color < self.players[playerNum].color do
+			k = k + 1
+		end
+		-- print("ADDED ELSEWHERE")
+		table.insert(self.playingPlayers, k, self.players[playerNum])
+	end
+end
+
+function MainMenu:removePlayerFromGame(playerNum)
+	for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
+		if self.playingPlayers[k].playerNumber == playerNum then
+			table.remove(self.playingPlayers, k)
+			print("REMOVED PLAYER "..playerNum.." FROM PLAYING PLAYERS")
+			return
+		end
+	end
+end
+
+function MainMenu:keypressed(key, unicode)
+	if key == "space" or key == "start" then
+		if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
 			self.game:addToScreenStack(self.game.level)
 			self.game:addToScreenStack(self.game.countdownScreen)
+		else
+			print("NOT ENOUGH PLAYERS")
 		end
 	end
-	for i = 1, #self.playerKeys, 1 do
-		for j = 1, #self.playerKeys[i], 1 do
-			if self.playerKeys[i][j] == key then
-				-- player i join the game!
-				for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
-					if self.playingPlayers[k].color == self.players[i].color then
-						return
-					end
-				end
-				local k = 1
-				if #self.playingPlayers == 0 then
-					table.insert(self.playingPlayers, self.players[i])
-				else
-					while k <= #self.playingPlayers and self.playingPlayers[k].color < self.players[i].color do
-						k = k + 1
-					end
-					table.insert(self.playingPlayers, k, self.players[i])
-				end
-			end
-		end
-	end
+	-- for i = 1, #self.playerKeys, 1 do
+	-- 	for j = 1, #self.playerKeys[i], 1 do
+	-- 		if self.playerKeys[i][j] == key then
+	-- 			-- player i join the game!
+	-- 			for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
+	-- 				if self.playingPlayers[k].color == self.players[i].color then
+	-- 					return
+	-- 				end
+	-- 			end
+	-- 			local k = 1
+	-- 			if #self.playingPlayers == 0 then
+	-- 				table.insert(self.playingPlayers, self.players[i])
+	-- 			else
+	-- 				while k <= #self.playingPlayers and self.playingPlayers[k].color < self.players[i].color do
+	-- 					k = k + 1
+	-- 				end
+	-- 				table.insert(self.playingPlayers, k, self.players[i])
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function MainMenu:keyreleased(key, unicode)

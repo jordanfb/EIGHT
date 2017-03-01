@@ -57,7 +57,10 @@ function CountdownScreen:resize(w, h)
 end
 
 function CountdownScreen:keypressed(key, unicode)
-	--
+	if key == "back" or key == "escape" then
+		self.game:popScreenStack()
+		self.game:popScreenStack()
+	end
 end
 
 function CountdownScreen:keyreleased(key, unicode)

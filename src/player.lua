@@ -165,7 +165,7 @@ function Player:update(dt)
 
 	-- check for switching directions:
 	--self.keyboard:keyState(self.inputNumber, "swapdirections") > 0
-	if leftMove > 0 and rightMove > 0 and self.attackTimer==0 then
+	if ((leftMove > 0 and rightMove > 0) or self.keyboard:keyState(self.inputNumber, "switchdirection") > 0) and self.attackTimer==0 then
 		if not self.switchedDirections then
 			self.facing = -self.facing
 			self.switchedDirections = true
@@ -174,6 +174,11 @@ function Player:update(dt)
 		end
 	else
 		self.switchedDirections = false
+	end
+	if self.keyboard:keyState(self.inputNumber, "lookleft") > 0 and self.attackTimer==0 then
+		self.facing = -1
+	elseif self.keyboard:keyState(self.inputNumber, "lookright") > 0 and self.attackTimer==0 then
+		self.facing = 1
 	end
 
 	self.dx = dx
@@ -225,7 +230,7 @@ function Player:update(dt)
 	end
 
 	--ATTACKS	----------------------------------------------------
-	
+
 	if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and self.attackTimer == 0 and self.onPlatform and self.dx==0  and self.coolDown == 0 then
 		self.attackType = 1
 		self.attackTimer = 1

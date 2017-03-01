@@ -271,7 +271,7 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 end
 
 function Level:keypressed(key, unicode)
-	if key == "escape" then
+	if key == "escape" or key == "back" or key == "start" then
 		if self.gameOver then
 			self.game:popScreenStack()
 		else
