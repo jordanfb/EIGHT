@@ -14,15 +14,25 @@ function Level:_init(keyboard, setPlayers, game)
 	self.drawUnder = false
 	self.updateUnder = false
 
+	self.SCREENWIDTH = 1920
+	self.SCREENHEIGHT = 1080
+	
 	self.game = game
 	self.keyboard = keyboard
 	-- 1920, 1080
 	self.allLevels = {}
 	self.allLevels[1] = {{0, 1000, 1920, 80}, {100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
 	self.allLevels[2] = {{0, 1000, 1920, 80}, {100, 500, 600, 30}, {1920 - 700, 500, 600, 30}, {400, 700, 1920-800, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}}
-	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {100, 500, 50, 30}, {1920 - 700, 500, 50, 30}, {0, 700, 1920, 30}, {150, 850, 20, 30}, {1920 - 350, 850, 20, 30}, {500, 320, 920, 30}, {1920/2, 1080/2, 50, 30}}
-
-	self.level = math.random(1,3)
+	self.allLevels[3] = {{0, 1000, 600, 80}, {600+720, 1000, 900, 80}, {0, 700, 1920, 30}, {150, 850, 200, 30}, {1920 - 350, 850, 200, 30}, {500, 320, 920, 30}, {1920/2-50, 1080/2-30, 100, 30}, {0, 1080/2-30, 200, 30}, {1720, 1080/2-30, 200, 30}}
+	self.allLevels[4] = {{1920/2-300, 800, 600, 30}, {200, 600, 300, 30}, {1920-500, 600, 300, 30}}
+	
+	self.allLevelItemSpawns = {}
+	self.allLevelItemSpawns[1] = {self.SCREENHEIGHT*(1/2)}
+	self.allLevelItemSpawns[2] = {self.SCREENHEIGHT*(2/3)}
+	self.allLevelItemSpawns[3] = {self.SCREENHEIGHT*(1/3), self.SCREENHEIGHT*(2/3)}
+	self.allLevelItemSpawns[4] = {self.SCREENHEIGHT*(1/2)}
+	
+	self.level = math.random(#self.allLevels)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
@@ -47,11 +57,9 @@ function Level:_init(keyboard, setPlayers, game)
 	self.platformImage = love.graphics.newImage('images/platform.png')
 
 	self.backgroundImages = {love.graphics.newImage('images/bg.png'), love.graphics.newImage('images/bg-2.png'),
-						love.graphics.newImage('images/bg-3.png')}
+						love.graphics.newImage('images/bg-3.png'), love.graphics.newImage('images/bg-3.png')}
 	self.bg = self.backgroundImages[self.level]
 
-	self.SCREENWIDTH = 1920
-	self.SCREENHEIGHT = 1080
 	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 end
 
@@ -69,7 +77,7 @@ function Level:resetPlayers()
 		self.players[i].dx = 0
 		self.players[i].ay = 0
 		self.players[i].speedUp = 0
-		self.players[i].numberJumps = 0
+		self.players[i].superJumps = 0
 		self.players[i].numKnives = 0
 		self.players[i].attackedTimer = 0
 	end
@@ -78,7 +86,7 @@ end
 
 function Level:load()
 	-- run when the level is given control
-	self.level = math.random(1,3)
+	self.level = math.random(#self.allLevels)
 	self:resetPlayers()
 	self.items = {}
 	self.projectiles = {}
@@ -210,37 +218,37 @@ function Level:update(dt)
 	end
 	if self.game.gameSettings.healthSpawn then
 		if math.random(3000/self.game.gameSettingRates.health)==1 then
-			table.insert(self.items, Item("health", -50, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+			table.insert(self.items, Item("health", -50, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
 		if math.random(3000/self.game.gameSettingRates.health)==1 then
-			table.insert(self.items, Item("health", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+			table.insert(self.items, Item("health", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.knifeSpawn then
+	if self.game.gameSettings.knifeSpawn and not self.game.gameSettings.infiniteKnives then
 		if math.random(3000/self.game.gameSettingRates.knife)==1 then
 		-- if math.random(100) == 1 then
-			table.insert(self.items, Item("knife", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+			table.insert(self.items, Item("knife", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
 		if math.random(3000/self.game.gameSettingRates.knife)==1 then
-			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.jumpSpawn then
+	if self.game.gameSettings.jumpSpawn and not self.game.gameSettings.infiniteJumps then
 		if math.random(3000/self.game.gameSettingRates.jump)==1 then
 		-- if math.random(100) == 1 then
-			table.insert(self.items, Item("jump", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+			table.insert(self.items, Item("jump", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
 		if math.random(3000/self.game.gameSettingRates.jump)==1 then
-			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.speedSpawn then
+	if self.game.gameSettings.speedSpawn and not self.game.gameSettings.infiniteSpeed then
 		if math.random(3000/self.game.gameSettingRates.speed)==1 then
 		-- if math.random(100) == 1 then
-			table.insert(self.items, Item("speed", -70, self.SCREENHEIGHT*(2/3), 1, 1, self.game))
+			table.insert(self.items, Item("speed", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
 		if math.random(3000/self.game.gameSettingRates.speed)==1 then
-			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.SCREENHEIGHT*(2/3), -1, 1, self.game))
+			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	self.attacks:update(dt)

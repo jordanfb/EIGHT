@@ -38,7 +38,7 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.isAttacking = false
 
 	self.color = color
-	self.colorTable = {{255, 255, 255}, {0, 0, 0}, {255, 255, 255}, {0, 255, 0}}
+	self.colorTable = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
 	self:loadImages()
 	self.width = 100
 	self.height = 150
@@ -151,6 +151,10 @@ function Player:onPlayerDeath()
 end
 
 function Player:update(dt)
+
+	if self.level.game.gameSettings.infiniteSpeed then
+		self.speedUp = 100
+	end
 
 	if self.speedUp > 0 then
 		self.moveSpeed = 750
@@ -378,7 +382,7 @@ function Player:update(dt)
 	end
 
 	if self.onPlatform and (self.keyboard:keyState(self.inputNumber, "up") > 0) then --and self.attackTimer==0 then
-		if self.superJumps > 0 then
+		if self.superJumps > 0 or self.level.game.gameSettings.infiniteJumps then
 			self.superJumps = self.superJumps - 1
 			self.dy = self.dy + self.jumpForce*.6
 		end
