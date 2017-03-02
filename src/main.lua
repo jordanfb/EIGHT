@@ -11,6 +11,7 @@ local game = Game()
 
 function love.load(args)
 
+	math.randomseed(os.time())
 	love.filesystem.setIdentity('EIGHT_Screenshots')
 	
 	game:load(args)
@@ -21,7 +22,6 @@ function love.load(args)
 	-- not much here
 	game:resize(width, height)
 	love.mouse.setVisible(false)
-	math.randomseed(os.time())
 end
 
 function love.resize(w, h)

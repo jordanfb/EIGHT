@@ -17,7 +17,8 @@ function MainMenu:_init(game)
 		self.mapPlayersToInputs[i] = {connected = false, input = 0}
 	end
 
-	self.bg = love.graphics.newImage('images/bg.png')
+	math.randomseed(os.time())
+	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
 
 	self.zoom = 10
 	self.playingPlayers = {}
@@ -83,6 +84,7 @@ function MainMenu:load()
 		self.fpsWasOn = true
 		self.game.drawFPS = false
 	end
+	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
 
 	-- this is for resetting the settings at the end of each match, this is an absolutely horrible place to put it
 	-- but the code's already a mess...
