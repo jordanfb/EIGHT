@@ -25,7 +25,7 @@ end
 
 function SettingsMenu:load()
 	-- run when the level is given control
-	love.graphics.setBackgroundColor(255, 255, 255)
+	love.graphics.setBackgroundColor(0, 0, 0)
 	self.subscribedToInputs = true
 	self.game.keyboard.settingsMenuSubscribed = true
 end
