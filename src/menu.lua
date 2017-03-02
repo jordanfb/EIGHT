@@ -7,14 +7,12 @@ Menu = class()
 
 function Menu:_init(game, buttons, x, y, width, height)
 	self.buttonNames = buttons -- buttons = a list of k = display name, v = thing to return with the new value of it.
-	self.buttons = {}
 	self.game = game
 	self.controllingInput = 0 -- the input that is allowed to edit. 0 can be controlled by anyone.
-	for i = 1, #buttons do
-		local v = buttons[i]
-		print(v[1])
-		self.buttons[i] = {displayName = v[1], message = v[2], value = 0, min = 0, max = 1, isBoolean = true, x = 0, y = 0}
-	end
+	self.buttons = {}
+	self:importFromButtons(buttons)
+	self.buttonBackup = {}
+	self:makeDefaultsBackup()
 	self.x = x
 	self.y = y
 	self.width = width or 0
@@ -27,6 +25,26 @@ function Menu:_init(game, buttons, x, y, width, height)
 	self.mainFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 18)
 	self.subFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 16)
 	self.selectionToggle = false
+end
+
+function Menu:makeDefaultsBackup()
+	for i = 1, #self.buttons do
+		self.buttonBackup[self.buttons[i].message] = self.game.gameSettings[self.buttons[i].message]
+	end
+end
+
+function Menu:loadDefaults(defaults)
+	for k, v in pairs(defaults) do
+		self.game.gameSettings[k] = v
+	end
+end
+
+function Menu:importFromButtons(buttons)
+	for i = 1, #buttons do
+		local v = buttons[i]
+		self.buttons[i] = {displayName = v[1], message = v[2], value = 0, min = 0, max = 1, isBoolean = true, x = 0, y = 0}
+	end
+	self.selection = 0
 end
 
 function Menu:drawSwitches(x, y, state)
@@ -95,7 +113,8 @@ function Menu:selectSelected()
 	if self.buttons[self.selection+1].message == "back" then
 		self.game:popScreenStack()
 	elseif self.buttons[self.selection+1].message == "reset" then
-		print("RESET ALL SETTINGS")
+		-- print("RESET ALL SETTINGS")
+		self:loadDefaults(self.buttonBackup)
 	else
 		-- print("button changed "..tostring(self.buttons[self.selection+1].message))
 		self.game.gameSettings[self.buttons[self.selection+1].message] = not self.game.gameSettings[self.buttons[self.selection+1].message]

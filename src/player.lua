@@ -37,21 +37,20 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.coolDown = 0
 	self.isAttacking = false
 
+	self.playerNumber = playerNumber
+	self.inputNumber = playerNumber % 4
+
 	self.color = color
-	self.colorTable = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
+	self.colorTable = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}, {211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
 	self:loadImages()
 	self.width = 100
 	self.height = 150
-
-	self.playerNumber = playerNumber
-	self.inputNumber = playerNumber % 4
 
 	self.health = 100
 	self.dead = false
 
 	-- animations:
 	-- punch, kick jump, duck, walking,
-	self:loadImages()
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
 
@@ -67,31 +66,31 @@ end
 
 function Player:loadImages()
 	-- load the correct images by appending things to the default filename
-	self.breathImages = {  }
+	self.breathImages = self.level.game.playerImages[(self.color%4)+1].breathImages
 	for i = 1, 4, 1 do
 		self.breathImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-breath-'..i..'.png')
 	end 
 	
-	self.runImages = {}
+	self.runImages = self.level.game.playerImages[(self.color%4)+1].runImages
 	for i = 1, 6, 1 do
 		self.runImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-run-'..i..'.png')
 	end
 	
-	self.hitImages = {}
+	self.hitImages = self.level.game.playerImages[(self.color%4)+1].hitImages
 	for i = 1, 4, 1 do
 		self.hitImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-hit-'..i..'.png')
 	end
 	
-	self.kickImages = {}
+	self.kickImages = self.level.game.playerImages[(self.color%4)+1].kickImages
 	for i = 1, 5, 1 do
 		self.kickImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-kick-'..i..'.png')
 	end
 	
-	self.duckImage = love.graphics.newImage('images/'..(self.color%4+1)..'-duck-1.png')
+	self.duckImage = self.level.game.playerImages[(self.color%4)+1].duckImage
 	
-	self.jumpImage = love.graphics.newImage('images/'..(self.color%4+1)..'-jump.png')
+	self.jumpImage = self.level.game.playerImages[(self.color%4)+1].jumpImage
 	
-	self.pImage = love.graphics.newImage('images/'..(self.color+1)..'-p.png')
+	self.pImage = self.level.game.playerImages[self.playerNumber].pImage
 end
 
 function Player:draw()
@@ -282,28 +281,28 @@ function Player:update(dt)
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+						self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
 					end
 				else
-					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
 				end
 			else
 				if self.numKnives > 0 or self.level.game.gameSettings.infiniteKnives then
 					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+						self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
 					end
 				else
-					self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20)
+					self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
 				end
 			end
 			self.coolDown = 50
 		elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 			else
-				self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+				self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 			end
 			self.coolDown = 50
 		end

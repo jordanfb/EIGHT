@@ -36,14 +36,15 @@ function Level:_init(keyboard, setPlayers, game)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, self.keyboard, 100, 100, 1, 0),
-					Player(self, self.keyboard, 900+100, 100, 5, 4),
-					Player(self, self.keyboard, 300+25, 100, 2, 1),
-					Player(self, self.keyboard, 1100+125, 100, 6, 5),
-					Player(self, self.keyboard, 500+50, 100, 3, 2),
-					Player(self, self.keyboard, 1300+150, 100, 7, 6),
-					Player(self, self.keyboard, 700+75, 100, 4, 3),
-					Player(self, self.keyboard, 1500+175, 100, 8, 7),
+	self.players = {
+					-- Player(self, self.keyboard, 100, 100, 1, 0),
+					-- Player(self, self.keyboard, 900+100, 100, 5, 4),
+					-- Player(self, self.keyboard, 300+25, 100, 2, 1),
+					-- Player(self, self.keyboard, 1100+125, 100, 6, 5),
+					-- Player(self, self.keyboard, 500+50, 100, 3, 2),
+					-- Player(self, self.keyboard, 1300+150, 100, 7, 6),
+					-- Player(self, self.keyboard, 700+75, 100, 4, 3),
+					-- Player(self, self.keyboard, 1500+175, 100, 8, 7),
 					}
 	self.numPlayersAlive = 8
 	
@@ -142,9 +143,6 @@ function Level:draw()
 --		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 --	end
 	self.attacks:draw()
-	love.graphics.setColor(0, 0, 0, 100)
-	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
-	love.graphics.setColor(255, 255, 255, 255)
 	self:drawHealth()
 
 	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
@@ -159,13 +157,15 @@ function Level:playerDied()
 end
 
 function Level:drawHealth()
-	love.graphics.setColor(255, 255, 255)
-	local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
+	love.graphics.setColor(0, 0, 0, 100)
+	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
+	love.graphics.setColor(255, 255, 255, 255)
+	-- local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
 	local colorsText = {"Red", "Green", "Blue", "Purple"}
 	local y = 10
 	local healthText = {}
 	for i = 1, #self.players, 1 do
-		healthText[#healthText+1] = colors[(self.players[i].color)%4+1]
+		healthText[#healthText+1] = self.players[1].colorTable[self.players[i].color+1]
 		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..math.max(0, math.floor(self.players[i].health)).."  "
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
@@ -192,7 +192,7 @@ function Level:drawHealth()
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
-			love.graphics.setColor(colors[self.winner%4+1])
+			love.graphics.setColor(self.players[1].colorTable[self.winner+1])
 			love.graphics.printf("TEAM "..colorsText[self.winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 		end
 	end

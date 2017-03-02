@@ -9,13 +9,22 @@ function MainMenu:_init(game)
 	self.drawUnder = false
 	self.updateUnder = false
 
+	self.mainFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 128)
+	self.smallerFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 64)
 	self.game = game
 	self.keyboard = self.game.keyboard
+	self:createDefaultPlayers()
 	self.mapInputsToPlayers = {}
 	self.mapPlayersToInputs = {} -- the input num for the player num
 	for i = 1, 8 do
 		self.mapPlayersToInputs[i] = {connected = false, input = 0}
 	end
+	self.playerColors = {0, 1, 2, 3, 4, 5, 6, 7} -- this is how we set what color players are
+	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 12)
+	self.playerMenus = {}
+	-- for k, v in pairs(self.players) do
+	-- create a PlayerMenu
+	-- end
 
 	math.randomseed(os.time())
 	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
@@ -26,30 +35,28 @@ function MainMenu:_init(game)
 	self.SCREENWIDTH = 1920
 	self.SCREENHEIGHT = 1080
 	self.menuCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
-
-	self:createDefaultPlayers()
 end
 
 function MainMenu:createDefaultPlayers()
 	self.players = {Player(self.game.level, self.keyboard, 100, 100, 1, 0),
-					Player(self.game.level, self.keyboard, 900+100, 100, 5, 4),
 					Player(self.game.level, self.keyboard, 300+25, 100, 2, 1),
-					Player(self.game.level, self.keyboard, 1100+125, 100, 6, 5),
 					Player(self.game.level, self.keyboard, 500+50, 100, 3, 2),
-					Player(self.game.level, self.keyboard, 1300+150, 100, 7, 6),
 					Player(self.game.level, self.keyboard, 700+75, 100, 4, 3),
+					Player(self.game.level, self.keyboard, 900+100, 100, 5, 4),
+					Player(self.game.level, self.keyboard, 1100+125, 100, 6, 5),
+					Player(self.game.level, self.keyboard, 1300+150, 100, 7, 6),
 					Player(self.game.level, self.keyboard, 1500+175, 100, 8, 7),
 					}
 
-	self.playerKeys = {{"`", "1", "2", "3", "4", "5"}, {"7", "8", "9", "0", "-", "="}, {"q", "w", "e", "r", "t", "y"}, {"u", "i", "o", "p", "[", "]"},
-						{"a", "s", "d", "f", "g", "h"}, {"j", "k", "l", ";", "'", "return"}}
-	if self.keyboard.wasd then
-		self.playerKeys[7] = {"6", "z", "x", "c", "v", "b"}
-		self.playerKeys[8] = {"n", "m", ",", ".", "/", "\\"}
-	else
-		self.playerKeys[7] = {"lshift", "z", "x", "c", "v", "b"}
-		self.playerKeys[8] = {"n", "m", ",", ".", "/", "rshift"}
-	end
+	-- self.playerKeys = {{"`", "1", "2", "3", "4", "5"}, {"7", "8", "9", "0", "-", "="}, {"q", "w", "e", "r", "t", "y"}, {"u", "i", "o", "p", "[", "]"},
+	-- 					{"a", "s", "d", "f", "g", "h"}, {"j", "k", "l", ";", "'", "return"}}
+	-- if self.keyboard.wasd then
+	-- 	self.playerKeys[7] = {"6", "z", "x", "c", "v", "b"}
+	-- 	self.playerKeys[8] = {"n", "m", ",", ".", "/", "\\"}
+	-- else
+	-- 	self.playerKeys[7] = {"lshift", "z", "x", "c", "v", "b"}
+	-- 	self.playerKeys[8] = {"n", "m", ",", ".", "/", "rshift"}
+	-- end
 end
 
 -- function MainMenu:makeTitleImage()
@@ -79,7 +86,7 @@ end
 function MainMenu:load()
 	-- run when the level is given control
 	love.mouse.setVisible(true)
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 128))
+	love.graphics.setFont(self.mainFont)
 	if self.game.drawFPS then
 		self.fpsWasOn = true
 		self.game.drawFPS = false
@@ -99,6 +106,10 @@ function MainMenu:leave()
 	if self.fpsWasOn then
 		self.game.drawFPS = true
 	end
+	for i = 1, #self.playingPlayers do
+		self.playingPlayers[i].color = self.playerColors[i]
+		self.playingPlayers[i]:loadImages()
+	end
 	self.game.level.players = self.playingPlayers -- just be a dick and overwrite it
 	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
 	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
@@ -117,10 +128,10 @@ function MainMenu:draw()
 	love.graphics.setCanvas(self.menuCanvas)
 	love.graphics.clear()
 	-- now start the drawing
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 128))
+	love.graphics.setFont(self.mainFont)
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 64))
+	love.graphics.setFont(self.smallerFont)
 	love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
 	love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
 	love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")
@@ -129,6 +140,7 @@ function MainMenu:draw()
 	if #self.playingPlayers > 0 then
 		for k, v in pairs(self.playingPlayers) do
 			-- print("color: "..self.playingPlayers[i].color)
+			love.graphics.setColor(self.players[1].colorTable[self.playerColors[v.playerNumber]+1])
 			love.graphics.draw(v.pImage, self.SCREENWIDTH*(v.color+1)/(9), self.SCREENHEIGHT - 100)
 		end
 	end
@@ -233,7 +245,7 @@ function MainMenu:inputMade(inputNum, input, pressValue)
 			print("disconected a player because joystick is gone. inputNum: "..inputNum)
 			return
 		end
-		print("input source "..inputNum)
+		-- print("input source "..inputNum)
 		if self.mapInputsToPlayers[inputNum] == nil then
 			-- it's a new player! yay!
 			-- print("found new input source")

@@ -6,7 +6,7 @@ Keyboard = class()
 
 
 function Keyboard:_init(game)
-	self.keyboardType = 0 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
+	self.keyboardType = 1 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
 	self.joystickDeadZone = .25
 	self.defaultJoystickMode = 0
 

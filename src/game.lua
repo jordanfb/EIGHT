@@ -18,12 +18,41 @@ function Game:_init()
 
 	-- here are the actual variables
 	self.drawFPS = false
+	self:makeGameSettings()
 
 	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
 	self.settingsMenu = SettingsMenu(self)
 
-	self.gameSettings = {
+	self:loadPlayerImages() -- this loads all the player images once, so we don't have to do it again.
+
+	self.countdownScreen = CountdownScreen(self)
+	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
+	self.mainMenu = MainMenu(self)
+	self.screenStack = {}
+	
+	self.bg = love.graphics.newImage('images/bg.png')
+	
+	bgm = love.audio.newSource("music/battlemusic.mp3")
+	bgm:setVolume(0.9) -- 90% of ordinary volume
+	bgm:setLooping( true )
+	if self.gameSettings.playMusic then
+		bgm:play()
+	end
+
+	self.healthItemImage = love.graphics.newImage('images/health-item.png')
+	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
+	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
+	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
+
+	self:addToScreenStack(self.mainMenu)
+
+	self.screenshakeDuration = 0
+	self.screenshakeMagnitude = 0
+end
+
+function Game:makeGameSettings()
+		self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
 			infiniteJumps = false, --I Miss the Old Kanye
 			infiniteSpeed = false, --I Miss the Old Kanye
@@ -69,30 +98,6 @@ function Game:_init()
 			healthGainOnKillAmount = 20,
 			healthPickupAmount = 30
 		} -- jumping?
-
-	self.countdownScreen = CountdownScreen(self)
-	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
-	self.mainMenu = MainMenu(self)
-	self.screenStack = {}
-	
-	self.bg = love.graphics.newImage('images/bg.png')
-	
-	bgm = love.audio.newSource("music/battlemusic.mp3")
-	bgm:setVolume(0.9) -- 90% of ordinary volume
-	bgm:setLooping( true )
-	if self.gameSettings.playMusic then
-		bgm:play()
-	end
-
-	self.healthItemImage = love.graphics.newImage('images/health-item.png')
-	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
-	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
-	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
-
-	self:addToScreenStack(self.mainMenu)
-
-	self.screenshakeDuration = 0
-	self.screenshakeMagnitude = 0
 end
 
 function Game:startScreenshake(time, intensity)
@@ -172,6 +177,43 @@ function Game:resize(w, h)
 		self.screenStack[i]:resize(w, h)
 	end
 	self.level:resize(w, h)
+end
+
+function Game:loadPlayerImages()
+	-- load the correct images by appending things to the default filename
+	self.playerImages = {}
+	for color = 1, 4 do
+		self.playerImages[color] = {}
+		self.playerImages[color].breathImages = {}
+		for i = 1, 4, 1 do
+			self.playerImages[color].breathImages[i] = love.graphics.newImage('images/'..color..'-breath-'..i..'.png')
+		end 
+		
+		self.playerImages[color].runImages = {}
+		for i = 1, 6, 1 do
+			self.playerImages[color].runImages[i] = love.graphics.newImage('images/'..color..'-run-'..i..'.png')
+		end
+		
+		self.playerImages[color].hitImages = {}
+		for i = 1, 4, 1 do
+			self.playerImages[color].hitImages[i] = love.graphics.newImage('images/'..color..'-hit-'..i..'.png')
+		end
+		
+		self.playerImages[color].kickImages = {}
+		for i = 1, 5, 1 do
+			self.playerImages[color].kickImages[i] = love.graphics.newImage('images/'..color..'-kick-'..i..'.png')
+		end
+		
+		self.playerImages[color].duckImage = love.graphics.newImage('images/'..color..'-duck-1.png')
+		
+		self.playerImages[color].jumpImage = love.graphics.newImage('images/'..color..'-jump.png')
+	end
+	for playerNum = 1, 8 do
+		if playerNum > 4 then
+			self.playerImages[playerNum] = {}
+		end
+		self.playerImages[playerNum].pImage = love.graphics.newImage('images/'..playerNum..'-p.png')
+	end
 end
 
 function Game:keypressed(key, unicode)
