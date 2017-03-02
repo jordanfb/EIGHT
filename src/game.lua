@@ -6,6 +6,7 @@ require "countdown"
 require "pausemenu"
 require "class"
 require "settingsmenu"
+require "copy"
 
 Game = class()
 
@@ -23,7 +24,8 @@ function Game:_init()
 	self.pauseMenu = PauseMenu(self)
 	self.settingsMenu = SettingsMenu(self)
 
-	self.gameSettings = {
+	
+	self.defaultSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
 			infiniteJumps = false, --I Miss the Old Kanye
 			infiniteSpeed = false, --I Miss the Old Kanye
@@ -47,6 +49,9 @@ function Game:_init()
 			noHealthLimit = false,
 			screenShake = true,
 		}
+	
+	self.gameSettings = clone(self.defaultSettings)
+	
 	self.gameSettingRates = {
 			knife = 3,
 			health = 1,

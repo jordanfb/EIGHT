@@ -1,6 +1,7 @@
 
 
 require "class"
+require "copy"
 
 
 Menu = class()
@@ -95,7 +96,7 @@ function Menu:selectSelected()
 	if self.buttons[self.selection+1].message == "back" then
 		self.game:popScreenStack()
 	elseif self.buttons[self.selection+1].message == "reset" then
-		print("RESET ALL SETTINGS")
+		self.game.gameSettings = clone(self.game.defaultSettings)
 	else
 		-- print("button changed "..tostring(self.buttons[self.selection+1].message))
 		self.game.gameSettings[self.buttons[self.selection+1].message] = not self.game.gameSettings[self.buttons[self.selection+1].message]
