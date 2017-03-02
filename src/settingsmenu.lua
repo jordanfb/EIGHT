@@ -14,25 +14,26 @@ function SettingsMenu:_init(game)
 	self.drawUnder = false
 	self.updateUnder = false
 	self.game = game
-	local b1 = {"Back", "back"}
-	local b2 = {"Reset-All", "reset"}
-	local b3 = {"Health Items", "healthSpawn"}
-	local b4 = {"Jump Items", "jumpSpawn"}
-	local b5 = {"Knife Items", "knifeSpawn"}
-	local b6 = {"Speed Items", "speedSpawn"}
-	local b7 = {"Infinite Knives", "infiniteKnives"}
-	local b8 = {"Infinite Speed", "infiniteSpeed"}
-	self.buttons = {b1, b2, b3, b4, b5, b6, b7, b8}
+	self.buttons = {{"Back", "back"}, {"Reset-All", "reset"},
+					{"Health Items", "healthSpawn"}, {"Jump Items", "jumpSpawn"},
+					{"Knife Items", "knifeSpawn"}, {"Speed Items", "speedSpawn"},
+					{"Infinite Knives", "infiniteKnives"}, {"Infinite Speed", "infiniteSpeed"},
+					{"Poison", "poison"}}
 	self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200)
+	self.subscribedToInputs = false
 end
 
 function SettingsMenu:load()
 	-- run when the level is given control
 	love.graphics.setBackgroundColor(255, 255, 255)
+	self.subscribedToInputs = true
+	self.game.keyboard.settingsMenuSubscribed = true
 end
 
 function SettingsMenu:leave()
 	-- run when the level no longer has control
+	self.subscribedToInputs = false
+	self.game.keyboard.settingsMenuSubscribed = false
 end
 
 function SettingsMenu:draw()
@@ -47,8 +48,14 @@ function SettingsMenu:resize(w, h)
 	--
 end
 
+function SettingsMenu:inputMade(inputNum, input, pressValue)
+	self.menu:inputMade(inputNum, input, pressValue)
+end
+
 function SettingsMenu:keypressed(key, unicode)
-	--
+	if key == "escape" or key == "back" then
+		self.game:popScreenStack()
+	end
 end
 
 function SettingsMenu:keyreleased(key, unicode)

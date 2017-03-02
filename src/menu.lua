@@ -97,7 +97,8 @@ function Menu:selectSelected()
 	elseif self.buttons[self.selection+1].message == "reset" then
 		print("RESET ALL SETTINGS")
 	else
-		self.game.gameSettings[v.message] = not self.game.gameSettings[v.message]
+		-- print("button changed "..tostring(self.buttons[self.selection+1].message))
+		self.game.gameSettings[self.buttons[self.selection+1].message] = not self.game.gameSettings[self.buttons[self.selection+1].message]
 	end
 end
 
@@ -106,6 +107,9 @@ function Menu:update(dt)
 end
 
 function Menu:inputMade(inputNum, input, pressValue)
+	if pressValue == 0 then
+		return
+	end
 	if self.controllingInput == 0 or self.controllingInput == inputNum then
 		if (input == "punch" or input == "kick") then
 			self:selectSelected()
@@ -123,7 +127,10 @@ function Menu:inputMade(inputNum, input, pressValue)
 			self.selection = self.selection + 1
 		end
 	end
-	if self.selection > #self.buttons then
-		self.selection = #self.buttons
+	if self.selection >= #self.buttons then
+		self.selection = 0
+	end
+	if self.selection < 0 then
+		self.selection = #self.buttons-1
 	end
 end

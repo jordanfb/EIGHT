@@ -23,6 +23,7 @@ function Keyboard:_init(game)
 	end
 	self.gamepadMappings = {} -- a map of gamepadID() to 1-8 of self.gamepads
 	self.mainmenuSubscribed = false
+	self.settingsMenuSubscribed = false
 
 	self.keySets = {}
 	for i = 1, 24 do -- make 8 for keyboards, then 8 for joysticks, then 8 for the second half of those joysticks...
@@ -182,6 +183,9 @@ function Keyboard:keypressed(key, unicode)
 				if self.mainmenuSubscribed then
 					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 1)
 				end
+				if self.settingsMenuSubscribed then
+					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 1)
+				end
 			else
 				-- just to deal with the legacy 4 keyboard system
 				self.keySets[inputNum][self:keyNumToType(keyType)] = 0
@@ -190,6 +194,9 @@ function Keyboard:keypressed(key, unicode)
 				-- end
 				if self.mainmenuSubscribed then
 					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
+				end
+				if self.settingsMenuSubscribed then
+					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
 				end
 			end
 		end
@@ -219,6 +226,9 @@ function Keyboard:keyreleased(key, unicode)
 				-- end
 				if self.mainmenuSubscribed then
 					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
+				end
+				if self.settingsMenuSubscribed then
+					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
 				end
 			end
 		end
@@ -291,6 +301,9 @@ function Keyboard:gamepadButtonToPress(gamepadID, button, pressedValue) -- press
 	if self.mainmenuSubscribed then
 		self.game.mainMenu:inputMade(inputNum, t[button], pressedValue)
 	end
+	if self.settingsMenuSubscribed then
+		self.game.settingsMenu:inputMade(inputNum, t[button], pressedValue)
+	end
 	if pressedValue == 1 and (t[button] == "back" or t[button] == "start") then
 		self.game:keypressed(t[button], 0)
 	end
@@ -328,6 +341,10 @@ function Keyboard:joystickremoved(gamepad)
 	if self.mainmenuSubscribed then
 		self.game.mainMenu:inputMade(i+8, "disconected", 1) -- for the main joystick
 		self.game.mainMenu:inputMade(i+16, "disconected", 1) -- in case it was a two person joystick
+	end
+	if self.settingsMenuSubscribed then
+		self.game.settingsMenu:inputMade(i+8, "disconected", 1)
+		self.game.settingsMenu:inputMade(i+16, "disconected", 1)
 	end
 	if i ~= 0 then
 		self.gamepads[i].hasGamepad = false

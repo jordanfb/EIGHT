@@ -5,6 +5,7 @@ require "mainmenu"
 require "countdown"
 require "pausemenu"
 require "class"
+require "settingsmenu"
 
 Game = class()
 
@@ -20,6 +21,7 @@ function Game:_init()
 
 	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
+	self.settingsMenu = SettingsMenu(self)
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye
@@ -133,6 +135,7 @@ function Game:draw()
 end
 
 function Game:update(dt)
+	print(self.gameSettings.infiniteKnives)
 	if self.screenshakeDuration > 0 then
 		self.screenshakeDuration = self.screenshakeDuration - dt
 	end
