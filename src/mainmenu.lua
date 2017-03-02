@@ -17,8 +17,6 @@ function MainMenu:_init(game)
 		self.mapPlayersToInputs[i] = {connected = false, input = 0}
 	end
 
-	self.playerColors = {1, 2, 3, 4, 5, 6, 7, 8} -- index by playernumber to get what color they are
-
 	self.bg = love.graphics.newImage('images/bg.png')
 
 	self.zoom = 10
@@ -30,12 +28,6 @@ function MainMenu:_init(game)
 
 	self:createDefaultPlayers()
 end
-
--- function MainMenu:setPlayingPlayerColors()
--- 	for k, v in pairs(self.playingPlayers) do
--- 		v.color = self.playerColors[v.playerNumber]
--- 	end
--- end
 
 function MainMenu:createDefaultPlayers()
 	self.players = {Player(self.game.level, self.keyboard, 100, 100, 1, 0),
@@ -139,18 +131,6 @@ function MainMenu:draw()
 		end
 	end
 
-	-- -- print("COLORS"..#self.playingPlayers)
-	-- if #self.playingPlayers > 0 then
-	-- 	for k, v in pairs(self.playingPlayers) do
-	-- 		-- print("color: "..self.playingPlayers[i].color)
-	-- 		print("setting color")
-	-- 		print(self.playerColors[v.playerNumber])
-	-- 		-- print(v.colorTable[self.playerColors[v.playerNumber]])
-	-- 		love.graphics.setColor(v.colorTable[self.playerColors[v.playerNumber]% 4])
-	-- 		love.graphics.draw(v.pImage, self.SCREENWIDTH*(v.color+1)/(9), self.SCREENHEIGHT - 100)
-	-- 	end
-	-- end
-
 
 	-- now be done with the drawing
 	love.graphics.setCanvas()
@@ -251,17 +231,14 @@ function MainMenu:inputMade(inputNum, input, pressValue)
 			print("disconected a player because joystick is gone. inputNum: "..inputNum)
 			return
 		end
-		-- -- print("input source "..inputNum)
-		-- if self.mapInputsToPlayers[inputNum] == nil then
-		-- 	-- it's a new player! yay!
-		-- 	-- print("found new input source")
-		-- 	self:addInputToPlayerMap(inputNum)
-		-- else
-		-- 	-- print("previously connected input")
-		-- 	if input == "left" then
-		-- 		--
-		-- 	end
-		-- end
+		print("input source "..inputNum)
+		if self.mapInputsToPlayers[inputNum] == nil then
+			-- it's a new player! yay!
+			-- print("found new input source")
+			self:addInputToPlayerMap(inputNum)
+		else
+			-- print("previously connected input")
+		end
 		-- print("did stuff "..input)
 	end
 end

@@ -5,7 +5,6 @@ require "mainmenu"
 require "countdown"
 require "pausemenu"
 require "class"
-require "settingsmenu"
 
 Game = class()
 
@@ -21,7 +20,6 @@ function Game:_init()
 
 	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
-	self.settingsMenu = SettingsMenu(self)
 
 	self.gameSettings = {
 			infiniteKnives = false, --I Miss the Old Kanye

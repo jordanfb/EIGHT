@@ -148,8 +148,6 @@ function Keyboard:keyNumToType(keyNum)
 end
 
 function Keyboard:keypressed(key, unicode)
-	-- print("SDFKJSDLFJSKLJ")
-	-- print(key)
 	-- supports three types of keyboard input. Ow.
 	local inputNum = 0
 	local keyType = 0
