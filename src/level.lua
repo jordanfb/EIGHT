@@ -142,9 +142,9 @@ function Level:draw()
 --		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 --	end
 	self.attacks:draw()
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 100)
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(0, 0, 0, 100)
+	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
+	love.graphics.setColor(255, 255, 255, 255)
 	self:drawHealth()
 
 	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.

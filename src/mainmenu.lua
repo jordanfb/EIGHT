@@ -89,8 +89,8 @@ function MainMenu:load()
 	-- this is for resetting the settings at the end of each match, this is an absolutely horrible place to put it
 	-- but the code's already a mess...
 	-- it needs to exist because of the way final showdowns (fewer than X players) are coded (by me, heh).
-	self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
-	self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
+	-- self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
+	-- self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
 	self.keyboard.mainmenuSubscribed = true -- starts the keyboard getting every input press
 end
 
@@ -278,6 +278,9 @@ function MainMenu:removePlayerFromGame(playerNum)
 end
 
 function MainMenu:keypressed(key, unicode)
+	if key == "r" then
+		self.game:addToScreenStack(self.game.settingsMenu)
+	end
 	if key == "space" or key == "start" then
 		if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
 			self.game:addToScreenStack(self.game.level)
