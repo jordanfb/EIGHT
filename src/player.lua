@@ -38,7 +38,7 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.isAttacking = false
 
 	self.color = color
-	self.colorTable = {{255, 255, 255}, {0, 0, 0}, {255, 255, 255}, {0, 255, 0}}
+	self.colorTable = {{255, 255, 255}, {255, 255, 255}, {255, 255, 255}, {255, 255, 255}}
 	self:loadImages()
 	self.width = 100
 	self.height = 150
