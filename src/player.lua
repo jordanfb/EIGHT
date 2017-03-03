@@ -2,7 +2,11 @@ require "class"
 
 Player = class()
 
-
+--APPLY
+--experience
+--why cs
+--why kronos
+--skills
 
 function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.level = level
@@ -264,7 +268,7 @@ function Player:update(dt)
 		self.isAttacking = true
 	elseif ( not (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 )) or self.attackTimer==25 then
 		self.isAttacking = false
-		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) then
+		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 ) then
 			if self.facing==1 then
 				if self.numKnives > 0 or self.level.game.gameSettings.knives == "always" then
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))

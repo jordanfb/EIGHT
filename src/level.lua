@@ -81,6 +81,7 @@ function Level:resetPlayers()
 		self.players[i].superJumps = 0
 		self.players[i].numKnives = 0
 		self.players[i].attackedTimer = 0
+		self.players[i].hasPlatforms = 0
 	end
 	self.numPlayersAlive = #self.players
 end
@@ -91,7 +92,23 @@ function Level:load()
 	if self.game.gameSettings.playMusic then
 		self.game.bgm:play()
 	end
+	--self.level = math.random(#self.allLevels)
+	
 	self.level = math.random(#self.allLevels)
+	
+	local decidingPlayer = math.random(#self.game.mainMenu.playerMenus)
+	local player = 1
+	for i, v in ipairs(self.game.mainMenu.playerMenus) do
+		if player == decidingPlayer then
+			if self.game.mainMenu.playerMenus[1].playerValues.map > #self.allLevels then
+				self.level = math.random(#self.allLevels)
+			else
+				self.level = self.game.mainMenu.playerMenus[player].playerValues.map
+			end
+		end
+		player = player + 1
+	end
+	
 	self:resetPlayers()
 	self.items = {}
 	self.projectiles = {}

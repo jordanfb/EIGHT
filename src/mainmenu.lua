@@ -23,7 +23,7 @@ function MainMenu:_init(game)
 	self.playerColors = {0, 1, 2, 3, 4, 5, 6, 7} -- this is how we set what color players are
 	self.startTimerMax = 3 -- start one higher than the count should start at because of floor.
 	self.startTimer = self.startTimerMax
-	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 24)
+	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 22)
 	self.playerMenus = {}
 	-- for k, v in pairs(self.players) do
 	-- create a PlayerMenu
@@ -198,10 +198,10 @@ function MainMenu:draw()
 		local i = 1
 		for i = 1, #self.playingPlayers do
 			-- local x = self.SCREENWIDTH*(self.playingPlayers[i].playerNumber)/(9)
-			local x = (self.SCREENWIDTH-300)*(i)/(#self.playingPlayers+1) + 150
+			local x = (self.SCREENWIDTH)*(i)/(#self.playingPlayers+1)
 			-- print("color: "..self.playingPlayers[i].color)
 			love.graphics.setColor(self.players[1].colorTable[self.playerColors[self.playingPlayers[i].playerNumber]+1])
-			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 500, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/2)
+			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 500, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/3)
 			self.playerMenus[i]:draw(x, self.SCREENHEIGHT - 350)
 			-- i = i + 1
 		end

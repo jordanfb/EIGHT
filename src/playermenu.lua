@@ -10,13 +10,16 @@ function PlayerMenu:_init(game, mainMenu, level, playerNum, inputNum, font)
 	self.mainMenu = mainMenu
 	self.level = level
 	self.font = font
-	self.mapIndexToValue = {"ready", "color", "controls", "settings", "leave"}
-	self.playerValues = {color = 1, controls = 1, ready = 1, settings = 1, leave = 1}
+	self.mapIndexToValue = {"ready", "color", "controls", "settings", "map", "leave"}
+	self.playerValues = {color = 1, controls = 1, ready = 1, settings = 1, map = 1, leave = 1}
 	self.playerNum = playerNum
 	self.inputNum = inputNum
 
 	self.playerValues.color = playerNum
-	self.menuOptions = {{"Not Ready", "Ready"}, {"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam", "Orange\nTeam", "Yellow\nTeam", "Teal\nTeam", "Pink\nTeam"}, {"Controls"}, {"Settings"}, {"Leave"}}
+	self.menuOptions = {{"Not Ready", "Ready"},
+						{"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam", "Orange\nTeam", "Yellow\nTeam", "Teal\nTeam", "Pink\nTeam"},
+						{"Controls"}, {"Settings"}, 
+						{"Leave"}}
 	for i = 1, #self.menuOptions do
 		self.menuPosition = i
 		self:changeValue()
@@ -57,7 +60,8 @@ function PlayerMenu:draw(globalx, globaly)
 		end
 		love.graphics.printf(text, x-500, y, 1000, "center")
 		y = y + 40
-		if i == 2 then 
+		_, count = string.gsub(self.menuOptions[i][1], "\n", "\n")
+		for i = 1, count do
 			y = y + 30
 		end
 	end
