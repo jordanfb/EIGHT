@@ -226,8 +226,12 @@ function Level:update(dt)
 	for i = 1, #self.projectiles, 1 do
 		self.projectiles[i]:update(dt)
 	end
-	for i = 1, #self.items, 1 do
-		self.items[i]:update(dt)
+	for i , item in ipairs(self.items) do
+		if item.dead then
+			table.remove (self.items, i)
+		else
+			item:update(dt)
+		end
 	end
 	if self.game.gameSettings.healthSpawn then
 		if math.random(3000/self.game.gameSettingRates.health)==1 then
@@ -271,6 +275,15 @@ function Level:update(dt)
 		end
 		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
 			table.insert(self.items, Item("platform", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+		end
+	end
+	if self.game.gameSettings.bats then
+		if math.random(3000/self.game.gameSettingRates.bat)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("bat", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
+		end
+		if math.random(3000/self.game.gameSettingRates.bat)==1 then
+			table.insert(self.items, Item("bat", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	self.attacks:update(dt)

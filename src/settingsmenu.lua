@@ -15,7 +15,7 @@ function SettingsMenu:_init(game)
 	self.updateUnder = false
 	self.game = game
 	self.buttons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"},
-					{"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"},
+					{"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"}, {"Bats", "bats"},
 					{"Poison", "poison"}, {"Life Steal", "lifeSteal"}, {"Life Regen", "regen"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
 
 	self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200)

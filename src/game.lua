@@ -30,6 +30,7 @@ function Game:_init()
 			superJumps = "on",
 			speedUps = "on",
 			platforms = "on",
+			bats = "on",
 			healthSpawn = true, --Straight from the Go Kayne
 			punching = true, -- I hate the new Kayne
 			kicking = true, --What if Kayne wrote a song about Kayne
@@ -61,6 +62,7 @@ function Game:_init()
 			health = 1,
 			jump = 3,
 			speed = 3,
+			bat = 2,
 			platforms = 1,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
@@ -96,7 +98,11 @@ function Game:_init()
 	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
 	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
 	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
-
+	self.batImages = {}
+	for i = 1, 4 do
+		table.insert(self.batImages, love.graphics.newImage('images/bat-'..i..'.png'))
+	end
+	
 	self:addToScreenStack(self.mainMenu)
 
 	self.screenshakeDuration = 0
