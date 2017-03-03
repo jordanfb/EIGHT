@@ -12,11 +12,6 @@ function Keyboard:_init(game)
 
 
 	self.game = game
-	-- self.playerMappings = {1, 2, 3, 1, 2, 3, 1, 2} -- a table of playernum to inputnum
-	-- self.playerKeys = {}
-	-- for i = 1, 8 do
-	-- 	self.playerKeys[i] = {}
-	-- end
 	self.gamepads = {}
 	for i = 1, 8 do
 		local debouncing = {leftx = 0, lefty = 0, rightx = 0, righty = 0, triggerleft = 0, triggerright = 0}

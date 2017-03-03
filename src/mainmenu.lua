@@ -25,9 +25,6 @@ function MainMenu:_init(game)
 	self.startTimer = self.startTimerMax
 	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 24)
 	self.playerMenus = {}
-	-- for k, v in pairs(self.players) do
-	-- create a PlayerMenu
-	-- end
 
 	math.randomseed(os.time())
 	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
@@ -155,6 +152,9 @@ function MainMenu:startPlay()
 	-- these two lines should be at the bottom of startPlay to ensure everything gets loaded first
 	self.game:addToScreenStack(self.game.level)
 	self.game:addToScreenStack(self.game.countdownScreen)
+
+	-- sets the bats to be a thing
+	self.game.level.numBatsKilled = 0
 end
 
 function MainMenu:leave()
@@ -206,7 +206,6 @@ function MainMenu:draw()
 			-- i = i + 1
 		end
 	end
-
 
 	-- now be done with the drawing
 	love.graphics.setCanvas()
@@ -381,9 +380,9 @@ function MainMenu:removePlayerFromGame(playerNum)
 end
 
 function MainMenu:keypressed(key, unicode)
-	if key == "space" or key == "start" then
-		-- self:startPlay()
-	end
+	-- if key == "space" or key == "start" then
+	-- 	-- self:startPlay()
+	-- end
 	-- for i = 1, #self.playerKeys, 1 do
 	-- 	for j = 1, #self.playerKeys[i], 1 do
 	-- 		if self.playerKeys[i][j] == key then

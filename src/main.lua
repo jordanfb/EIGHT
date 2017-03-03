@@ -11,13 +11,12 @@ local game = Game()
 
 function love.load(args)
 	math.randomseed(os.time())
-	love.filesystem.setIdentity('EIGHT_Screenshots')
+	love.filesystem.setIdentity('EIGHT')
 	
 	game:load(args)
 	--local width, height = 512, 256
 	local width, height = 1920, 1080
-	love.window.setMode(width/2, height/2, {resizable = true})
-	love.window.setFullscreen(true)
+	love.window.setMode(width/2, height/2, {resizable = true, fullscreen = true})
 	-- not much here
 	game:resize(width, height)
 	love.mouse.setVisible(false)
