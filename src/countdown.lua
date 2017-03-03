@@ -58,6 +58,7 @@ function CountdownScreen:update(dt)
 		self.messageIndex = self.messageIndex + dt
 		if self.messageIndex > #self.countdownMessages + .25 then
 			self.game:popScreenStack(false) -- don't load the next screen, but go to it
+			self.game:startScreenshake(.15, 10)
 		end
 	else
 		self.countdownTimer = self.countdownTimer - dt

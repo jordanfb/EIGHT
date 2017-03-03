@@ -367,8 +367,6 @@ function Keyboard:inputPressDistribute(inputNum, keyType, pressValue)
 	end
 end
 
--- function Keyboard:
-
 function Keyboard:gamepadaxis(gamepad, axis, value)
 	local gamepadNum, connected = self:getGamepadNumber(gamepad)
 	if gamepadNum == 0 then return end

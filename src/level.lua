@@ -170,7 +170,7 @@ function Level:drawHealth()
 	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
 	love.graphics.setColor(255, 255, 255, 255)
 	-- local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
-	local colorsText = {"Red", "Green", "Blue", "Purple"}
+	local colorsText = {"Red", "Green", "Blue", "Purple", "Orange", "Yellow", "Teal", "Pink"}
 	local y = 10
 	local healthText = {}
 	for i = 1, #self.players, 1 do
@@ -189,7 +189,7 @@ function Level:drawHealth()
 			if self.players[i].health>0 then
 				if self.winner == -1 then
 					self.winner = self.players[i].color
-				elseif self.winner%4 ~= self.players[i].color%4 then
+				elseif self.winner ~= self.players[i].color then
 					self.gameOver = false
 				end
 			end
@@ -202,7 +202,7 @@ function Level:drawHealth()
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
 			love.graphics.setColor(self.players[1].colorTable[self.winner+1])
-			love.graphics.printf("TEAM "..colorsText[self.winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
+			love.graphics.printf("TEAM "..colorsText[self.winner+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 		end
 	end
 end

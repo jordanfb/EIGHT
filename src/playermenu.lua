@@ -15,8 +15,8 @@ function PlayerMenu:_init(game, mainMenu, level, playerNum, inputNum, font)
 	self.playerNum = playerNum
 	self.inputNum = inputNum
 
-	self.playerValues.color = (playerNum - 1)%4 + 1 -- we have to add one because player color is normally - 1. just to fuck with you
-	self.menuOptions = {{"Not Ready", "Ready"}, {"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam"}, {"Controls"}, {"Settings"}, {"Leave"}}
+	self.playerValues.color = playerNum
+	self.menuOptions = {{"Not Ready", "Ready"}, {"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam", "Orange\nTeam", "Yellow\nTeam", "Teal\nTeam", "Pink\nTeam"}, {"Controls"}, {"Settings"}, {"Leave"}}
 	for i = 1, #self.menuOptions do
 		self.menuPosition = i
 		self:changeValue()
@@ -31,7 +31,7 @@ function PlayerMenu:getTextToDisplay(optionNumber)
 	-- 	-- then cry because this is dependant on what input things you have. This probably launches the input setup
 	-- 	return self.menuOptions[2][1], false
 	-- elseif optionNumber == 1 then -- the team color name
-	-- 	return self.menuOptions[1][(self.color%4)+1], true
+	-- 	return self.menuOptions[1][self.color], true
 	-- elseif optionNumber == 3 then -- the ready state
 	-- 	return self.menuOptions[3][self.readyState+1], true
 	-- else

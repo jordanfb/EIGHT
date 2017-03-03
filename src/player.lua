@@ -39,10 +39,10 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.isAttacking = false
 
 	self.playerNumber = playerNumber
-	self.inputNumber = playerNumber % 4
+	self.inputNumber = 0
 
 	self.color = color
-	self.colorTable = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}, {211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
+	self.colorTable = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}, {255, 100, 50}, {255, 255, 16}, {30, 255, 255}, {255, 100, 209}}
 	self:loadImages()
 	self.width = 100
 	self.height = 150
@@ -99,7 +99,7 @@ function Player:draw()
 		return
 	end
 		
-	love.graphics.setColor(self.colorTable[self.color % 4 + 1])
+	love.graphics.setColor(self.colorTable[self.color + 1])
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
 	love.graphics.setColor(255, 255, 255, 255)
 	
@@ -415,7 +415,7 @@ function Player:update(dt)
 		if self.level.projectiles[i] then
 			if self.x + self.width - 10 > self.level.projectiles[i].x and self.x + 10 < self.level.projectiles[i].x + self.level.projectiles[i].width then
 				if self.y + self.height > self.level.projectiles[i].y and self.y < self.level.projectiles[i].y + self.level.projectiles[i].height then
-					if self.color%4 ~= self.level.projectiles[i].color%4 then
+					if self.color ~= self.level.projectiles[i].color then
 						self.health = self.health - 30
 						self.attackedTimer = 20
 						table.remove(self.level.projectiles, i)
