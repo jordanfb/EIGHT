@@ -13,6 +13,10 @@ function CountdownScreen:_init(game, countdownTimer)
 
 
 	self.game = game
+	self.useMessages = true
+	self.messageIndex = 1.25
+	self.countdownMessages = {"Ready", "GO!"}
+
 	if countdownTimer then
 		self.countdownTimer = countdownTimer+1
 		self.maxCountdownTimer = countdownTimer+1
@@ -28,6 +32,7 @@ function CountdownScreen:load()
 	-- run when the level is given control
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 72))
 	self.countdownTimer = self.maxCountdownTimer
+	self.messageIndex = 1
 	self.showFPSwasOn = self.game.drawFPS
 	self.game.drawFPS = false
 end
@@ -38,17 +43,27 @@ function CountdownScreen:leave()
 end
 
 function CountdownScreen:draw()
-	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 72))
 	love.graphics.setColor(0, 0, 0, 100)
 	love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.printf(math.floor(self.countdownTimer), 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center")
+	if self.useMessages then
+		love.graphics.printf(self.countdownMessages[math.floor(self.messageIndex)], 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center")
+	else
+		love.graphics.printf(math.floor(self.countdownTimer), 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center")
+	end
 end
 
 function CountdownScreen:update(dt)
-	self.countdownTimer = self.countdownTimer - dt
-	if self.countdownTimer <= 1 then
-		self.game:popScreenStack(false) -- don't load the next screen, since it will then reload the level
+	if self.useMessages then
+		self.messageIndex = self.messageIndex + dt
+		if self.messageIndex > #self.countdownMessages + .25 then
+			self.game:popScreenStack(false) -- don't load the next screen, but go to it
+		end
+	else
+		self.countdownTimer = self.countdownTimer - dt
+		if self.countdownTimer <= 1 then
+			self.game:popScreenStack(false) -- don't load the next screen, since it will then reload the level
+		end
 	end
 end
 

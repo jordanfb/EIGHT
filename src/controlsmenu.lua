@@ -56,6 +56,7 @@ function ControlsMenu:resize(w, h)
 end
 
 function ControlsMenu:inputMade(inputNum, input, pressValue)
+	self.game:popScreenStack()
 	if inputNum ~= self.inputNum then
 		-- ignore input made by other controllers
 		return
@@ -63,9 +64,10 @@ function ControlsMenu:inputMade(inputNum, input, pressValue)
 end
 
 function ControlsMenu:keypressed(key, unicode)
-	if key == "escape" or key == "back" then
-		self.game:popScreenStack()
-	end
+	self.game:popScreenStack()
+	-- if key == "escape" or key == "back" then
+	-- 	self.game:popScreenStack()
+	-- end
 end
 
 function ControlsMenu:keyreleased(key, unicode)

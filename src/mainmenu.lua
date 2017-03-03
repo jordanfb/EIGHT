@@ -21,7 +21,7 @@ function MainMenu:_init(game)
 		self.mapPlayersToInputs[i] = {connected = false, input = 0}
 	end
 	self.playerColors = {0, 1, 2, 3, 4, 5, 6, 7} -- this is how we set what color players are
-	self.startTimerMax = 1 -- start one higher than the count should start at because of floor.
+	self.startTimerMax = 4 -- start one higher than the count should start at because of floor.
 	self.startTimer = self.startTimerMax
 	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 24)
 	self.playerMenus = {}

@@ -55,7 +55,6 @@ end
 
 function SettingsMenu:keypressed(key, unicode)
 	if key == "escape" or key == "back" then
-		print("I don't think this is ever called")
 		self.game:popScreenStack()
 	end
 end
