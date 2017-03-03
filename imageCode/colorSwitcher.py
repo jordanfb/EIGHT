@@ -9,7 +9,7 @@ Returns the adjusted image
 '''
 def colorReplace(img, oldColor, newColor):
 	width, height = img.size;
-	print("Width: "+ str(width) + " Height: " + str(height))
+	# print("Width: "+ str(width) + " Height: " + str(height))
 	if max(oldColor) > 255 or max(newColor) > 255:
 		print("ERROR: Invalid color options:  Old: {0}   New: {1}".format(oldColor, newColor))
 	count = 0
