@@ -71,17 +71,17 @@ end
 
 function Player:loadImages()
 	-- load the correct images by appending things to the default filename
-	self.breathImages = self.level.game.playerImages[(self.color%5)+1].breathImages
+	self.breathImages = self.level.game.playerImages[(self.color)+1].breathImages
 	
-	self.runImages = self.level.game.playerImages[(self.color%5)+1].runImages
+	self.runImages = self.level.game.playerImages[(self.color)+1].runImages
 	
-	self.hitImages = self.level.game.playerImages[(self.color%5)+1].hitImages
+	self.hitImages = self.level.game.playerImages[(self.color)+1].hitImages
 
-	self.kickImages = self.level.game.playerImages[(self.color%5)+1].kickImages
+	self.kickImages = self.level.game.playerImages[(self.color)+1].kickImages
 	
-	self.duckImage = self.level.game.playerImages[(self.color%5)+1].duckImage
+	self.duckImage = self.level.game.playerImages[(self.color)+1].duckImage
 	
-	self.jumpImage = self.level.game.playerImages[(self.color%5)+1].jumpImage
+	self.jumpImage = self.level.game.playerImages[(self.color)+1].jumpImage
 	
 	self.pImage = self.level.game.playerImages[self.playerNumber].pImage
 end
