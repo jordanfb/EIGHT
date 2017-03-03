@@ -67,29 +67,17 @@ end
 
 function Player:loadImages()
 	-- load the correct images by appending things to the default filename
-	self.breathImages = self.level.game.playerImages[(self.color%4)+1].breathImages
-	for i = 1, 4, 1 do
-		self.breathImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-breath-'..i..'.png')
-	end 
+	self.breathImages = self.level.game.playerImages[(self.color%5)+1].breathImages
 	
-	self.runImages = self.level.game.playerImages[(self.color%4)+1].runImages
-	for i = 1, 6, 1 do
-		self.runImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-run-'..i..'.png')
-	end
+	self.runImages = self.level.game.playerImages[(self.color%5)+1].runImages
 	
-	self.hitImages = self.level.game.playerImages[(self.color%4)+1].hitImages
-	for i = 1, 4, 1 do
-		self.hitImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-hit-'..i..'.png')
-	end
+	self.hitImages = self.level.game.playerImages[(self.color%5)+1].hitImages
+
+	self.kickImages = self.level.game.playerImages[(self.color%5)+1].kickImages
 	
-	self.kickImages = self.level.game.playerImages[(self.color%4)+1].kickImages
-	for i = 1, 5, 1 do
-		self.kickImages[i] = love.graphics.newImage('images/'..(self.color%4+1)..'-kick-'..i..'.png')
-	end
+	self.duckImage = self.level.game.playerImages[(self.color%5)+1].duckImage
 	
-	self.duckImage = self.level.game.playerImages[(self.color%4)+1].duckImage
-	
-	self.jumpImage = self.level.game.playerImages[(self.color%4)+1].jumpImage
+	self.jumpImage = self.level.game.playerImages[(self.color%5)+1].jumpImage
 	
 	self.pImage = self.level.game.playerImages[self.playerNumber].pImage
 end

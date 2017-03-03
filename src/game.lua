@@ -211,7 +211,7 @@ end
 function Game:loadPlayerImages()
 	-- load the correct images by appending things to the default filename
 	self.playerImages = {}
-	for color = 1, 4 do
+	for color = 1, 5 do
 		self.playerImages[color] = {}
 		self.playerImages[color].breathImages = {}
 		for i = 1, 4, 1 do
@@ -238,7 +238,7 @@ function Game:loadPlayerImages()
 		self.playerImages[color].jumpImage = love.graphics.newImage('images/'..color..'-jump.png')
 	end
 	for playerNum = 1, 8 do
-		if playerNum > 4 then
+		if playerNum > 5 then
 			self.playerImages[playerNum] = {}
 		end
 		self.playerImages[playerNum].pImage = love.graphics.newImage('images/'..playerNum..'-p.png')
