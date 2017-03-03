@@ -6,6 +6,7 @@ require "countdown"
 require "pausemenu"
 require "class"
 require "settingsmenu"
+require "controlsmenu"
 
 Game = class()
 
@@ -18,11 +19,15 @@ function Game:_init()
 
 	-- here are the actual variables
 	self.drawFPS = false
+
+	self.mainFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 128)
+	self.smallerFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 64)
 	self:makeGameSettings()
 
 	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
 	self.settingsMenu = SettingsMenu(self)
+	self.controlsMenu = ControlsMenu(self, self.mainFont, self.smallerFont)
 
 	self:loadPlayerImages() -- this loads all the player images once, so we don't have to do it again.
 

@@ -60,6 +60,7 @@ function CountdownScreen:keypressed(key, unicode)
 	if key == "back" or key == "escape" then
 		self.game:popScreenStack()
 		self.game:popScreenStack()
+		self.game.mainMenu:endPlay()
 	end
 end
 

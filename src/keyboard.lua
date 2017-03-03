@@ -6,7 +6,7 @@ Keyboard = class()
 
 
 function Keyboard:_init(game)
-	self.keyboardType = 1 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
+	self.keyboardType = 0 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
 	self.joystickDeadZone = .25
 	self.defaultJoystickMode = 0
 
@@ -19,11 +19,13 @@ function Keyboard:_init(game)
 	-- end
 	self.gamepads = {}
 	for i = 1, 8 do
-		self.gamepads[i] = {gamepad = nil, mode = self.defaultJoystickMode, hasGamepad = false} -- 0 is jordan one per, 1 is martin's gameboy method, 2 is two per
+		local debouncing = {leftx = 0, lefty = 0, rightx = 0, righty = 0, triggerleft = 0, triggerright = 0}
+		self.gamepads[i] = {gamepad = nil, mode = self.defaultJoystickMode, hasGamepad = false, debounce = debouncing} -- 0 is jordan one per, 1 is martin's gameboy method, 2 is two per
 	end
 	self.gamepadMappings = {} -- a map of gamepadID() to 1-8 of self.gamepads
 	self.mainmenuSubscribed = false
 	self.settingsMenuSubscribed = false
+	self.controlsMenuSubscribed = false
 
 	self.keySets = {}
 	for i = 1, 24 do -- make 8 for keyboards, then 8 for joysticks, then 8 for the second half of those joysticks...
@@ -148,10 +150,8 @@ function Keyboard:keyNumToType(keyNum)
 	return convertTable[keyNum]
 end
 
-function Keyboard:keypressed(key, unicode)
-	-- supports three types of keyboard input. Ow.
-	local inputNum = 0
-	local keyType = 0
+function Keyboard:keyTypeInputNumKeyboard(key, unicode)
+	-- returns: keyType, inputNum, press
 	local keyValue = 0
 	local press = true
 	if self.keyboardType == 0 then
@@ -167,38 +167,28 @@ function Keyboard:keypressed(key, unicode)
 			keyValue = self.eightWasdPress[key]
 		end
 	end
+	if keyValue == nil then
+		return nil, nil, nil
+	end
+	local keyType = ((keyValue-1) % 6) + 1
+	local inputNum = math.floor((keyValue-1)/6)+1
+	return keyType, inputNum, press
+end
 
-	if keyValue ~= nil then
-		inputNum = math.floor((keyValue-1)/6)+1
-		keyType = ((keyValue-1) % 6) + 1
-		-- if keyType == 0 then keyType = 6 end
-		if inputNum ~= nil and inputNum ~= 0 then
-			if self:keyNumToType(keyType) == nil then
-				return
-			elseif press then
-				self.keySets[inputNum][self:keyNumToType(keyType)] = 1
-				-- if self.playerMappings[inputNum] then
-				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 1
-				-- end
-				if self.mainmenuSubscribed then
-					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 1)
-				end
-				if self.settingsMenuSubscribed then
-					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 1)
-				end
-			else
-				-- just to deal with the legacy 4 keyboard system
-				self.keySets[inputNum][self:keyNumToType(keyType)] = 0
-				-- if self.playerMappings[inputNum] then
-				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 0
-				-- end
-				if self.mainmenuSubscribed then
-					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
-				end
-				if self.settingsMenuSubscribed then
-					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
-				end
-			end
+function Keyboard:keypressed(key, unicode)
+	-- supports three types of keyboard input. Ow.
+	local keyType, inputNum, press = self:keyTypeInputNumKeyboard(key, unicode)
+	-- if keyType == 0 then keyType = 6 end
+	if inputNum ~= nil and inputNum ~= 0 then
+		if self:keyNumToType(keyType) == nil then
+			return
+		elseif press then
+			self.keySets[inputNum][self:keyNumToType(keyType)] = 1
+			self:inputPressDistribute(inputNum, self:keyNumToType(keyType), 1)
+		else
+			-- just to deal with the legacy 4 keyboard system
+			self.keySets[inputNum][self:keyNumToType(keyType)] = 0
+			self:inputPressDistribute(inputNum, self:keyNumToType(keyType), 0)
 		end
 	end
 end
@@ -221,15 +211,7 @@ function Keyboard:keyreleased(key, unicode)
 		if inputNum ~= nil and inputNum ~= 0 then
 			if self:keyNumToType(keyType) ~= nil then
 				self.keySets[inputNum][self:keyNumToType(keyType)] = 0
-				-- if self.playerMappings[inputNum] then
-				-- 	self.playerKeys[self.playerMappings[inputNum]][self:keyNumToType(keyType)] = 1
-				-- end
-				if self.mainmenuSubscribed then
-					self.game.mainMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
-				end
-				if self.settingsMenuSubscribed then
-					self.game.settingsMenu:inputMade(inputNum, self:keyNumToType(keyType), 0)
-				end
+				self:inputPressDistribute(inputNum, self:keyNumToType(keyType), 0)
 			end
 		end
 	end
@@ -273,10 +255,8 @@ function Keyboard:getGamepadNumber(gamepad)
 	return 0, false
 end
 
-function Keyboard:gamepadButtonToPress(gamepadID, button, pressedValue) -- pressedValue
-	local gp = self.gamepads[gamepadID]
-	local t = {}
-	local inputNum = gamepadID + 8
+function Keyboard:gamepadButtonToInputType(inputNum, button)
+	local gp = self.gamepads[inputNum - 8]
 	if gp.mode == 0 then -- it's one person per Jordan's method
 		t = {a = "up", b = "down", x = "punch", y = "kick", leftshoulder = "kick", rightshoulder = "punch", leftstick = "switchdirection",
 					back = "back", start = "start", dpleft = "left", dpright = "right", dpup = "up", dpdown = "down"}
@@ -294,18 +274,19 @@ function Keyboard:gamepadButtonToPress(gamepadID, button, pressedValue) -- press
 		t = {rightshoulder = "punch", a = "down", b = "lookright", x = "lookleft", y = "up", leftstick = "switchdirection", back = "back", start = "start",
 			leftshoulder = "punch", dpleft = "lookleft", dpright = "lookright", dpup = "up", dpdown = "down", rightstick = "switchdirection"}
 	end
-	if t[button] == nil then
-		return
-	end
-	self.keySets[inputNum][t[button]] = pressedValue
-	if self.mainmenuSubscribed then
-		self.game.mainMenu:inputMade(inputNum, t[button], pressedValue)
-	end
-	if self.settingsMenuSubscribed then
-		self.game.settingsMenu:inputMade(inputNum, t[button], pressedValue)
-	end
-	if pressedValue == 1 and (t[button] == "back" or t[button] == "start") then
-		self.game:keypressed(t[button], 0)
+	return t[button], inputNum
+end
+
+function Keyboard:gamepadButtonToPress(gamepadID, button, pressedValue) -- pressedValue
+	local gp = self.gamepads[gamepadID]
+	local t = {}
+	local inputType, inputNum = self:gamepadButtonToInputType(gamepadID+8, button)
+	if inputType == nil then return end
+	
+	self.keySets[inputNum][inputType] = pressedValue
+	self:inputPressDistribute(inputNum, inputType, pressedValue)
+	if pressedValue == 1 and (inputType == "back" or inputType == "start") then
+		self.game:keypressed(inputType, 0)
 	end
 end
 
@@ -338,14 +319,8 @@ end
 
 function Keyboard:joystickremoved(gamepad)
 	local i, connected = self:getGamepadNumber(gamepad)
-	if self.mainmenuSubscribed then
-		self.game.mainMenu:inputMade(i+8, "disconected", 1) -- for the main joystick
-		self.game.mainMenu:inputMade(i+16, "disconected", 1) -- in case it was a two person joystick
-	end
-	if self.settingsMenuSubscribed then
-		self.game.settingsMenu:inputMade(i+8, "disconected", 1)
-		self.game.settingsMenu:inputMade(i+16, "disconected", 1)
-	end
+	self:inputPressDistribute(i+8, "disconected", 1) -- for the main joystick
+	self:inputPressDistribute(i+16, "disconected", 1) -- in case it's a two person joystick
 	if i ~= 0 then
 		self.gamepads[i].hasGamepad = false
 		-- print("REMOVED JOYSTICK FROM POS "..i)
@@ -382,6 +357,19 @@ function Keyboard:gamepadreleased(gamepad, button)
 	self:gamepadButtonToPress(gamepadID, button, 0)
 end
 
+function Keyboard:inputPressDistribute(inputNum, keyType, pressValue)
+	if self.mainmenuSubscribed then
+		self.game.mainMenu:inputMade(inputNum, keyType, pressValue)
+	elseif self.settingsMenuSubscribed then
+		self.game.settingsMenu:inputMade(inputNum, keyType, pressValue)
+	end
+	if self.controlsMenuSubscribed then
+		self.game.controlsMenu:inputMade(inputNum, keyType, pressValue)
+	end
+end
+
+-- function Keyboard:
+
 function Keyboard:gamepadaxis(gamepad, axis, value)
 	local gamepadNum, connected = self:getGamepadNumber(gamepad)
 	if gamepadNum == 0 then return end
@@ -394,39 +382,6 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 		end
 		onValue = self.gamepadAxisToMeaning[3][axis][1]
 		offValue = self.gamepadAxisToMeaning[3][axis][2]
-		-- if math.abs(value) > self.joystickDeadZone then
-		-- 	if axis == "rightx" or axis == "leftx" then
-		-- 		if value > 0 then
-		-- 			self.keySets[inputNum]["right"] = value
-		-- 			self.keySets[inputNum]["left"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["right"] = 0
-		-- 			self.keySets[inputNum]["left"] = -value
-		-- 		end
-		-- 	elseif axis == "righty" or axis == "lefty" then -- then it equals righty
-		-- 		if value < 0 then
-		-- 			self.keySets[inputNum]["up"] = -value
-		-- 			self.keySets[inputNum]["down"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["up"] = 0
-		-- 			self.keySets[inputNum]["down"] = value
-		-- 		end
-		-- 	elseif axis == "triggerright" or axis == "triggerleft" then -- then it equals righty
-		-- 		if value > 0 then
-		-- 			self.keySets[inputNum]["kick"] = value
-		-- 		end
-		-- 	end
-		-- else
-		-- 	if axis == "rightx" then
-		-- 		self.keySets[inputNum]["right"] = 0
-		-- 		self.keySets[inputNum]["left"] = 0
-		-- 	elseif axis == "righty" then -- then it equals righty
-		-- 		self.keySets[inputNum]["up"] = 0
-		-- 		self.keySets[inputNum]["down"] = 0
-		-- 	elseif axis == "triggerright" then
-		-- 		self.keySets[inputNum]["kick"] = 0
-		-- 	end
-		-- end
 	elseif self.gamepads[gamepadNum].mode == 1 then
 		onValue = self.gamepadAxisToMeaning[2][axis][1]
 		offValue = self.gamepadAxisToMeaning[2][axis][2]
@@ -437,6 +392,39 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 	if math.abs(value) < self.joystickDeadZone then
 		value = 0
 	end
+	
+	if value < 0 then
+		if self.gamepads[gamepadNum].debounce[axis] >= 0 then
+			self.gamepads[gamepadNum].debounce[axis] = -1 -- larger than 0
+			if offValue ~= "" then
+				self:inputPressDistribute(inputNum, "menu"..offValue, 1)
+			end
+			-- if axis == "lefty" or axis == "righty" then
+			-- 	self:inputPressDistribute(inputNum, "menuup", 1)
+			-- else -- it's leftx or rightx, since triggers can't be negative.
+			-- 	self:inputPressDistribute(inputNum, "menuleft", 1)
+			-- end
+		end
+	elseif value > 0 then
+		if self.gamepads[gamepadNum].debounce[axis] <= 0 then
+			self.gamepads[gamepadNum].debounce[axis] = 1 -- larger than 0
+			if onValue ~= "" then
+				self:inputPressDistribute(inputNum, "menu"..onValue, 1)
+			end
+			-- if axis == "lefty" or axis == "righty" then
+			-- 	self:inputPressDistribute(inputNum, "menuup", 1)
+			-- elseif axis == "leftx" or axis == "rightx" then
+			-- 	self:inputPressDistribute(inputNum, "menuleft", 1)
+			-- elseif axis == "triggerleft" then -- then it's triggers. Welp.
+			-- 	self:inputPressDistribute(inputNum, "punch", 1)
+			-- elseif axis == "triggerright" then
+			-- 	self:inputPressDistribute(inputNum, "kick", 1)
+			-- end
+		end
+	else
+		self.gamepads[gamepadNum].debounce[axis] = 0
+	end
+
 	if value > 0 then
 		if onValue ~= "" then
 			self.keySets[inputNum][onValue] = math.abs(value)
@@ -452,64 +440,6 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 			self.keySets[inputNum][offValue] = math.abs(value)
 		end
 	end
-		-- if math.abs(value) > self.joystickDeadZone then
-		-- 	if axis == "rightx" then
-		-- 		if value > 0 then
-		-- 			self.keySets[inputNum]["lookright"] = value
-		-- 			self.keySets[inputNum]["lookleft"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["lookright"] = 0
-		-- 			self.keySets[inputNum]["lookleft"] = -value
-		-- 		end
-		-- 	elseif axis == "righty" then
-		-- 		if value < 0 then
-		-- 			self.keySets[inputNum]["up"] = -value
-		-- 			self.keySets[inputNum]["down"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["up"] = 0
-		-- 			self.keySets[inputNum]["down"] = value
-		-- 		end
-		-- 	elseif axis == "leftx" then
-		-- 		if value > 0 then
-		-- 			self.keySets[inputNum]["right"] = value
-		-- 			self.keySets[inputNum]["left"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["right"] = 0
-		-- 			self.keySets[inputNum]["left"] = -value
-		-- 		end
-		-- 	elseif axis == "lefty" then
-		-- 		if value < 0 then
-		-- 			self.keySets[inputNum]["up"] = -value
-		-- 			self.keySets[inputNum]["down"] = 0
-		-- 		else
-		-- 			self.keySets[inputNum]["up"] = 0
-		-- 			self.keySets[inputNum]["down"] = value
-		-- 		end
-		-- 	elseif axis == "triggerleft" then
-		-- 		self.keySets[inputNum]["kick"] = value
-		-- 	elseif axis == "triggerright" then
-		-- 		self.keySets[inputNum]["punch"] = value
-		-- 	end
-		-- else
-		-- 	if axis == "rightx" then
-		-- 		self.keySets[inputNum]["lookright"] = 0
-		-- 		self.keySets[inputNum]["lookleft"] = 0
-		-- 	elseif axis == "righty" then
-		-- 		self.keySets[inputNum]["up"] = 0
-		-- 		self.keySets[inputNum]["down"] = 0
-		-- 	elseif axis == "leftx" then
-		-- 		self.keySets[inputNum]["right"] = 0
-		-- 		self.keySets[inputNum]["left"] = 0
-		-- 	elseif axis == "lefty" then
-		-- 		self.keySets[inputNum]["up"] = 0
-		-- 		self.keySets[inputNum]["down"] = 0
-		-- 	elseif axis == "triggerleft" then
-		-- 		self.keySets[inputNum]["kick"] = 0
-		-- 	elseif axis == "triggerright" then
-		-- 		self.keySets[inputNum]["punch"] = 0
-		-- 	end
-		-- end
-	-- end
 end
 
 

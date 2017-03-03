@@ -1,6 +1,7 @@
 require "class"
 
 MainMenu = class()
+require "playermenu"
 
 -- _init, load, draw, update(dt), keypressed, keyreleased, mousepressed, mousereleased, resize, (drawUnder, updateUnder)
 
@@ -9,9 +10,9 @@ function MainMenu:_init(game)
 	self.drawUnder = false
 	self.updateUnder = false
 
-	self.mainFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 128)
-	self.smallerFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 64)
 	self.game = game
+	self.mainFont = game.mainFont
+	self.smallerFont = game.smallerFont
 	self.keyboard = self.game.keyboard
 	self:createDefaultPlayers()
 	self.mapInputsToPlayers = {}
@@ -20,7 +21,9 @@ function MainMenu:_init(game)
 		self.mapPlayersToInputs[i] = {connected = false, input = 0}
 	end
 	self.playerColors = {0, 1, 2, 3, 4, 5, 6, 7} -- this is how we set what color players are
-	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 12)
+	self.startTimerMax = 1 -- start one higher than the count should start at because of floor.
+	self.startTimer = self.startTimerMax
+	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 24)
 	self.playerMenus = {}
 	-- for k, v in pairs(self.players) do
 	-- create a PlayerMenu
@@ -84,8 +87,10 @@ end
 -- end
 
 function MainMenu:load()
+	-- print("MAIN MENU LOADED")
 	-- run when the level is given control
-	love.mouse.setVisible(true)
+	self.startTimer = self.startTimerMax
+	love.mouse.setVisible(false)
 	love.graphics.setFont(self.mainFont)
 	if self.game.drawFPS then
 		self.fpsWasOn = true
@@ -93,27 +98,71 @@ function MainMenu:load()
 	end
 	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
 
-	-- this is for resetting the settings at the end of each match, this is an absolutely horrible place to put it
-	-- but the code's already a mess...
-	-- it needs to exist because of the way final showdowns (fewer than X players) are coded (by me, heh).
-	-- self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
-	-- self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
 	self.keyboard.mainmenuSubscribed = true -- starts the keyboard getting every input press
 end
 
+function MainMenu:endPlay()
+	-- this is for resetting the settings at the end of each match, this is an absolutely horrible place to put it
+	-- but the code's already a mess...
+	-- it needs to exist because of the way final showdowns (fewer than X players) are coded (by me, heh).
+	self.game.gameSettings = self.gameSettingsBackup or self.game.gameSettings
+	self.game.gameSettingRates = self.gameSettingRatesBackup or self.game.gameSettingRates
+	for k, v in pairs(self.playerMenus) do
+		v:onLoadScreen()
+	end
+end
+
+function MainMenu:checkPlayersReady()
+	if #self.playerMenus < 2 then
+		return false
+	end
+	local atLeastThisColor = -1
+	for i = 1, #self.playerMenus do
+		if self.playerMenus[i].playerValues.ready ~= 2 then
+			return false -- someone's not ready to play
+		end
+		if atLeastThisColor == -1 then
+			atLeastThisColor = self.playerColors[self.playingPlayers[i].playerNumber]
+		elseif atLeastThisColor ~= -1 then
+			if self.playerColors[self.playingPlayers[i].playerNumber] ~= atLeastThisColor then
+				-- another color exists! let the play start!
+				atLeastThisColor = -2
+			end
+		end
+	end
+	if atLeastThisColor ~= -2 then
+		return false
+	end
+	return true
+end
+
+function MainMenu:startPlay()
+	if not self:checkPlayersReady() then
+		return false
+	end
+	-- the above checked that everyone was ready and there were different colors
+	-- thus, prepare everything and then launch the game!
+	self.keyboard.mainmenuSubscribed = false
+	for i = 1, #self.playingPlayers do
+		self.playingPlayers[i].color = self.playerColors[self.playingPlayers[i].playerNumber]
+		self.playingPlayers[i]:loadImages()
+	end
+	self.game.level:setPlayingPlayers(self.playingPlayers)
+	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
+	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
+
+	-- these two lines should be at the bottom of startPlay to ensure everything gets loaded first
+	self.game:addToScreenStack(self.game.level)
+	self.game:addToScreenStack(self.game.countdownScreen)
+end
+
 function MainMenu:leave()
+	self.keyboard.mainmenuSubscribed = false
 	-- run when the level no longer has control
 	if self.fpsWasOn then
 		self.game.drawFPS = true
 	end
-	for i = 1, #self.playingPlayers do
-		self.playingPlayers[i].color = self.playerColors[i]
-		self.playingPlayers[i]:loadImages()
-	end
-	self.game.level.players = self.playingPlayers -- just be a dick and overwrite it
-	self.gameSettingsBackup = self:copyTable(self.game.gameSettings)
-	self.gameSettingRatesBackup = self:copyTable(self.game.gameSettingRates)
-	self.keyboard.mainmenuSubscribed = false -- stop the keyboard from sending this every keypress
+	-- a lot of content from here was moved to MainMenu:startPlay()
 end
 
 function MainMenu:copyTable(t)
@@ -132,16 +181,28 @@ function MainMenu:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
 	love.graphics.setFont(self.smallerFont)
-	love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
-	love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
-	love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")
+	-- love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+	if self:checkPlayersReady() then
+		love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+	else
+		love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		
+	end
+	-- love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
+	-- love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")
 
 	-- print("COLORS"..#self.playingPlayers)
+	love.graphics.setFont(self.playerMenuFont)
 	if #self.playingPlayers > 0 then
-		for k, v in pairs(self.playingPlayers) do
+		local i = 1
+		for i = 1, #self.playingPlayers do
+			-- local x = self.SCREENWIDTH*(self.playingPlayers[i].playerNumber)/(9)
+			local x = (self.SCREENWIDTH-300)*(self.playingPlayers[i].playerNumber-1)/7 + 150
 			-- print("color: "..self.playingPlayers[i].color)
-			love.graphics.setColor(self.players[1].colorTable[self.playerColors[v.playerNumber]+1])
-			love.graphics.draw(v.pImage, self.SCREENWIDTH*(v.color+1)/(9), self.SCREENHEIGHT - 100)
+			love.graphics.setColor(self.players[1].colorTable[self.playerColors[self.playingPlayers[i].playerNumber]+1])
+			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 500, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/2)
+			self.playerMenus[i]:draw(x, self.SCREENHEIGHT - 350)
+			-- i = i + 1
 		end
 	end
 
@@ -203,6 +264,14 @@ function MainMenu:update(dt)
 	elseif self.zoom < 1 then
 		self.zoom = 1
 	end
+	if self:checkPlayersReady() then
+		self.startTimer = self.startTimer - dt
+		if self.startTimer < 1 then -- it's one less because of math.floor
+			self:startPlay()
+		end
+	else
+		self.startTimer = self.startTimerMax
+	end
 end
 
 function MainMenu:resize(w, h)
@@ -210,16 +279,27 @@ function MainMenu:resize(w, h)
 end
 
 function MainMenu:addInputToPlayerMap(inputNum)
+	-- print("CONNECTING INPUT NUM "..tostring(inputNum))
 	if self.mapInputsToPlayers[inputNum] ~= nil then
+		for i = 1, math.min(#self.mapPlayersToInputs, self.mapInputsToPlayers[inputNum]) do
+			if not self.mapPlayersToInputs[i].connected then
+				self.mapPlayersToInputs[i].connected = true
+				self.mapPlayersToInputs[i].input = inputNum
+				self.mapInputsToPlayers[inputNum] = i
+				self:addPlayerToGame(inputNum, i)
+				-- print("Moved a previously connected person to a lower playernum")
+				return true
+			end
+		end
 		if self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].input == inputNum then
 			-- then it hasn't been snapped up yet, so take it!
 			self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].connected = true
 			self:addPlayerToGame(inputNum, self.mapInputsToPlayers[inputNum])
-			print("connected an input to its previous player")
+			-- print("connected an input to its previous player")
 			return true
 		end
 		self.mapInputsToPlayers[inputNum] = nil
-		print("unable to connect an input to its previous player")
+		-- print("unable to connect an input to its previous player")
 	end
 	for k, v in pairs(self.mapPlayersToInputs) do
 		if not v.connected then
@@ -228,11 +308,11 @@ function MainMenu:addInputToPlayerMap(inputNum)
 			v.input = inputNum
 			self.mapInputsToPlayers[inputNum] = k
 			self:addPlayerToGame(inputNum, k)
-			print("connected an input to a new player")
+			-- print("connected an input to a new player")
 			return true
 		end
 	end
-	print("Unable to connect an input to a player")
+	-- print("Unable to connect an input to a player")
 	return false
 end
 
@@ -242,7 +322,7 @@ function MainMenu:inputMade(inputNum, input, pressValue)
 			self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].connected = false
 			self:removePlayerFromGame(self.mapInputsToPlayers[inputNum])
 			-- self.mapInputsToPlayers[inputNum] == nil -- not actually certain if this line should exist...
-			print("disconected a player because joystick is gone. inputNum: "..inputNum)
+			-- print("disconected a player because joystick is gone. inputNum: "..inputNum)
 			return
 		end
 		-- print("input source "..inputNum)
@@ -250,18 +330,24 @@ function MainMenu:inputMade(inputNum, input, pressValue)
 			-- it's a new player! yay!
 			-- print("found new input source")
 			self:addInputToPlayerMap(inputNum)
+		elseif self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].input ~= inputNum then
+			self:addInputToPlayerMap(inputNum) -- then it should connect to a brand new player
+		elseif self.mapPlayersToInputs[self.mapInputsToPlayers[inputNum]].connected == false then
+			self:addInputToPlayerMap(inputNum) -- then it should connect to that player
 		else
 			-- print("previously connected input")
+			for k, v in pairs(self.playerMenus) do
+				v:inputMade(inputNum, input, pressValue)
+			end
 		end
-		-- print("did stuff "..input)
 	end
 end
 
 function MainMenu:addPlayerToGame(inputNum, playerNum)
-	print("PLAYER NUMBER IS "..tostring(playerNum))
-	for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
+	-- print("PLAYER NUMBER IS "..tostring(playerNum))
+	for k = 1, #self.playingPlayers do -- should prevent joining twice
 		if self.playingPlayers[k].playerNumber == playerNum then
-			-- print("EXITED EARLY")
+			-- print("Player already joined. I don't know how this happend. If it did. It hasn't yet.")
 			return
 		end
 	end
@@ -270,12 +356,14 @@ function MainMenu:addPlayerToGame(inputNum, playerNum)
 	if #self.playingPlayers == 0 then
 		-- print("ADDED AT 1")
 		table.insert(self.playingPlayers, self.players[playerNum])
+		table.insert(self.playerMenus, PlayerMenu(self.game, self, self.level, playerNum, inputNum, self.playerMenuFont))
 	else
 		while k <= #self.playingPlayers and self.playingPlayers[k].color < self.players[playerNum].color do
 			k = k + 1
 		end
 		-- print("ADDED ELSEWHERE")
 		table.insert(self.playingPlayers, k, self.players[playerNum])
+		table.insert(self.playerMenus, k, PlayerMenu(self.game, self, self.level, playerNum, inputNum, self.playerMenuFont))
 	end
 end
 
@@ -283,23 +371,17 @@ function MainMenu:removePlayerFromGame(playerNum)
 	for k = 1, #self.playingPlayers, 1 do -- should prevent joining twice
 		if self.playingPlayers[k].playerNumber == playerNum then
 			table.remove(self.playingPlayers, k)
-			print("REMOVED PLAYER "..playerNum.." FROM PLAYING PLAYERS")
+			table.remove(self.playerMenus, k)
+			self.mapPlayersToInputs[playerNum].connected = false
+			-- print("REMOVED PLAYER "..playerNum.." FROM PLAYING PLAYERS")
 			return
 		end
 	end
 end
 
 function MainMenu:keypressed(key, unicode)
-	if key == "r" then
-		self.game:addToScreenStack(self.game.settingsMenu)
-	end
 	if key == "space" or key == "start" then
-		if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
-			self.game:addToScreenStack(self.game.level)
-			self.game:addToScreenStack(self.game.countdownScreen)
-		else
-			print("NOT ENOUGH PLAYERS")
-		end
+		-- self:startPlay()
 	end
 	-- for i = 1, #self.playerKeys, 1 do
 	-- 	for j = 1, #self.playerKeys[i], 1 do
@@ -329,23 +411,7 @@ function MainMenu:keyreleased(key, unicode)
 end
 
 function MainMenu:mousepressed(x, y, button)
-	-- if not self.keyboard.wasd then
-	-- 	-- add the level to the game as a quick default
-	-- 	self.game:addToScreenStack(self.game.level)
-	-- else
-		
-	-- end
-	if #self.playingPlayers >= 2 then -- at least two players, technically two from the same team could do it though
-		self.game:addToScreenStack(self.game.level)
-		-- if self.game.countdownScreen then
-		-- 	print("is not nil!")
-		-- else
-		-- 	print("is nil")
-		-- end
-		self.game:addToScreenStack(self.game.countdownScreen)
-	else
-		print("NOT ENOUGH PLAYERS!")
-	end
+	-- self:startPlay()
 end
 
 function MainMenu:mousereleased(x, y, button)
