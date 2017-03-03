@@ -26,7 +26,7 @@ def colorReplace(img, oldColor, newColor):
 	return img
 
 def isClose(val1, val2):
-	tolerence = 20
+	tolerence = 3
 	if abs(val1[0] - val2[0]) < tolerence and\
 	 abs(val1[1] - val2[1]) < tolerence and\
 	 abs(val1[2] - val2[2]) < tolerence and\
@@ -58,8 +58,8 @@ def loadFiles(file):
 	return files
 
 def main():
-	imgSet = "test"
-	oldColors, newColors = loadColors("instructions.txt")
+	imgSet = "5"
+	oldColors, newColors = loadColors("instructions5.txt")
 	files = loadFiles("files.txt")
 	print(files)
 	for picture in files:
