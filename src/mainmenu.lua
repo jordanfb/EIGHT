@@ -79,6 +79,7 @@ end
 function MainMenu:load()
 	-- run when the level is given control
 	love.mouse.setVisible(true)
+	self.game.bgm:stop()
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 128))
 	if self.game.drawFPS then
 		self.fpsWasOn = true

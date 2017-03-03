@@ -100,6 +100,8 @@ function Attacks:update(dt)
 									self.level.players[k].superJumps = self.game.gameSettingRates.numberJumps
 								elseif self.level.items[i].itemType == "speed" then
 									self.level.players[k].speedUp = 500
+								elseif self.level.items[i].itemType == "platform" then
+									self.level.players[k].hasPlatforms = 2
 								end
 								self.game:startScreenshake(.15, 1)
 								table.remove(self.level.items, i)

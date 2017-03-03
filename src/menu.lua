@@ -1,8 +1,5 @@
-
-
 require "class"
 require "copy"
-
 
 Menu = class()
 
@@ -14,7 +11,10 @@ function Menu:_init(game, buttons, x, y, width, height)
 	for i = 1, #buttons do
 		local v = buttons[i]
 		print(v[1])
-		self.buttons[i] = {displayName = v[1], message = v[2], value = 0, min = 0, max = 1, isBoolean = true, x = 0, y = 0}
+		self.buttons[i] = {displayName = v[1], message = v[2], value = 0, min = 0, max = 1, isBoolean = true, x = 0, y = 0, action = false}
+		if v[3] == "action" then
+			self.buttons[i].action = true
+		end
 	end
 	self.x = x
 	self.y = y
@@ -77,17 +77,23 @@ function Menu:draw()
 	love.graphics.setColor(0, 0, 0)
 	for k, v in pairs(self.buttons) do
 		-- love.graphics.printf(v.displayName, v.x-500, v.y, 1000, "center")
-		if v.message == "reset" or v.message == "back" then
+		if v.action then
 			-- draw magic stuff
 			self:drawSwitches(v.x, v.y+50, tostring(""))
 		else
-			if self.game.gameSettings[v.message] then
-				love.graphics.setColor(100, 255, 100)
-			else
+			if not self.game.gameSettings[v.message] or tostring(self.game.gameSettings[v.message]) == "off" then
 				love.graphics.setColor(255, 100, 100)
+			else
+				love.graphics.setColor(100, 255, 100)
 			end
 			-- print("DKLSJDFLKSJ")
-			self:drawSwitches(v.x, v.y+50, tostring(self.game.gameSettings[v.message]))
+			if tostring(self.game.gameSettings[v.message]) == "false" then
+				self:drawSwitches(v.x, v.y+50, "off")
+			elseif tostring(self.game.gameSettings[v.message]) == "true" then
+				self:drawSwitches(v.x, v.y+50, "on")
+			else
+				self:drawSwitches(v.x, v.y+50, tostring(self.game.gameSettings[v.message]))
+			end
 		end
 	end
 end
@@ -97,9 +103,25 @@ function Menu:selectSelected()
 		self.game:popScreenStack()
 	elseif self.buttons[self.selection+1].message == "reset" then
 		self.game.gameSettings = clone(self.game.defaultSettings)
+	elseif self.buttons[self.selection+1].message == "random" then
+		for i, v in ipairs(self.buttons) do
+			if not v.action then
+				for i = 1, math.random(10) do
+					self.game:changeSetting(v.message)
+				end
+			end
+		end
+	elseif self.buttons[self.selection+1].message == "alloff" then
+		for i, v in ipairs(self.buttons) do
+			if tostring(self.game.gameSettings[v.message]) == "true" then
+				self.game.gameSettings[v.message] = false
+			elseif tostring(self.game.gameSettings[v.message]) ~= "false" then
+				self.game.gameSettings[v.message] = "off"
+			end
+		end
 	else
 		-- print("button changed "..tostring(self.buttons[self.selection+1].message))
-		self.game.gameSettings[self.buttons[self.selection+1].message] = not self.game.gameSettings[self.buttons[self.selection+1].message]
+		self.game:changeSetting(self.buttons[self.selection+1].message)
 	end
 end
 

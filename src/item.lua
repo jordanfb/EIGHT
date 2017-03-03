@@ -24,6 +24,8 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.jumpItemImage
 	elseif self.itemType == "speed" then
 		self.image = self.game.speedItemImage
+	elseif self.itemType == "platform" then
+		self.image = self.game.platformItemImage
 	end
 	
 end

@@ -26,13 +26,11 @@ function Game:_init()
 
 	
 	self.defaultSettings = {
-			infiniteKnives = false, --I Miss the Old Kanye
-			infiniteJumps = false, --I Miss the Old Kanye
-			infiniteSpeed = false, --I Miss the Old Kanye
+			knives = "on",
+			superJumps = "on",
+			speedUps = "on",
+			platforms = "on",
 			healthSpawn = true, --Straight from the Go Kayne
-			knifeSpawn = true, --Set on his goals Kayne
-			jumpSpawn = true, --Set on his goals Kayne
-			speedSpawn = true, --Set on his goals Kayne
 			punching = true, -- I hate the new Kayne
 			kicking = true, --What if Kayne wrote a song about Kayne
 			instantKill = false, --Man that'd be so Kayne
@@ -50,6 +48,12 @@ function Game:_init()
 			screenShake = true,
 		}
 	
+	self.settingOptions = {knives = {"on", "off", "always"},
+						   superJumps = {"on", "off", "always"},
+						   speedUps = {"on", "off", "always"},
+						   platforms = {"on", "off", "always"},
+						   default = {"on", "off"}} 
+	
 	self.gameSettings = clone(self.defaultSettings)
 	
 	self.gameSettingRates = {
@@ -57,6 +61,7 @@ function Game:_init()
 			health = 1,
 			jump = 3,
 			speed = 3,
+			platforms = 1,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional
@@ -74,7 +79,7 @@ function Game:_init()
 			healthGainOnKillAmount = 20,
 			healthPickupAmount = 30
 		} -- jumping?
-
+		
 	self.countdownScreen = CountdownScreen(self)
 	self.level = Level(self.keyboard, nil, self) -- we should have it load by filename or something.
 	self.mainMenu = MainMenu(self)
@@ -82,22 +87,36 @@ function Game:_init()
 	
 	self.bg = love.graphics.newImage('images/bg.png')
 	
-	bgm = love.audio.newSource("music/battlemusic.mp3")
-	bgm:setVolume(0.9) -- 90% of ordinary volume
-	bgm:setLooping( true )
-	if self.gameSettings.playMusic then
-		bgm:play()
-	end
+	self.bgm = love.audio.newSource("music/battlemusic.mp3")
+	self.bgm:setVolume(0.9) -- 90% of ordinary volume
+	self.bgm:setLooping( true )
 
 	self.healthItemImage = love.graphics.newImage('images/health-item.png')
 	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
 	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
 	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
+	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
 
 	self:addToScreenStack(self.mainMenu)
 
 	self.screenshakeDuration = 0
 	self.screenshakeMagnitude = 0
+end
+
+function Game:changeSetting(setting)
+	if not self.settingOptions[setting] then
+		self.gameSettings[setting] = not self.gameSettings[setting]
+	else
+		for i, v in ipairs(self.settingOptions[setting]) do
+			if i == #self.settingOptions[setting] then
+				self.gameSettings[setting] = self.settingOptions[setting][1]
+				break
+			elseif v == self.gameSettings[setting] then
+				self.gameSettings[setting] = self.settingOptions[setting][i+1]
+				break
+			end
+		end
+	end
 end
 
 function Game:startScreenshake(time, intensity)
@@ -108,11 +127,6 @@ function Game:startScreenshake(time, intensity)
 end
 
 function Game:load(args)
-	if self.gameSettings.playMusic then
-		bgm:play()
-	else
-		bgm:stop()
-	end
 end
 
 function Game:draw()
@@ -167,9 +181,6 @@ function Game:addToScreenStack(newScreen)
 	end
 	self.screenStack[#self.screenStack+1] = newScreen
 	newScreen:load()
-	if self.gameSettings.playMusic then
-		bgm:play()
-	end
 end
 
 function Game:resize(w, h)

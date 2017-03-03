@@ -18,6 +18,7 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.superJumps = 0
 	self.speedUp = 0
 	self.jumpForce = -1000
+	self.hasPlatforms = 0
 	
 	self.attackSpeed = 2
 	self.coolDownSpeed = 1
@@ -152,7 +153,7 @@ end
 
 function Player:update(dt)
 
-	if self.level.game.gameSettings.infiniteSpeed then
+	if self.level.game.gameSettings.speedUps == "always" then
 		self.speedUp = 100
 	end
 
@@ -278,7 +279,7 @@ function Player:update(dt)
 		self.isAttacking = false
 		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) then
 			if self.facing==1 then
-				if self.numKnives > 0 or self.level.game.gameSettings.infiniteKnives then
+				if self.numKnives > 0 or self.level.game.gameSettings.knives == "always" then
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
@@ -288,7 +289,7 @@ function Player:update(dt)
 					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20)
 				end
 			else
-				if self.numKnives > 0 or self.level.game.gameSettings.infiniteKnives then
+				if self.numKnives > 0 or self.level.game.gameSettings.knives == "always" then
 					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
@@ -301,9 +302,25 @@ function Player:update(dt)
 			self.coolDown = 50
 		elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) then
 			if self.facing==1 then
-				self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+				if self.hasPlatforms > 0 or self.level.game.gameSettings.platforms == "always" then
+					table.insert(self.level.platforms, {self.x + self.width + 50, self.y, 100, 30, 500})
+					self.hasPlatforms = self.hasPlatforms - 1
+					if self.level.game.gameSettings.punchWhileThrowing then
+						self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+					end
+				else
+					self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+				end
 			else
-				self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+				if self.hasPlatforms > 0 or self.level.game.gameSettings.platforms == "always" then
+						table.insert(self.level.platforms, {self.x - 150, self.y, 100, 30, 500})
+						self.hasPlatforms = self.hasPlatforms - 1
+						if self.level.game.gameSettings.punchWhileThrowing then
+							self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+						end
+					else
+						self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+					end
 			end
 			self.coolDown = 50
 		end
@@ -382,7 +399,7 @@ function Player:update(dt)
 	end
 
 	if self.onPlatform and (self.keyboard:keyState(self.inputNumber, "up") > 0) then --and self.attackTimer==0 then
-		if self.superJumps > 0 or self.level.game.gameSettings.infiniteJumps then
+		if self.superJumps > 0 or self.level.game.gameSettings.superJumps == "always" then
 			self.superJumps = self.superJumps - 1
 			self.dy = self.dy + self.jumpForce*.6
 		end

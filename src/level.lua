@@ -55,6 +55,7 @@ function Level:_init(keyboard, setPlayers, game)
 	
 	self.grassImage = love.graphics.newImage('images/grass.png')
 	self.platformImage = love.graphics.newImage('images/platform.png')
+	self.platformImageTransparent = love.graphics.newImage('images/platform-transparent.png')
 
 	self.backgroundImages = {love.graphics.newImage('images/bg.png'), love.graphics.newImage('images/bg-2.png'),
 						love.graphics.newImage('images/bg-3.png'), love.graphics.newImage('images/bg-4.png')}
@@ -86,6 +87,10 @@ end
 
 function Level:load()
 	-- run when the level is given control
+	
+	if self.game.gameSettings.playMusic then
+		self.game.bgm:play()
+	end
 	self.level = math.random(#self.allLevels)
 	self:resetPlayers()
 	self.items = {}
@@ -117,14 +122,19 @@ function Level:draw()
 	-- everything to be drawn in the draw function should be beneath this
 
 	love.graphics.draw(self.bg, 0, 0)
+	local colorMode
 	for i = 1, #self.platforms, 1 do
 		if self.platforms[i][4]==80 then
 			for x = 0, self.platforms[i][3], 80 do
 				love.graphics.draw(self.grassImage, self.platforms[i][1] + x, self.platforms[i][2])
 			end
 		else
-			for x = 0, self.platforms[i][3], 1 do
-				love.graphics.draw(self.platformImage, self.platforms[i][1] + x, self.platforms[i][2])
+			for x = 0, self.platforms[i][3]/10, 1 do
+				if self.platforms[i][5] and self.platforms[i][5] < 100 then
+					love.graphics.draw(self.platformImageTransparent, self.platforms[i][1] + x*10, self.platforms[i][2])
+				else
+					love.graphics.draw(self.platformImage, self.platforms[i][1] + x*10, self.platforms[i][2])
+				end
 			end
 		end
 	end
@@ -227,7 +237,7 @@ function Level:update(dt)
 			table.insert(self.items, Item("health", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.knifeSpawn and not self.game.gameSettings.infiniteKnives then
+	if self.game.gameSettings.knives=="on" then
 		if math.random(3000/self.game.gameSettingRates.knife)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("knife", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
@@ -236,7 +246,7 @@ function Level:update(dt)
 			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.jumpSpawn and not self.game.gameSettings.infiniteJumps then
+	if self.game.gameSettings.superJumps=="on" then
 		if math.random(3000/self.game.gameSettingRates.jump)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("jump", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
@@ -245,7 +255,7 @@ function Level:update(dt)
 			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.speedSpawn and not self.game.gameSettings.infiniteSpeed then
+	if self.game.gameSettings.speedUps=="on" then
 		if math.random(3000/self.game.gameSettingRates.speed)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("speed", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
@@ -254,11 +264,29 @@ function Level:update(dt)
 			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
+	if self.game.gameSettings.platforms=="on" then
+		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("platform", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
+		end
+		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+			table.insert(self.items, Item("platform", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+		end
+	end
 	self.attacks:update(dt)
 
 	for k, v in pairs(self.projectiles) do
 		if v.x < -50 or v.y > 1200 or v.x > 1970 then
 			table.remove(self.projectiles, k)
+		end
+	end
+	
+	for i, v in ipairs(self.platforms) do
+		if v[5] then
+			v[5] = v[5] - 1
+		end
+		if v[5] == 0 then
+			table.remove(self.platforms, i)
 		end
 	end
 end
