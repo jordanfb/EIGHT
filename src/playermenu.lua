@@ -19,6 +19,7 @@ function PlayerMenu:_init(game, mainMenu, level, playerNum, inputNum, font)
 	self.menuOptions = {{"Not Ready", "Ready"},
 						{"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam", "Orange\nTeam", "Yellow\nTeam", "Teal\nTeam", "Pink\nTeam"},
 						{"Controls"}, {"Settings"}, 
+						{"Map:\nRandom\nMap", "Map:\nBlue\nMountain", "Map:\nHigh\nTemple",  "Map:\nTom\nPond", "Map:\nPenultimate\nDestination"},
 						{"Leave"}}
 	for i = 1, #self.menuOptions do
 		self.menuPosition = i
