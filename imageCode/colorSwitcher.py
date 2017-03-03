@@ -58,12 +58,13 @@ def loadFiles(file):
 	return files
 
 def main():
-	imgSet = "5"
-	oldColors, newColors = loadColors("instructions5.txt")
-	files = loadFiles("files.txt")
-	print(files)
-	for picture in files:
-		processImage(picture, oldColors, newColors, imgSet)
+	for i in {5, 7, 8}:
+		imgSet = str(i)
+		oldColors, newColors = loadColors("instructions" + str(i) + ".txt")
+		files = loadFiles("files.txt")
+		print(files)
+		for picture in files:
+			processImage(picture, oldColors, newColors, imgSet)
 
 
 if __name__ == '__main__':
