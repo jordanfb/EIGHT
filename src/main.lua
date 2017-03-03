@@ -10,7 +10,6 @@ local game = Game()
 
 
 function love.load(args)
-
 	math.randomseed(os.time())
 	love.filesystem.setIdentity('EIGHT_Screenshots')
 	

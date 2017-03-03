@@ -36,15 +36,7 @@ function Level:_init(keyboard, setPlayers, game)
 	self.platforms = self.allLevels[self.level]
 	-- {  {x, y, width, height}  }
 
-	self.players = {Player(self, self.keyboard, 100, 100, 1, 0),
-					Player(self, self.keyboard, 900+100, 100, 5, 4),
-					Player(self, self.keyboard, 300+25, 100, 2, 1),
-					Player(self, self.keyboard, 1100+125, 100, 6, 5),
-					Player(self, self.keyboard, 500+50, 100, 3, 2),
-					Player(self, self.keyboard, 1300+150, 100, 7, 6),
-					Player(self, self.keyboard, 700+75, 100, 4, 3),
-					Player(self, self.keyboard, 1500+175, 100, 8, 7),
-					}
+	self.players = {} -- this gets set when gameplay starts
 	self.numPlayersAlive = 8
 	
 	self.players = setPlayers or self.players -- if setPlayers == nil then set it to self.players
@@ -62,10 +54,18 @@ function Level:_init(keyboard, setPlayers, game)
 	self.bg = self.backgroundImages[self.level]
 
 	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
+	self.victoryEnjoymentTime = 3 -- the amount of time with the winners before it goes to the main menu
+	self.endGameTimer = self.victoryEnjoymentTime
+end
+
+function Level:setPlayingPlayers(players)
+	self.players = players
+	self:resetPlayers()
+	self.endGameTimer = self.victoryEnjoymentTime
 end
 
 function Level:resetPlayers()
-	for i = 1, #self.players, 1 do
+	for i = 1, #self.players do
 		self.players[i].x = self.SCREENWIDTH*i/(#self.players+1) - self.players[1].width/2
 		self.players[i].y = 100
 		self.players[i].health = 100
@@ -152,9 +152,6 @@ function Level:draw()
 --		love.graphics.draw(self.grassImage, i*80, self.SCREENHEIGHT-80)
 --	end
 	self.attacks:draw()
-	love.graphics.setColor(0, 0, 0, 100)
-	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
-	love.graphics.setColor(255, 255, 255, 255)
 	self:drawHealth()
 
 	-- this is the ending of the scaling things to the correct size, so nothing should be beneath this.
@@ -169,14 +166,16 @@ function Level:playerDied()
 end
 
 function Level:drawHealth()
-	love.graphics.setColor(255, 255, 255)
-	local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
+	love.graphics.setColor(0, 0, 0, 100)
+	love.graphics.rectangle("fill", 0, 0, self.SCREENWIDTH, 60)
+	love.graphics.setColor(255, 255, 255, 255)
+	-- local colors = {{211, 46, 12}, {44, 145, 16}, {30, 72, 227}, {182, 29, 209}}
 	local colorsText = {"Red", "Green", "Blue", "Purple"}
 	local y = 10
 	local healthText = {}
 	for i = 1, #self.players, 1 do
-		healthText[#healthText+1] = colors[(self.players[i].color)%4+1]
-		healthText[#healthText+1] = "P"..(self.players[i].color+1)..":"..math.max(0, math.floor(self.players[i].health)).."  "
+		healthText[#healthText+1] = self.players[1].colorTable[self.players[i].color+1]
+		healthText[#healthText+1] = "P"..self.players[i].playerNumber..":"..math.max(0, math.floor(self.players[i].health)).."  "
 	end
 	-- local healthText = {{211, 46, 12},"P1:"..self.players[1].health.."  ", {44, 145, 16},"P2:"..self.players[2].health.."  ",
 	-- 					{30, 72, 227}, "P3:"..self.players[3].health.."  ", {182, 29, 209},"P4:"..self.players[4].health.."  ",}
@@ -202,13 +201,20 @@ function Level:drawHealth()
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 		else
-			love.graphics.setColor(colors[self.winner%4+1])
+			love.graphics.setColor(self.players[1].colorTable[self.winner+1])
 			love.graphics.printf("TEAM "..colorsText[self.winner%4+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 		end
 	end
 end
 
 function Level:update(dt)
+	if self.gameOver then
+		self.endGameTimer = self.endGameTimer - dt
+		if self.endGameTimer <= 0 then
+			self.endGameTimer = self.victoryEnjoymentTime
+			self:endGame()
+		end
+	end
 	for i = 1, #self.players, 1 do
 		self.players[i]:update(dt)
 		if self.game.gameSettings.poison and not self.gameOver then -- do poison
@@ -348,13 +354,21 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	return {playerY, false, false}
 end
 
+function Level:endGame()
+	self.game:popScreenStack()
+	self.game.mainMenu:endPlay()
+end
+
 function Level:keypressed(key, unicode)
-	if key == "escape" or key == "back" or key == "start" then
+	if key == "escape" or key == "start" then
 		if self.gameOver then
-			self.game:popScreenStack()
+			self:endGame()
 		else
 			self.game:addToScreenStack(self.game.pauseMenu)
 		end
+	end
+	if (key == "space" or key == "back") and self.gameOver then
+		self:endGame()
 	end
 end
 

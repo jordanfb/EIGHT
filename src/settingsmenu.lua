@@ -23,6 +23,7 @@ function SettingsMenu:_init(game)
 end
 
 function SettingsMenu:load()
+	-- print("settings loaded")
 	-- run when the level is given control
 	love.graphics.setBackgroundColor(0, 0, 0)
 	self.subscribedToInputs = true
@@ -31,6 +32,7 @@ end
 
 function SettingsMenu:leave()
 	-- run when the level no longer has control
+	-- print("settings left")
 	self.subscribedToInputs = false
 	self.game.keyboard.settingsMenuSubscribed = false
 end
@@ -53,6 +55,7 @@ end
 
 function SettingsMenu:keypressed(key, unicode)
 	if key == "escape" or key == "back" then
+		print("I don't think this is ever called")
 		self.game:popScreenStack()
 	end
 end
