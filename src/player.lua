@@ -305,20 +305,20 @@ function Player:update(dt)
 					table.insert(self.level.platforms, {self.x + self.width + 50, self.y, 100, 30, 500})
 					self.hasPlatforms = self.hasPlatforms - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+						self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 					end
 				else
-					self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+					self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 				end
 			else
 				if self.hasPlatforms > 0 or self.level.game.gameSettings.platforms == "always" then
 					table.insert(self.level.platforms, {self.x - 150, self.y, 100, 30, 500})
 					self.hasPlatforms = self.hasPlatforms - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+						self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 					end
 				else
-					self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20)
+					self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 				end
 			end
 			self.coolDown = 50

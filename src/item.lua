@@ -46,7 +46,7 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.batImages
 		self.width = 90
 		self.attacks = {}
-		for i, v in ipairs(self.game.level.players) do
+		for i = 1, 8 do
 			self.attacks[i] = 0
 		end
 	end
@@ -63,9 +63,9 @@ function Item:update(dt)
 	end
 	if self.itemType == "bat" then
 		self.animation = (self.animation + .1)%4
-		for i, player in ipairs(self.game.level.players) do
+		for i, player in pairs(self.game.level.players) do
 			if player.x < self.x + self.width and player.x + player.width > self.x then	
-				if player.y < self.y + self.height and player.y + player.height > self.y and self.attacks[i] == 0 then
+				if player.y < self.y + self.height and player.y + player.height > self.y and self.attacks[player.playerNumber] <= 0 then
 					self.game:startScreenshake(.15, 5)
 					player.health = math.max(player.health - 10, 0)
 					if self.game.gameSettings.instantKill then
@@ -73,7 +73,7 @@ function Item:update(dt)
 						self.game:startScreenshake(.25, 10)
 					end
 					player.attackedTimer = 10
-					self.attacks[i] = 50
+					self.attacks[player.playerNumber] = 50
 				end
 			end
 		end
@@ -84,9 +84,9 @@ function Item:update(dt)
 				end
 			end
 		end
-		for i, v in ipairs(self.attacks) do
+		for i, v in pairs(self.attacks) do
 			if v > 0 then
-				v = v - 1
+				self.attacks[i] = v - 1
 			end
 		end
 	end

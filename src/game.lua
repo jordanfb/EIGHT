@@ -50,7 +50,8 @@ function Game:_init()
 	self.knifeItemImage = love.graphics.newImage('images/knife-item.png')
 	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
 	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
-	
+	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
+
 	self.batImages = {}
 	for i = 1, 4 do
 		table.insert(self.batImages, love.graphics.newImage('images/bat-'..i..'.png'))

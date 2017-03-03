@@ -86,8 +86,9 @@ function Attacks:update(dt)
 			if self.level.items[i] then
 				if attack[1] + attack[3] > self.level.items[i].x and attack[1] < self.level.items[i].x + self.level.items[i].width then
 					if attack[2] + attack[4] > self.level.items[i].y and attack[2] < self.level.items[i].y + self.level.items[i].height then
+						-- it's a hit by at least someone
 						for k = 1, #self.level.players, 1 do
-							if (self.level.players[k].playerNumber==attack[9]) then
+							if (self.level.players[k].playerNumber == attack[9]) then
 								if self.level.items[i].itemType == "health" then
 									if self.game.gameSettings.noHealthLimit then
 										self.level.players[k].health = self.level.players[k].health + self.game.gameSettingRates.healthPickupAmount
