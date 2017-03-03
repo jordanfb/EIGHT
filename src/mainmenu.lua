@@ -198,7 +198,7 @@ function MainMenu:draw()
 		local i = 1
 		for i = 1, #self.playingPlayers do
 			-- local x = self.SCREENWIDTH*(self.playingPlayers[i].playerNumber)/(9)
-			local x = (self.SCREENWIDTH-300)*(self.playingPlayers[i].playerNumber-1)/7 + 150
+			local x = (self.SCREENWIDTH-300)*(i)/(#self.playingPlayers+1) + 150
 			-- print("color: "..self.playingPlayers[i].color)
 			love.graphics.setColor(self.players[1].colorTable[self.playerColors[self.playingPlayers[i].playerNumber]+1])
 			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 500, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/2)
