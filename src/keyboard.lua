@@ -362,8 +362,7 @@ function Keyboard:inputPressDistribute(inputNum, keyType, pressValue)
 		self.game.mainMenu:inputMade(inputNum, keyType, pressValue)
 	elseif self.settingsMenuSubscribed then
 		self.game.settingsMenu:inputMade(inputNum, keyType, pressValue)
-	end
-	if self.controlsMenuSubscribed then
+	elseif self.controlsMenuSubscribed then
 		self.game.controlsMenu:inputMade(inputNum, keyType, pressValue)
 	end
 end
