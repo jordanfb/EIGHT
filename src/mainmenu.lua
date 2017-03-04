@@ -25,9 +25,6 @@ function MainMenu:_init(game)
 	self.startTimer = self.startTimerMax
 	self.playerMenuFont = love.graphics.newFont("fonts/joystixMonospace.ttf", 22)
 	self.playerMenus = {}
-	-- for k, v in pairs(self.players) do
-	-- create a PlayerMenu
-	-- end
 
 	math.randomseed(os.time())
 	self.bg = self.game.level.backgroundImages[math.random(#self.game.level.backgroundImages)]
@@ -89,6 +86,7 @@ end
 function MainMenu:load()
 	-- print("MAIN MENU LOADED")
 	-- run when the level is given control
+	self.game:findBestScore()
 	self.game.bgm:stop()
 	self.startTimer = self.startTimerMax
 	love.mouse.setVisible(false)
@@ -114,7 +112,7 @@ function MainMenu:endPlay()
 end
 
 function MainMenu:checkPlayersReady()
-	if #self.playerMenus < 2 then
+	if #self.playerMenus < 2 and self.game.gameSettings.gameMode == "versus" then
 		return false
 	end
 	local atLeastThisColor = -1
@@ -155,6 +153,9 @@ function MainMenu:startPlay()
 	-- these two lines should be at the bottom of startPlay to ensure everything gets loaded first
 	self.game:addToScreenStack(self.game.level)
 	self.game:addToScreenStack(self.game.countdownScreen)
+
+	-- sets the bats to be a thing
+	self.game.level.numBatsKilled = 0
 end
 
 function MainMenu:leave()
@@ -178,16 +179,36 @@ function MainMenu:draw()
 	love.graphics.setCanvas(self.menuCanvas)
 	love.graphics.clear()
 	-- now start the drawing
-	love.graphics.setFont(self.mainFont)
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
-	love.graphics.setFont(self.smallerFont)
+	-- love.graphics.setFont(self.mainFont)
+	-- love.graphics.setColor(255, 255, 255, 255)
+	-- love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+	-- love.graphics.setFont(self.smallerFont)
 	-- love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
-	if self:checkPlayersReady() then
-		love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+	if not (self.game.gameSettings.gameMode == "co-op") then
+		love.graphics.setFont(self.mainFont)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+		love.graphics.setFont(self.smallerFont)
+		if self:checkPlayersReady() then
+			love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		end
 	else
-		love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
-		
+		love.graphics.setFont(self.mainFont)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.printf("EIGHT Co-op mode!", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+		love.graphics.setFont(self.smallerFont)
+		if self.game.highScoreDisplayText == "" then
+			love.graphics.printf("No high score for "..self.game.gameSettings.difficulty, 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("High score:\n"..self.game.highScoreDisplayText, 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		end
+		if self:checkPlayersReady() then
+			love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
+		end
 	end
 	-- love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
 	-- love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")
@@ -206,7 +227,6 @@ function MainMenu:draw()
 			-- i = i + 1
 		end
 	end
-
 
 	-- now be done with the drawing
 	love.graphics.setCanvas()
@@ -381,9 +401,9 @@ function MainMenu:removePlayerFromGame(playerNum)
 end
 
 function MainMenu:keypressed(key, unicode)
-	if key == "space" or key == "start" then
-		-- self:startPlay()
-	end
+	-- if key == "space" or key == "start" then
+	-- 	-- self:startPlay()
+	-- end
 	-- for i = 1, #self.playerKeys, 1 do
 	-- 	for j = 1, #self.playerKeys[i], 1 do
 	-- 		if self.playerKeys[i][j] == key then

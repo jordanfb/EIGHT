@@ -103,6 +103,8 @@ function Attacks:update(dt)
 									self.level.players[k].speedUp = 500
 								elseif self.level.items[i].itemType == "platform" then
 									self.level.players[k].hasPlatforms = 2
+								elseif self.level.items[i].itemType == "bat" then
+									self.level:creatureKilled("bat")
 								end
 								self.game:startScreenshake(.15, 1)
 								table.remove(self.level.items, i)

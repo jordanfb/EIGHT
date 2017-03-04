@@ -30,6 +30,7 @@ end
 
 function CountdownScreen:load()
 	-- run when the level is given control
+	self.updateUnder = false
 	love.graphics.setFont(love.graphics.newFont("fonts/joystixMonospace.ttf", 72))
 	self.countdownTimer = self.maxCountdownTimer
 	self.messageIndex = 1
@@ -43,8 +44,15 @@ function CountdownScreen:leave()
 end
 
 function CountdownScreen:draw()
-	love.graphics.setColor(0, 0, 0, 100)
-	love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+	if self.useMessages then
+		if self.messageIndex < 2 then
+			love.graphics.setColor(0, 0, 0, 100)
+			love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+		end
+	else
+		love.graphics.setColor(0, 0, 0, 100)
+		love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+	end
 	love.graphics.setColor(255, 255, 255, 255)
 	if self.useMessages then
 		love.graphics.printf(self.countdownMessages[math.floor(self.messageIndex)], 0, love.graphics.getHeight()/2, love.graphics.getWidth(), "center")
@@ -55,6 +63,9 @@ end
 
 function CountdownScreen:update(dt)
 	if self.useMessages then
+		if self.messageIndex > 2 then
+			self.updateUnder = true
+		end
 		self.messageIndex = self.messageIndex + dt
 		if self.messageIndex > #self.countdownMessages + .25 then
 			self.game:popScreenStack(false) -- don't load the next screen, but go to it

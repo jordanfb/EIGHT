@@ -56,6 +56,9 @@ function Level:_init(keyboard, setPlayers, game)
 	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 	self.victoryEnjoymentTime = 3 -- the amount of time with the winners before it goes to the main menu
 	self.endGameTimer = self.victoryEnjoymentTime
+
+	-- co-op stuff:
+	self.numBatsKilled = 0
 end
 
 function Level:setPlayingPlayers(players)
@@ -311,7 +314,7 @@ function Level:update(dt)
 			table.insert(self.items, Item("platform", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.bats then
+	if self.game.gameSettings.bats == "on" then
 		if math.random(3000/self.game.gameSettingRates.bat)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("bat", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
@@ -382,9 +385,26 @@ function Level:downCollision(playerX, playerY, playerWidth, playerHeight, dy)
 	return {playerY, false, false}
 end
 
+function Level:creatureKilled(t)
+	if t == "bat" then
+		self.numBatsKilled = self.numBatsKilled + 1
+	end
+	self:calculateStage()
+end
+
 function Level:endGame()
 	self.game:popScreenStack()
 	self.game.mainMenu:endPlay()
+	if self.game.gameSettings.gameMode == "co-op" then
+		self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self:calculateStage(), difficulty = self.game.gameSettings.difficulty}
+		self.game:recordNewScore(self.scoreTable)
+	end
+end
+
+function Level:calculateStage()
+	local stage = self.numBatsKilled
+	self.coopStage = stage
+	return stage
 end
 
 function Level:keypressed(key, unicode)
