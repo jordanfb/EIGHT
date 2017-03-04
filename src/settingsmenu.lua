@@ -4,6 +4,7 @@
 
 require "class"
 require "menu"
+require "copy" 
 
 SettingsMenu = class()
 
@@ -14,10 +15,17 @@ function SettingsMenu:_init(game)
 	self.drawUnder = false
 	self.updateUnder = false
 	self.game = game
-	self.buttons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"},
-					{"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"}, {"Bats", "bats"},
-					{"Poison", "poison"}, {"Life Steal", "lifeSteal"}, {"Life Regen", "regen"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
+	self.versusButtons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"}, {"Game Mode", "gameMode"},
+						  {"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"}, {"Bats", "bats"},
+						  {"Poison", "poison"}, {"Life Steal", "lifeSteal"}, {"Life Regen", "regen"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
 
+	self.coopButtons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"}, {"Game Mode", "gameMode"},
+						{"Difficulty", "difficulty"}, {"Play Music", "playMusic"}}
+	
+	self.buttons = clone(self.versusButtons)
+	
+	self.wasGameMode = "versus"
+					
 	self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200)
 	self.subscribedToInputs = false
 end
@@ -42,6 +50,32 @@ function SettingsMenu:draw()
 end
 
 function SettingsMenu:update(dt)
+	if self.game.gameSettings.gameMode == "co-op" and self.wasGameMode == "versus" then
+		self.buttons = clone(self.coopButtons)
+		self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200, 4)
+		self.wasGameMode = "co-op"
+		
+		-----SET UP CO-OP!!! -----
+		self.game.oldSettings = clone(self.game.gameSettings)
+		for i, v in pairs(self.game.coopSettings) do
+			self.game.gameSettings[i] = v
+		end
+		
+		--set team colors
+		for i, v in pairs(self.game.mainMenu.playerMenus) do
+			self.game.mainMenu.playerMenus[i].playerValues.color = 1
+			self.game.mainMenu.playerColors[self.game.mainMenu.playingPlayers[i].playerNumber] = 1
+		end
+		self.game.gameSettingRates.bat = 16
+		
+	elseif self.game.gameSettings.gameMode == "versus" and self.wasGameMode == "co-op" then
+		self.buttons = clone(self.versusButtons)
+		self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200, 4)
+		self.wasGameMode = "versus"
+		self.game.gameSettings = clone(self.game.oldSettings)
+		self.game.gameSettings.gameMode = "versus"
+		self.game.gameSettingRates.bat = 2
+	end
 	self.menu:update(dt)
 end
 

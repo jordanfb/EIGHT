@@ -54,6 +54,8 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	self.health = 100
 	self.dead = false
 
+	self.little = true
+	
 	-- animations:
 	-- punch, kick jump, duck, walking,
 	self.SCREENWIDTH = 1920
@@ -294,8 +296,10 @@ function Player:update(dt)
 		elseif (self.keyboard:keyState(self.inputNumber, "kick") > 0) then
 			if self.facing==1 then
 				if self.hasPlatforms > 0 or self.level.game.gameSettings.platforms == "always" then
-					table.insert(self.level.platforms, {self.x + self.width + 50, self.y, 100, 30, 500})
-					self.hasPlatforms = self.hasPlatforms - 1
+					if self.y > -50 then
+						table.insert(self.level.platforms, {self.x + self.width + 50, self.y, 100, 30, 500})
+						self.hasPlatforms = self.hasPlatforms - 1
+					end
 					if self.level.game.gameSettings.punchWhileThrowing then
 						self.level.attacks:newAttack(self.x+120, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 					end
@@ -304,8 +308,10 @@ function Player:update(dt)
 				end
 			else
 				if self.hasPlatforms > 0 or self.level.game.gameSettings.platforms == "always" then
-					table.insert(self.level.platforms, {self.x - 150, self.y, 100, 30, 500})
-					self.hasPlatforms = self.hasPlatforms - 1
+					if self.y > -50 then
+						table.insert(self.level.platforms, {self.x - 150, self.y, 100, 30, 500})
+						self.hasPlatforms = self.hasPlatforms - 1
+					end
 					if self.level.game.gameSettings.punchWhileThrowing then
 						self.level.attacks:newAttack(self.x-80, self.y+10, 90, 90, self.color, self.level.game.gameSettingRates.kickDamage, self.facing, 20, self.playerNumber)
 					end

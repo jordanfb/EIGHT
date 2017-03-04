@@ -3,7 +3,7 @@ require "copy"
 
 Menu = class()
 
-function Menu:_init(game, buttons, x, y, width, height)
+function Menu:_init(game, buttons, x, y, width, height, selection)
 	self.buttonNames = buttons -- buttons = a list of k = display name, v = thing to return with the new value of it.
 	self.game = game
 	self.controllingInput = 0 -- the input that is allowed to edit. 0 can be controlled by anyone.
@@ -15,7 +15,7 @@ function Menu:_init(game, buttons, x, y, width, height)
 	self.y = y
 	self.width = width or 0
 	self.height = height or 0
-	self.selection = 0
+	self.selection = selection or 0
 
 	self.numPerHorizontal = 5
 	self.numPerVertical = 4
@@ -123,7 +123,7 @@ function Menu:selectSelected()
 		self.game.gameSettings = clone(self.game.defaultSettings)
 	elseif self.buttons[self.selection+1].message == "random" then
 		for i, v in ipairs(self.buttons) do
-			if not v.action then
+			if not v.action and v.message~= "playMusic" and v.message~="gameMode" then
 				for i = 1, math.random(10) do
 					self.game:changeSetting(v.message)
 				end
@@ -133,7 +133,7 @@ function Menu:selectSelected()
 		for i, v in ipairs(self.buttons) do
 			if tostring(self.game.gameSettings[v.message]) == "true" then
 				self.game.gameSettings[v.message] = false
-			elseif tostring(self.game.gameSettings[v.message]) ~= "false" then
+			elseif tostring(self.game.gameSettings[v.message]) ~= "false" and v.message~="gameMode"  and v.message~="difficulty" then
 				self.game.gameSettings[v.message] = "off"
 			end
 		end

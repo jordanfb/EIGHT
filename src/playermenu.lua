@@ -89,6 +89,12 @@ end
 function PlayerMenu:changeValue()
 	if self.mapIndexToValue[self.menuPosition] == "color" then
 		self.mainMenu.playerColors[self.playerNum] = self.playerValues.color-1
+		if self.game.gameSettings.gameMode == "co-op" then
+			for i, v in pairs(self.mainMenu.playerMenus) do
+				self.mainMenu.playerMenus[i].playerValues.color = self.playerValues.color
+				self.mainMenu.playerColors[self.mainMenu.playingPlayers[i].playerNumber] = self.playerValues.color - 1
+			end
+		end
 	end
 end
 

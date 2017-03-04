@@ -65,7 +65,7 @@ function Item:update(dt)
 		self.animation = (self.animation + .1)%4
 		for i, player in pairs(self.game.level.players) do
 			if player.x < self.x + self.width and player.x + player.width > self.x then	
-				if player.y < self.y + self.height and player.y + player.height > self.y and self.attacks[player.playerNumber] <= 0 then
+				if player.y < self.y + self.height and player.y + player.height > self.y and self.attacks[player.playerNumber] <= 0 and player.health > 0 then
 					self.game:startScreenshake(.15, 5)
 					player.health = math.max(player.health - 10, 0)
 					if self.game.gameSettings.instantKill then

@@ -114,6 +114,13 @@ function Level:load()
 	self.projectiles = {}
 	self.attacks = Attacks(self, self.players, self.game)
 	self.platforms = self.allLevels[self.level]
+	
+	for i, v in ipairs(self.platforms) do
+		if v[5] then
+			table.remove(self.platforms, i)
+		end
+	end
+	
 	self.bg = self.backgroundImages[self.level]
 
 	love.mouse.setVisible(false)
@@ -211,6 +218,10 @@ function Level:drawHealth()
 				end
 			end
 		end
+	end
+	
+	if self.winner ~= - 1 and self.game.gameSettings.gameMode == "co-op" then
+		self.gameOver = false
 	end
 	
 	if self.gameOver==true then

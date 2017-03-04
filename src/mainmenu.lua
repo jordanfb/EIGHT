@@ -131,7 +131,7 @@ function MainMenu:checkPlayersReady()
 			end
 		end
 	end
-	if atLeastThisColor ~= -2 then
+	if atLeastThisColor ~= -2 and self.game.gameSettings.gameMode == "versus" then
 		return false
 	end
 	return true

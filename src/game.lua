@@ -63,34 +63,52 @@ function Game:_init()
 end
 
 function Game:makeGameSettings()
-		self.defaultSettings = {
-			knives = "on",
-			superJumps = "on",
-			speedUps = "on",
-			platforms = "on",
-			bats = "on",
-			healthSpawn = true, --Straight from the Go Kayne
-			punching = true, -- I hate the new Kayne
-			kicking = true, --What if Kayne wrote a song about Kayne
-			instantKill = false, --Man that'd be so Kayne
-			lifeSteal = false, -- harming other people gives you health
-			poison = false,
-			regen = false,
-			suddenDeathOnNumberOfPeople = false,
-			noItemsAtNumberOfPeople = false,
-			noHealthAtNumberOfPeople = false,
-			takeFallingOutOfWorldDamage = true,
-			healthGainOnKill = true, -- I don't think this is functional
-			playMusic = false,
-			punchWhileThrowing = false,
-			noHealthLimit = false,
-			screenShake = true,
-		}
+	self.defaultSettings = {
+		knives = "on",
+		superJumps = "on",
+		speedUps = "on",
+		platforms = "on",
+		bats = "on",
+		gameMode = "versus",
+		difficulty = "easy",
+		punching = true, -- I hate the new Kayne
+		kicking = true, --What if Kayne wrote a song about Kayne
+		instantKill = false, --Man that'd be so Kayne
+		lifeSteal = false, -- harming other people gives you health
+		poison = false,
+		regen = false,
+		suddenDeathOnNumberOfPeople = false,
+		noItemsAtNumberOfPeople = false,
+		noHealthAtNumberOfPeople = false,
+		takeFallingOutOfWorldDamage = true,
+		healthGainOnKill = true, -- I don't think this is functional
+		playMusic = false,
+		punchWhileThrowing = false,
+		noHealthLimit = false,
+		screenShake = true,
+	}
+
+	self.coopSettings = {
+		knives = "on",
+		superJumps = "on",
+		speedUps = "on",
+		platforms = "on",
+		bats = "on",
+		instantKill = false, --Man that'd be so Kayne
+		lifeSteal = false, -- harming other people gives you health
+		poison = false,
+		regen = false,
+		takeFallingOutOfWorldDamage = true
+	}
+
+	self.oldSettings = {}
 	
 	self.settingOptions = {knives = {"on", "off", "always"},
 						   superJumps = {"on", "off", "always"},
 						   speedUps = {"on", "off", "always"},
 						   platforms = {"on", "off", "always"},
+						   gameMode = {"versus", "co-op"},
+						   difficulty = {"easy", "medium", "hard"},
 						   default = {"on", "off"}} 
 	
 	self.gameSettings = clone(self.defaultSettings)
