@@ -100,15 +100,15 @@ function Level:load()
 	local player = 1
 	for i, v in ipairs(self.game.mainMenu.playerMenus) do
 		if player == decidingPlayer then
-			if self.game.mainMenu.playerMenus[1].playerValues.map > #self.allLevels then
+			if self.game.mainMenu.playerMenus[player].playerValues.map == 1 then
 				self.level = math.random(#self.allLevels)
 			else
-				self.level = self.game.mainMenu.playerMenus[player].playerValues.map
+				self.level = self.game.mainMenu.playerMenus[player].playerValues.map - 1
 			end
 		end
 		player = player + 1
 	end
-	
+		
 	self:resetPlayers()
 	self.items = {}
 	self.projectiles = {}
