@@ -27,16 +27,6 @@ end
 function PlayerMenu:getTextToDisplay(optionNumber)
 	-- returns a string and a boolean, the boolean is whether or not it is adjustable.
 	return self.menuOptions[optionNumber][self.playerValues[self.mapIndexToValue[optionNumber]]], #self.menuOptions[optionNumber] > 1
-	-- if optionNumber == 2 then
-	-- 	-- then cry because this is dependant on what input things you have. This probably launches the input setup
-	-- 	return self.menuOptions[2][1], false
-	-- elseif optionNumber == 1 then -- the team color name
-	-- 	return self.menuOptions[1][self.color], true
-	-- elseif optionNumber == 3 then -- the ready state
-	-- 	return self.menuOptions[3][self.readyState+1], true
-	-- else
-	-- 	--
-	-- end
 end
 
 function PlayerMenu:draw(globalx, globaly)

@@ -178,16 +178,36 @@ function MainMenu:draw()
 	love.graphics.setCanvas(self.menuCanvas)
 	love.graphics.clear()
 	-- now start the drawing
-	love.graphics.setFont(self.mainFont)
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
-	love.graphics.setFont(self.smallerFont)
+	-- love.graphics.setFont(self.mainFont)
+	-- love.graphics.setColor(255, 255, 255, 255)
+	-- love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+	-- love.graphics.setFont(self.smallerFont)
 	-- love.graphics.printf("Controls are wasd+cv or ijkl+./", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
-	if self:checkPlayersReady() then
-		love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+	if not self.game.gameSettings.coopMode then
+		love.graphics.setFont(self.mainFont)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.printf("EIGHT", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+		love.graphics.setFont(self.smallerFont)
+		if self:checkPlayersReady() then
+			love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		end
 	else
-		love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
-		
+		love.graphics.setFont(self.mainFont)
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.printf("EIGHT Co-op mode!", 0, self.SCREENHEIGHT/6, self.SCREENWIDTH, "center")
+		love.graphics.setFont(self.smallerFont)
+		if self.game.highScoreDisplayText == "" then
+			love.graphics.printf("No high score!", 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("High score:\n"..self.game.highScoreDisplayText, 0, self.SCREENHEIGHT/3, self.SCREENWIDTH, "center")
+		end
+		if self:checkPlayersReady() then
+			love.graphics.printf("Starting in "..math.floor(self.startTimer), 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
+		else
+			love.graphics.printf("Press any button to join!", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
+		end
 	end
 	-- love.graphics.printf("Press any key to join", 0, self.SCREENHEIGHT/2, self.SCREENWIDTH, "center")
 	-- love.graphics.printf("Click the mouse to start", 0, self.SCREENHEIGHT*2/3, self.SCREENWIDTH, "center")

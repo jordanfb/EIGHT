@@ -158,13 +158,13 @@ function Menu:inputMade(inputNum, input, pressValue)
 		-- else
 			-- self.selectionToggle = false
 		end
-		if input == "up" then
+		if input == "up" or input == "menuup" then
 			self.selection = self.selection - self.numPerHorizontal
-		elseif input == "down" then
+		elseif input == "down" or input == "menudown" then
 			self.selection = self.selection + self.numPerHorizontal
-		elseif input == "left" or input == "lookleft" then
+		elseif input == "left" or input == "lookleft" or input == "menuleft" then
 			self.selection = self.selection - 1
-		elseif input == "right" or input == "lookright" then
+		elseif input == "right" or input == "lookright" or input == "menuright" then
 			self.selection = self.selection + 1
 		end
 	end

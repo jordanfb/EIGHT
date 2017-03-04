@@ -60,10 +60,16 @@ function Game:_init()
 	self:addToScreenStack(self.mainMenu)
 	self.screenshakeDuration = 0
 	self.screenshakeMagnitude = 0
+end
 
+function Game:loadScores()
 	-- Score loading:
 	self.scoreFilename = "coop-scores.txt"
 	self.scoreData = self:loadTable(self.scoreFilename, "coop_score")
+	self.highScore = {}
+	self.highScoreDisplayText = ""
+	print("LSDKFJSLKDFJLKSDJF "..tostring(#self.scoreData))
+	self:findBestScore()
 end
 
 function Game:makeGameSettings()
@@ -106,7 +112,7 @@ function Game:makeGameSettings()
 			health = 1,
 			jump = 3,
 			speed = 3,
-			bat = 2,
+			bat = 10,
 			platforms = 1,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
@@ -131,12 +137,36 @@ function Game:recordNewScore(scoreTable)
 	-- table will have #players, map, difficulty, num bats killed, stage gotten to.
 	self:saveTable(scoreTable, self.scoreFilename)
 	table.insert(self.scoreData, scoreTable)
+	self:findBestScore()
+end
+
+function Game:findBestScore()
+	local bestScore = {}
+	local bestStage = -1
+	local bestBats = -1
+	for k, score in pairs(self.scoreData) do
+		if score.stage > bestStage then
+			bestStage = score.stage
+			bestBats = score.batskilled
+			bestScore = score
+		end
+	end
+	self.highScore = bestScore
+	if bestStage == -1 then
+		self.highScoreDisplayText = ""
+	else
+		self.highScoreDisplayText = "Stage: "..tostring(bestStage).." Bats Killed: "..tostring(bestBats)
+	end
 end
 
 function Game:loadTable(filename, tableBreakString)
 	local fn = filename or self.scoreFilename
 	local startPoint = tableBreakString or "coop_score"
 	local t = {}
+	-- print(love.filesystem.getIdentity())
+	-- for k, v in pairs(love.filesystem.getDirectoryItems(love.filesystem.getAppdataDirectory())) do
+	-- 	print(v)
+	-- end
 	if love.filesystem.exists(fn) then
 		-- read the file
 		local subTable = {}
@@ -148,44 +178,45 @@ function Game:loadTable(filename, tableBreakString)
 				if line == startPoint then
 					state = 1 -- loading keys/values
 				elseif line == startPoint .. "_end" then
-					t[#t+1] = subTable
+					table.insert(t, clone(subTable))
 					state = 0 -- looking for startpoint state
 				elseif state == 1 then
 					-- set the key
 					key = line
 					state = 2 -- the value setting state
-				else
+				elseif state == 2 then
 					-- add the key value pair to the table and set state to 1
-					score[key] = tonumber(line) or line
+					subTable[key] = tonumber(line) or line
 					-- ^ if it's a number make it a number
 					state = 1
 				end
 			end
 		end
+	else
+		error("TRIED TO READ SOMETHING THAT DIDN'T EXIST")
 	end
 	return t
 end
 
 function Game:makeTableString(t, tableName)
-	local s = tableName or "coop_score\n"
+	local s = tableName.."\n" or "coop_score\n"
 	for k, v in pairs(t) do
 		s = s .. tostring(k) .. "\n" .. tostring(v) .. "\n"
 	end
 	if tableName then
-		s = s .. tableName .. "_end"
+		s = s .. tableName .. "_end\n"
 	else
 		s = s .. "coop_score_end\n"
 	end
+	return s
 end
 
-function Game:saveTable(inTable, filename)
+function Game:saveTable(inTable) -- inTable, filename
 	local fn = filename or self.scoreFilename
 	if love.filesystem.exists(fn) then
-		-- append the file
-		return love.filesystem.append(fn, self:makeTableString(inTable))
+		return love.filesystem.append(fn, self:makeTableString(inTable, "coop_score"))
 	else
-		-- write to the new file
-		return love.filesystem.write(fn, self:makeTableString(inTable))
+		return love.filesystem.write(fn, self:makeTableString(inTable, "coop_score"))
 	end
 end
 
@@ -213,6 +244,7 @@ function Game:startScreenshake(time, intensity)
 end
 
 function Game:load(args)
+	self:loadScores()
 end
 
 function Game:draw()
