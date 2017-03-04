@@ -55,6 +55,7 @@ function Level:_init(keyboard, setPlayers, game)
 
 	self.fullCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 	self.victoryEnjoymentTime = 3 -- the amount of time with the winners before it goes to the main menu
+	self.coopEnjoymentTime = 5
 	self.endGameTimer = self.victoryEnjoymentTime
 
 	-- co-op stuff:
@@ -122,6 +123,11 @@ function Level:load()
 		if v[5] then
 			table.remove(self.platforms, i)
 		end
+	end
+	if self.game.gameSettings.gameMode == "co-op" then
+		self.endGameTimer = self.coopEnjoymentTime
+	else
+		self.endGameTimer = self.victoryEnjoymentTime
 	end
 	
 	self.bg = self.backgroundImages[self.level]
@@ -227,13 +233,25 @@ function Level:drawHealth()
 		self.gameOver = false
 	end
 	
-	if self.gameOver==true then
-		if self.winner == -1 then
+	if self.gameOver then
+		if (self.game.gameSettings.gameMode == "co-op") then
+			self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self:calculateStage(), difficulty = self.game.gameSettings.difficulty}
 			love.graphics.setColor(255, 255, 255)
-			love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
+			local s, displayText = self.game:findBestScore({self.scoreTable})
+			if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
+				-- it's a high score!
+				love.graphics.printf("NEW HIGH SCORE!\n"..tostring(displayText), 0, 100, self.SCREENWIDTH, "center")
+			else
+				love.graphics.printf("SCORE:\n"..tostring(displayText), 0, 100, self.SCREENWIDTH, "center")
+			end
 		else
-			love.graphics.setColor(self.players[1].colorTable[self.winner+1])
-			love.graphics.printf("TEAM "..colorsText[self.winner+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
+			if self.winner == -1 then
+				love.graphics.setColor(255, 255, 255)
+				love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
+			else
+				love.graphics.setColor(self.players[1].colorTable[self.winner+1])
+				love.graphics.printf("TEAM "..colorsText[self.winner+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
+			end
 		end
 	end
 end

@@ -68,7 +68,7 @@ function Game:loadScores()
 	self.scoreData = self:loadTable(self.scoreFilename, "coop_score")
 	self.highScore = {}
 	self.highScoreDisplayText = ""
-	self:findBestScore()
+	self.highScore, self.highScoreDisplayText = self:findBestScore(self.scoreData)
 end
 
 function Game:makeGameSettings()
@@ -156,17 +156,17 @@ function Game:recordNewScore(scoreTable)
 	-- table will have #players, map, difficulty, num bats killed, stage gotten to.
 	self:saveTable(scoreTable, self.scoreFilename)
 	table.insert(self.scoreData, scoreTable)
-	self:findBestScore()
+	self.highScore, self.highScoreDisplayText = self:findBestScore(self.scoreData)
 end
 
-function Game:findBestScore()
+function Game:findBestScore(scoreTable)
 	local bestScore = {}
 	local bestStage = -1
 	local bestBats = -1
 	if self.scoreData == nil then
 		return -1
 	end
-	for k, score in pairs(self.scoreData) do
+	for k, score in pairs(scoreTable) do
 		if score.difficulty == self.gameSettings.difficulty then
 			if score.stage > bestStage then
 				bestStage = score.stage
@@ -180,12 +180,11 @@ function Game:findBestScore()
 			end
 		end
 	end
-	self.highScore = bestScore
-	if bestStage == -1 then
-		self.highScoreDisplayText = ""
-	else
-		self.highScoreDisplayText = "Stage: "..tostring(bestStage).." Bats Killed: "..tostring(bestBats)
+	local displayText = ""
+	if bestStage ~= -1 then
+		displayText = "Stage: "..tostring(bestStage).." Bats Killed: "..tostring(bestBats)
 	end
+	return bestScore, displayText
 end
 
 function Game:loadTable(filename, tableBreakString)

@@ -86,7 +86,7 @@ end
 function MainMenu:load()
 	-- print("MAIN MENU LOADED")
 	-- run when the level is given control
-	self.game:findBestScore()
+	self.game.highScore, self.game.highScoreDisplayText = self.game:findBestScore(self.game.scoreData)
 	self.game.bgm:stop()
 	self.startTimer = self.startTimerMax
 	love.mouse.setVisible(false)
@@ -114,6 +114,9 @@ end
 function MainMenu:checkPlayersReady()
 	if #self.playerMenus < 2 and self.game.gameSettings.gameMode == "versus" then
 		return false
+	end
+	if #self.playerMenus < 1 then
+		return false -- no matter what we need at least one player...
 	end
 	local atLeastThisColor = -1
 	for i = 1, #self.playerMenus do
