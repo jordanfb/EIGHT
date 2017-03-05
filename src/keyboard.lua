@@ -8,14 +8,15 @@ Keyboard = class()
 function Keyboard:_init(game)
 	self.keyboardType = 0 -- 0 = max four on keyboard, 1 = all eight on one keyboard, 2 = all eight on wasd
 	self.joystickDeadZone = .25
-	self.defaultJoystickMode = 0
-
+	self.defaultJoystickMode = 1
+	self.defaultJoystickSplit = false
+	self.defaultJoystickMappingsFile = "joystickmappings.txt"
 
 	self.game = game
 	self.gamepads = {}
 	for i = 1, 8 do
 		local debouncing = {leftx = 0, lefty = 0, rightx = 0, righty = 0, triggerleft = 0, triggerright = 0}
-		self.gamepads[i] = {gamepad = nil, mode = self.defaultJoystickMode, hasGamepad = false, debounce = debouncing} -- 0 is jordan one per, 1 is martin's gameboy method, 2 is two per
+		self.gamepads[i] = {gamepad = nil, split = self.defaultJoystickSplit, primaryMode = self.defaultJoystickMode, secondaryMode = self.defaultJoystickMode, hasGamepad = false, debounce = debouncing} -- 0 is jordan one per, 1 is martin's gameboy method, 2 is two per
 	end
 	self.gamepadMappings = {} -- a map of gamepadID() to 1-8 of self.gamepads
 	self.mainmenuSubscribed = false
@@ -110,29 +111,39 @@ function Keyboard:_init(game)
 	self.eightWasdUnpress["kp."] = ";"
 	self.eightWasdUnpress["end"] = "/"
 
-	local leftx = {"right", "left"}
-	local lefty = {"down", "up"}
-	local rightx = {"lookright", "lookleft"}
-	local righty = {"down", "up"}
-	local triggerleft = {"kick", ""}
-	local triggerright = {"punch", ""}
-	local gamepad0 = {leftx = leftx, lefty = lefty, rightx = rightx, righty = righty, triggerleft = triggerleft, triggerright = triggerright}
-	leftx = {"right", "left"}
-	lefty = {"down", "up"}
-	rightx = {"lookright", "lookleft"}
-	righty = {"down", "up"}
-	triggerleft = {"kick", ""}
-	triggerright = {"punch", ""}
-	local gamepad1 = {leftx = leftx, lefty = lefty, rightx = rightx, righty = righty, triggerleft = triggerleft, triggerright = triggerright}
-	leftx = {"right", "left"}
-	lefty = {"down", "up"}
-	rightx = {"right", "left"}
-	righty = {"down", "up"}
-	triggerleft = {"kick", ""}
-	triggerright = {"kick", ""}
-	local gamepad2 = {leftx = leftx, lefty = lefty, rightx = rightx, righty = righty, triggerleft = triggerleft, triggerright = triggerright}
-	self.gamepadAxisToMeaning = {gamepad0, gamepad1, gamepad2}
+	self.gamepadBindings = {}
+	self:addGamepadBindingsFrom(self.defaultJoystickMappingsFile)
+end
 
+function Keyboard:splitApartAxis(str)
+	local w = {}
+	for word in str:gmatch("%w+") do
+		if word == "none" then
+			table.insert("", word)
+		else
+			table.insert(w, word)
+		end
+	end
+	return w
+end
+
+function Keyboard:addGamepadBindingsFrom(filename)
+	local t = self.game:loadTable(filename, "joystick_mapping")
+	for k, v in pairs(t) do
+		if v.rightx ~= nil then
+			v.rightx = self:splitApartAxis(v.rightx)
+		end
+		if v.righty ~= nil then
+			v.righty = self:splitApartAxis(v.righty)
+		end
+		if v.leftx ~= nil then
+			v.leftx = self:splitApartAxis(v.leftx)
+		end
+		if v.lefty ~= nil then
+			v.lefty = self:splitApartAxis(v.lefty)
+		end
+		table.insert(self.gamepadBindings, v)
+	end
 end
 
 function Keyboard:keyTypeToNum(keyType)
@@ -252,24 +263,16 @@ end
 
 function Keyboard:gamepadButtonToInputType(inputNum, button)
 	local gp = self.gamepads[inputNum - 8]
-	if gp.mode == 0 then -- it's one person per Jordan's method
-		t = {a = "up", b = "down", x = "punch", y = "kick", leftshoulder = "kick", rightshoulder = "punch", leftstick = "switchdirection",
-					back = "back", start = "start", dpleft = "left", dpright = "right", dpup = "up", dpdown = "down"}
-	elseif gp.mode == 1 then -- it's Martin's method
-		t = {a = "kick", b = "punch", x = "down", y = "up", leftshoulder = "lookleft", rightshoulder = "lookright", leftstick = "switchdirection",
-					back = "back", start = "start", dpleft = "left", dpright = "right", dpup = "up", dpdown = "down"}
-	elseif gp.mode == 2 then -- it's two players on one gamepad
-		local secondHalf = {rightshoulder = true, a = true, b = true, x = true, y = true, rightstick = true}
-		-- print("CHECKING IF SECOND STICK")
-		-- print(secondHalf[button])
-		-- print(button)
+	local binding = gp.primaryMode
+	if gp.split then
+		-- it's a half joystick, so figure out if it should use the second half's bindings
+		local secondHalf = {rightshoulder = true, a = true, b = true, x = true, y = true, rightstick = true, start = true}
 		if secondHalf[button] ~= nil then
-			inputNum = inputNum + 8 -- it's eight further along...
+			inputNum = inputNum + 8 -- it's eight further along because it's the second half
+			binding = gp.secondaryMode
 		end
-		t = {rightshoulder = "punch", a = "down", b = "lookright", x = "lookleft", y = "up", leftstick = "switchdirection", back = "back", start = "start",
-			leftshoulder = "punch", dpleft = "lookleft", dpright = "lookright", dpup = "up", dpdown = "down", rightstick = "switchdirection"}
 	end
-	return t[button], inputNum
+	return self.gamepadBindings[binding][button], inputNum
 end
 
 function Keyboard:gamepadButtonToPress(gamepadID, button, pressedValue) -- pressedValue
@@ -301,7 +304,9 @@ function Keyboard:joystickadded(gamepad)
 					self.gamepads[i].hasGamepad = true
 					self.gamepads[i].gamepad = gamepad
 					self.gamepadMappings[gamepad:getID()] = i
-					self.gamepads[i].mode = self.defaultJoystickMode
+					self.gamepads[i].split = self.defaultJoystickSplit
+					self.gamepads[i].primaryMode = self.defaultJoystickMode
+					self.gamepads[i].secondaryMode = self.defaultJoystickMode
 					-- print("JOYSTICK ADDED TO POS "..i)
 					return true
 				end
@@ -366,36 +371,42 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 	local gamepadNum, connected = self:getGamepadNumber(gamepad)
 	if gamepadNum == 0 then return end
 	local inputNum = gamepadNum + 8
-	local onValue = ""
-	local offValue = ""
-	if self.gamepads[gamepadNum].mode == 2 then
+
+	if self.gamepads[gamepadNum].split then
 		if axis == "rightx" or axis == "righty" or axis == "triggerright" then
 			inputNum = inputNum + 8
 		end
-		onValue = self.gamepadAxisToMeaning[3][axis][1]
-		offValue = self.gamepadAxisToMeaning[3][axis][2]
-	elseif self.gamepads[gamepadNum].mode == 1 then
-		onValue = self.gamepadAxisToMeaning[2][axis][1]
-		offValue = self.gamepadAxisToMeaning[2][axis][2]
-	elseif self.gamepads[gamepadNum].mode == 0 then
-		onValue = self.gamepadAxisToMeaning[1][axis][1]
-		offValue = self.gamepadAxisToMeaning[1][axis][2]
 	end
+	
 	if math.abs(value) < self.joystickDeadZone then
 		value = 0
 	end
-	
+	local onValue = ""
+	local offValue = ""
+	if axis == "triggerright" or axis == "triggerleft" then
+		if self.gamepads[gamepadNum].split then
+			onValue = self.gamepadBindings[self.gamepads[gamepadNum].secondaryMode][axis]
+		else
+			onValue = self.gamepadBindings[self.gamepads[gamepadNum].primaryMode][axis]
+		end
+	else
+		if self.gamepads[gamepadNum].split then
+			onValue = self.gamepadBindings[self.gamepads[gamepadNum].secondaryMode][axis]
+			offValue = onValue[2]
+			onValue = onValue[1]
+		else
+			onValue = self.gamepadBindings[self.gamepads[gamepadNum].primaryMode][axis]
+			offValue = onValue[2]
+			onValue = onValue[1]
+		end
+	end
+
 	if value < 0 then
 		if self.gamepads[gamepadNum].debounce[axis] >= 0 then
 			self.gamepads[gamepadNum].debounce[axis] = -1 -- larger than 0
 			if offValue ~= "" then
 				self:inputPressDistribute(inputNum, "menu"..offValue, 1)
 			end
-			-- if axis == "lefty" or axis == "righty" then
-			-- 	self:inputPressDistribute(inputNum, "menuup", 1)
-			-- else -- it's leftx or rightx, since triggers can't be negative.
-			-- 	self:inputPressDistribute(inputNum, "menuleft", 1)
-			-- end
 		end
 	elseif value > 0 then
 		if self.gamepads[gamepadNum].debounce[axis] <= 0 then
@@ -403,15 +414,6 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 			if onValue ~= "" then
 				self:inputPressDistribute(inputNum, "menu"..onValue, 1)
 			end
-			-- if axis == "lefty" or axis == "righty" then
-			-- 	self:inputPressDistribute(inputNum, "menuup", 1)
-			-- elseif axis == "leftx" or axis == "rightx" then
-			-- 	self:inputPressDistribute(inputNum, "menuleft", 1)
-			-- elseif axis == "triggerleft" then -- then it's triggers. Welp.
-			-- 	self:inputPressDistribute(inputNum, "punch", 1)
-			-- elseif axis == "triggerright" then
-			-- 	self:inputPressDistribute(inputNum, "kick", 1)
-			-- end
 		end
 	else
 		self.gamepads[gamepadNum].debounce[axis] = 0
