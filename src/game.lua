@@ -202,7 +202,7 @@ function Game:loadTable(filename, tableBreakString)
 		local value = ""
 		local state = 0
 		for line in love.filesystem.lines(fn) do
-			if line ~= "" then
+			if line ~= "" and string.sub(line, 1, 1) ~= "#" then
 				if line == startPoint then
 					state = 1 -- loading keys/values
 				elseif line == startPoint .. "_end" then
