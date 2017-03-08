@@ -119,7 +119,7 @@ function Keyboard:splitApartAxis(str)
 	local w = {}
 	for word in str:gmatch("%w+") do
 		if word == "none" then
-			table.insert("", word)
+			table.insert(w, "")
 		else
 			table.insert(w, word)
 		end
@@ -404,14 +404,18 @@ function Keyboard:gamepadaxis(gamepad, axis, value)
 	if value < 0 then
 		if self.gamepads[gamepadNum].debounce[axis] >= 0 then
 			self.gamepads[gamepadNum].debounce[axis] = -1 -- larger than 0
-			if offValue ~= "" then
+			if offValue == "menudown" or offValue == "menuup" then
+				self:inputPressDistribute(inputNum, offValue, 1)
+			elseif offValue ~= "" then
 				self:inputPressDistribute(inputNum, "menu"..offValue, 1)
 			end
 		end
 	elseif value > 0 then
 		if self.gamepads[gamepadNum].debounce[axis] <= 0 then
 			self.gamepads[gamepadNum].debounce[axis] = 1 -- larger than 0
-			if onValue ~= "" then
+			if onValue == "menudown" or onValue == "menuup" then
+				self:inputPressDistribute(inputNum, onValue, 1)
+			elseif onValue ~= "" then
 				self:inputPressDistribute(inputNum, "menu"..onValue, 1)
 			end
 		end

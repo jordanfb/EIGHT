@@ -28,7 +28,7 @@ function Game:_init()
 	self.keyboard = Keyboard(self)
 	self.pauseMenu = PauseMenu(self)
 	self.settingsMenu = SettingsMenu(self)
-	self.controlsMenu = ControlsMenu(self, self.mainFont, self.smallerFont)
+	self.controlsMenu = ControlsMenu(self, self.mainFont, love.graphics.newFont("fonts/joystixMonospace.ttf", 32))
 
 	self:loadPlayerImages() -- this loads all the player images once, so we don't have to do it again.
 
@@ -77,7 +77,7 @@ function Game:makeGameSettings()
 		superJumps = "on",
 		speedUps = "on",
 		platforms = "on",
-		bats = "on",
+		bats = "off",
 		gameMode = "versus",
 		difficulty = "easy",
 		punching = true, -- I hate the new Kayne
@@ -131,7 +131,7 @@ function Game:makeGameSettings()
 			health = 1,
 			jump = 3,
 			speed = 3,
-			bat = 10,
+			bat = 2,
 			platforms = 1,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional

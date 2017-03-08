@@ -60,7 +60,13 @@ kick
 
 triggerright
 punch
+
+displaytextprimary
+Left stick is move, jump and duck.|Right stick is look left and right.|Hold left trigger for kick.|Hold right trigger for punch.
 joystick_mapping_end
+
+displaytextsecondary
+This should never appear! Please tell Jordan if it does!
 
 
 joystick_mapping
@@ -128,13 +134,20 @@ kick
 
 triggerright
 punch
+
+displaytextprimary
+Left stick is move, jump, and duck.|Bumpers are look left and right.|Left trigger or a is kick.|Right trigger or b is punch.
+
+displaytextsecondary
+This should never be seen. Tell Jordan.
+
 joystick_mapping_end
 
 
 # this one is the first half map that we did
 joystick_mapping
 name
-Main Secondary
+Simple Two Person
 size
 half
 
@@ -197,4 +210,159 @@ kick
 
 triggerright
 kick
+
+displaytextprimary
+Left stick is move, jump, and duck.|D-pad is look left and right, jump, and duck.|Hold left bumper for punch.|Hold left trigger for kick.
+
+displaytextsecondary
+Right stick is move, jump, and duck.|x and b are look left and right|y and a is jump and duck.|Hold right bumper for punch.|Hold right trigger for kick.
+joystick_mapping_end
+
+
+
+#This is Jordan's prefered setup
+joystick_mapping
+name
+Jordan's Favorite
+size
+full
+
+a
+up
+
+b
+down
+
+x
+punch
+
+y
+kick
+
+leftshoulder
+lookleft
+
+rightshoulder
+lookright
+
+leftstick
+switchdirection
+
+rightstick
+switchdirection
+
+back
+back
+
+start
+start
+
+dpleft
+left
+
+dpright
+right
+
+dpup
+up
+
+dpdown
+down
+
+leftx
+right left
+
+lefty
+menudown menuup
+
+rightx
+lookright lookleft
+
+righty
+down up
+
+triggerleft
+kick
+
+triggerright
+punch
+
+displaytextprimary
+Left stick is move left and right.|Bumpers are look left and right.|Right stick is look left and right as well as jump and duck.|a is jump, b is duck.|Hold right trigger for punch, hold left trigger for kick.
+
+displaytextsecondary
+This should never appear. Tell Jordan
+joystick_mapping_end
+
+joystick_mapping
+name
+Sidewinder
+size
+full
+
+a
+up
+
+b
+down
+
+x
+punch
+
+y
+kick
+
+leftshoulder
+lookleft
+
+rightshoulder
+lookright
+
+leftstick
+switchdirection
+
+rightstick
+switchdirection
+
+back
+back
+
+start
+start
+
+dpleft
+left
+
+dpright
+right
+
+dpup
+up
+
+dpdown
+down
+
+leftx
+right left
+
+lefty
+menudown menuup
+
+rightx
+lookright lookleft
+
+righty
+menudown menuup
+
+triggerleft
+kick
+
+triggerright
+punch
+
+displaytextprimary
+Left stick is move left and right.|Bumpers are look left and right.|a is jump, b is duck.|Hold right trigger for punch, hold left trigger for kick.
+
+displaytextsecondary
+This should never appear. Tell Jordan
 joystick_mapping_end
