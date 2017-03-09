@@ -152,7 +152,7 @@ function Menu:inputMade(inputNum, input, pressValue)
 		return
 	end
 	if self.controllingInput == 0 or self.controllingInput == inputNum then
-		if (input == "punch" or input == "kick") then
+		if (input == "punch" or input == "kick" or input == "menupunch" or input == "menukick") then
 			self:selectSelected()
 			-- self.selectionToggle = true
 		-- else

@@ -139,7 +139,7 @@ function ControlsMenu:draw()
 	if self.inputNum <= 8 then
 		return
 	end
-	local y = love.graphics.getHeight()/2
+	local y = love.graphics.getHeight()/2+love.graphics.getHeight()/4
 	local x = love.graphics.getWidth()/2
 	for i = 1, #self.menuOptions do
 		local displayText = self.menuOptions[i][self.menuValues[i]]
@@ -185,7 +185,7 @@ function ControlsMenu:inputMade(inputNum, input, pressValue)
 	if self.inputNum <= 8 then
 		self.game:popScreenStack() -- it's a keyboard, so exit out
 	end
-	if input == "right" or input == "lookright" or input == "menuright" or input == "punch" then
+	if input == "right" or input == "lookright" or input == "menuright" or input == "punch" or input == "menupunch" then
 		if self.menuSelection == 1 then
 			self:changeJoystickInputMethod(true)
 		elseif self.menuSelection == 2 then
@@ -203,9 +203,13 @@ function ControlsMenu:inputMade(inputNum, input, pressValue)
 			if not self.game.keyboard.gamepads[(self.inputNum-9)%8+1].split and self.inputNum >= 16 then
 				self.game:popScreenStack()
 				self.game.mainMenu:removePlayerFromGame(self.game.mainMenu.mapInputsToPlayers[self.inputNum])
+			elseif not self.game.keyboard.gamepads[(self.inputNum-9)%8+1].split then
+				self.game.mainMenu:removePlayerFromGame(self.game.mainMenu.mapInputsToPlayers[self.inputNum+8])
 			end
+		elseif self.menuSelection == 3 then
+			self.game:popScreenStack()
 		end
-	elseif input == "left" or input == "lookleft" or input == "menuleft" or input == "kick" then
+	elseif input == "left" or input == "lookleft" or input == "menuleft" or input == "kick" or input == "menukick" then
 		if self.menuSelection == 1 then
 			self:changeJoystickInputMethod(false)
 		elseif self.menuSelection == 2 then
@@ -223,7 +227,11 @@ function ControlsMenu:inputMade(inputNum, input, pressValue)
 			if not self.game.keyboard.gamepads[(self.inputNum-9)%8+1].split and self.inputNum >= 16 then
 				self.game:popScreenStack()
 				self.game.mainMenu:removePlayerFromGame(self.game.mainMenu.mapInputsToPlayers[self.inputNum])
+			elseif not self.game.keyboard.gamepads[(self.inputNum-9)%8+1].split then
+				self.game.mainMenu:removePlayerFromGame(self.game.mainMenu.mapInputsToPlayers[self.inputNum+8])
 			end
+		elseif self.menuSelection == 3 then
+			self.game:popScreenStack()
 		end
 	elseif input == "down" or input == "menudown" then
 		self.menuSelection = self.menuSelection + 1

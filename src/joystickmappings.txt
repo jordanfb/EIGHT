@@ -1,6 +1,6 @@
 joystick_mapping
 name
-Main
+Default
 size
 full
 
@@ -240,10 +240,10 @@ y
 kick
 
 leftshoulder
-lookleft
+kick
 
 rightshoulder
-lookright
+punch
 
 leftstick
 switchdirection

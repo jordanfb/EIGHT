@@ -91,7 +91,7 @@ function Game:makeGameSettings()
 		noHealthAtNumberOfPeople = false,
 		takeFallingOutOfWorldDamage = true,
 		healthGainOnKill = true, -- I don't think this is functional
-		playMusic = false,
+		playMusic = true,
 		punchWhileThrowing = false,
 		noHealthLimit = false,
 		screenShake = true,
