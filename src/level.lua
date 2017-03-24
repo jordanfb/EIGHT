@@ -156,9 +156,10 @@ function Level:load()
 		self.game.gameSettings[i] = v
 	end
 	
-	
-	
-	table.insert(self.announcements, {message = "STAGE 1", timer = 100})
+	self.announcements = {}
+	if self.game.gameSettings.gameMode == "co-op" then
+		table.insert(self.announcements, {message = "STAGE 1", timer = 100})
+	end
 	-- for k, v in pairs(self.keyboard.keys) do
 	-- 	self.keyboard.keys[k] = false
 	-- end
@@ -253,6 +254,24 @@ function Level:drawHealth()
 				end
 			end
 		end
+		if self.gameOver then
+			if self.game.gameSettings.gameMode == "versus" then
+				if self.winner ~= -1 then
+					table.insert( self.announcements, {message = "TEAM "..colorsText[self.winner+1].." WINS!", timer = 200})
+				else
+					table.insert( self.announcements, {message = "NO TEAM WINS", timer = 200})
+				end
+			elseif self.game.gameSettings.gameMode == "co-op" and self.winner == -1 then
+				self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
+				local s, displayText = self.game:findBestScore({self.scoreTable})
+				if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
+					-- it's a high score!
+					table.insert( self.announcements, {message = "NEW HIGH SCORE!\n"..tostring(displayText), timer = 300})
+				else
+					table.insert( self.announcements, {message = "SCORE:\n"..tostring(displayText), timer = 300})
+				end
+			end
+		end
 	end
 	
 	if self.winner ~= - 1 and self.game.gameSettings.gameMode == "co-op" then
@@ -261,22 +280,15 @@ function Level:drawHealth()
 	
 	if self.gameOver then
 		if (self.game.gameSettings.gameMode == "co-op") then
-			self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
+			
 			love.graphics.setColor(255, 255, 255)
-			local s, displayText = self.game:findBestScore({self.scoreTable})
-			if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
-				-- it's a high score!
-				love.graphics.printf("NEW HIGH SCORE!\n"..tostring(displayText), 0, 100, self.SCREENWIDTH, "center")
-			else
-				love.graphics.printf("SCORE:\n"..tostring(displayText), 0, 100, self.SCREENWIDTH, "center")
-			end
+			
+			
 		else
 			if self.winner == -1 then
 				love.graphics.setColor(255, 255, 255)
-				love.graphics.printf("NO TEAM WINS", 0, 100, self.SCREENWIDTH, "center")
 			else
 				love.graphics.setColor(self.players[1].colorTable[self.winner+1])
-				love.graphics.printf("TEAM "..colorsText[self.winner+1].." WINS!", 0, 100, self.SCREENWIDTH, "center")
 			end
 		end
 	end

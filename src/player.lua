@@ -142,6 +142,7 @@ function Player:onPlayerDeath()
 	self.level.game:startScreenshake(.5, 10)
 	self.level.numPlayersAlive = self.level.numPlayersAlive - 1
 	self.level:playerDied()
+	table.insert(self.level.announcements, {message="PLAYER "..self.playerNumber.." DIED!", timer=100})
 end
 
 function Player:update(dt)
