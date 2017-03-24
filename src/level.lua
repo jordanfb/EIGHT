@@ -94,6 +94,7 @@ function Level:resetPlayers()
 		self.players[i].attackedTimer = 0
 		self.players[i].hasPlatforms = 0
 		self.players[i].hasSword = 0
+		self.players[i].dead = false
 	end
 	self.numPlayersAlive = #self.players
 	self.allottedBatSpawns = 0
@@ -121,7 +122,7 @@ function Level:load()
 		end
 		player = player + 1
 	end
-		
+	
 	self:resetPlayers()
 	self.items = {}
 	self.projectiles = {}
@@ -152,14 +153,13 @@ function Level:load()
 	self.batsSpawned = 0
 	self.numbatsKilled = 0
 	self.batSpeed = 1
-
-	for i, v in pairs(self.game.coopSettings) do
-		self.game.gameSettings[i] = v
-	end
 	
 	self.announcements = {}
 	if self.game.gameSettings.gameMode == "co-op" then
 		table.insert(self.announcements, {message = "STAGE 1", timer = 100})
+		for i, v in pairs(self.game.coopSettings) do
+			self.game.gameSettings[i] = v
+		end
 	end
 	-- for k, v in pairs(self.keyboard.keys) do
 	-- 	self.keyboard.keys[k] = false
@@ -220,11 +220,11 @@ function Level:draw()
 	love.graphics.draw(self.fullCanvas, 0, 0, 0, love.graphics.getWidth()/1920, love.graphics.getHeight()/1080)
 end
 
-function Level:playerDied()
-	if self.numPlayersAlive <= self.game.gameSettingRates.suddenDeathOnNumberOfPeople then
-		--
-	end
-end
+-- function Level:playerDied()
+-- 	if self.numPlayersAlive <= self.game.gameSettingRates.suddenDeathOnNumberOfPeople then
+-- 		--
+-- 	end
+-- end
 
 function Level:drawHealth()
 	love.graphics.setColor(0, 0, 0, 100)
@@ -265,7 +265,7 @@ function Level:drawHealth()
 			elseif self.game.gameSettings.gameMode == "co-op" and self.winner == -1 then
 				self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
 				local s, displayText = self.game:findBestScore({self.scoreTable})
-				if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
+				if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highScore.stage) then
 					-- it's a high score!
 					table.insert( self.announcements, {message = "NEW HIGH SCORE!\n"..tostring(displayText), timer = 300})
 				else
@@ -281,10 +281,7 @@ function Level:drawHealth()
 	
 	if self.gameOver then
 		if (self.game.gameSettings.gameMode == "co-op") then
-			
 			love.graphics.setColor(255, 255, 255)
-			
-			
 		else
 			if self.winner == -1 then
 				love.graphics.setColor(255, 255, 255)
@@ -322,7 +319,7 @@ function Level:update(dt)
 	end
 	for i , item in ipairs(self.items) do
 		if item.dead then
-			table.remove (self.items, i)
+			table.remove(self.items, i)
 		else
 			item:update(dt)
 		end
@@ -450,7 +447,7 @@ function Level:update(dt)
 	for i, v in ipairs(self.announcements) do
 		v.timer = v.timer - 1
 		if v.timer == 0 then
-			table.remove (self.announcements, i)
+			table.remove(self.announcements, i)
 		end
 	end
 end

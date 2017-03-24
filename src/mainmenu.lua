@@ -225,9 +225,8 @@ function MainMenu:draw()
 			local x = (self.SCREENWIDTH)*(i)/(#self.playingPlayers+1)
 			-- print("color: "..self.playingPlayers[i].color)
 			love.graphics.setColor(self.players[1].colorTable[self.playerColors[self.playingPlayers[i].playerNumber]+1])
-			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 500, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/3)
+			love.graphics.draw(self.playingPlayers[i].pImage, x, self.SCREENHEIGHT - 450, 0, 1, 1, self.playingPlayers[i].pImage:getWidth()/2)
 			self.playerMenus[i]:draw(x, self.SCREENHEIGHT - 350)
-			-- i = i + 1
 		end
 	end
 

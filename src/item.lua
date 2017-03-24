@@ -25,6 +25,9 @@ function Item:_init(itemType, x, y, dX, dY, game)
 	
 	self.xSpeed = 300
 	self.ySpeed = 50
+	if self.itemType == "bat" then
+		self.ySpeed = 150
+	end
 	
 	self.game = game
 	
