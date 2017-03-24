@@ -264,7 +264,7 @@ function Level:drawHealth()
 			elseif self.game.gameSettings.gameMode == "co-op" and self.winner == -1 then
 				self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
 				local s, displayText = self.game:findBestScore({self.scoreTable})
-				if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
+				if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highScore.stage) then
 					-- it's a high score!
 					table.insert( self.announcements, {message = "NEW HIGH SCORE!\n"..tostring(displayText), timer = 300})
 				else
