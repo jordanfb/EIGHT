@@ -19,6 +19,9 @@ function Level:_init(keyboard, setPlayers, game)
 	
 	self.game = game
 	self.keyboard = keyboard
+	
+	self.announcements = {}
+	
 	-- 1920, 1080
 	self.allLevels = {}
 	self.allLevels[1] = {{0, 1000, 1920, 80}, {100, 700, 200, 30}, {0, 900, 200, 30}, {1920-300, 700, 200, 30}, {1920-200, 900, 200, 30}, {300, 600, 1920-300-300, 30}}
@@ -58,6 +61,10 @@ function Level:_init(keyboard, setPlayers, game)
 	self.coopEnjoymentTime = 5
 	self.endGameTimer = self.victoryEnjoymentTime
 
+	self.batsSpawned = 0
+	
+	self.coopStage = 1
+	
 	-- co-op stuff:
 	self.numBatsKilled = 0
 end
@@ -88,6 +95,7 @@ function Level:resetPlayers()
 		self.players[i].hasPlatforms = 0
 	end
 	self.numPlayersAlive = #self.players
+	self.allottedBatSpawns = 0
 end
 
 function Level:load()
@@ -138,6 +146,19 @@ function Level:load()
 	self.attacks.players = self.players
 	self.gameOver = false
 	self.winner = -1
+	self.coopStage = 1
+	self.allottedBatSpawns = self.game.batsPerStage[1]
+	self.batsSpawned = 0
+	self.numbatsKilled = 0
+	self.batSpeed = 1
+
+	for i, v in pairs(self.game.coopSettings) do
+		self.game.gameSettings[i] = v
+	end
+	
+	
+	
+	table.insert(self.announcements, {message = "STAGE 1", timer = 100})
 	-- for k, v in pairs(self.keyboard.keys) do
 	-- 	self.keyboard.keys[k] = false
 	-- end
@@ -155,6 +176,11 @@ function Level:draw()
 	-- everything to be drawn in the draw function should be beneath this
 
 	love.graphics.draw(self.bg, 0, 0)
+	
+	for i, v in ipairs(self.announcements) do
+		love.graphics.printf(v.message, 0, 100*i, self.SCREENWIDTH, "center")
+	end
+	
 	local colorMode
 	for i = 1, #self.platforms, 1 do
 		if self.platforms[i][4]==80 then
@@ -235,7 +261,7 @@ function Level:drawHealth()
 	
 	if self.gameOver then
 		if (self.game.gameSettings.gameMode == "co-op") then
-			self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self:calculateStage(), difficulty = self.game.gameSettings.difficulty}
+			self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
 			love.graphics.setColor(255, 255, 255)
 			local s, displayText = self.game:findBestScore({self.scoreTable})
 			if (self.game.highScore.stage == nil) or (s.stage > self.game.highScore.stage) or (s.stage == self.game.highScore.stage and s.batskilled > self.game.highscore.stage) then
@@ -333,12 +359,20 @@ function Level:update(dt)
 		end
 	end
 	if self.game.gameSettings.bats == "on" then
-		if math.random(3000/self.game.gameSettingRates.bat)==1 then
-		-- if math.random(100) == 1 then
-			table.insert(self.items, Item("bat", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
-		end
-		if math.random(3000/self.game.gameSettingRates.bat)==1 then
-			table.insert(self.items, Item("bat", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+		if self.game.gameSettings.gameMode ~= "co-op" or self.batsSpawned < self.allottedBatSpawns then
+			local ySpawn = self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])]
+			if self.game.gameSettings.gameMode == "co-op" then
+				ySpawn = self.players[math.random(#self.players)].y
+			end
+			if math.random(3000/self.game.gameSettingRates.bat)==1 then
+			-- if math.random(100) == 1 then
+				table.insert(self.items, Item("bat", -70, ySpawn, 1, 1, self.game))
+				self.batsSpawned = self.batsSpawned + 1
+			end
+			if math.random(3000/self.game.gameSettingRates.bat)==1 then
+				table.insert(self.items, Item("bat", self.SCREENWIDTH, ySpawn, -1, 1, self.game))
+				self.batsSpawned = self.batsSpawned + 1
+			end
 		end
 	end
 	self.attacks:update(dt)
@@ -355,6 +389,46 @@ function Level:update(dt)
 		end
 		if v[5] == 0 then
 			table.remove(self.platforms, i)
+		end
+	end
+	
+	if self.game.gameSettings.gameMode == "co-op" then
+		if self.batsSpawned == self.allottedBatSpawns and self.batsSpawned == self.numBatsKilled then
+			self.coopStage = self.coopStage + 1
+			table.insert (self.announcements, {message = "STAGE "..self.coopStage, timer = 100})
+			if self.coopStage < #self.game.batsPerStage then
+				self.allottedBatSpawns = self.allottedBatSpawns + self.game.batsPerStage[self.coopStage]
+			else
+				self.allottedBatSpawns = self.allottedBatSpawns + self.game.batsPerStage[#self.game.batsPerStage]
+			end
+
+			if self.game.batSpeed[self.coopStage] then
+				self.batSpeed = self.game.batSpeed[self.coopStage]
+			end
+			if self.coopStage > 2 then
+				self.game.gameSettings.superJumps = "on";
+			end
+			if self.coopStage > 1 then
+				self.game.gameSettings.speedUps = "on";
+			end
+			if self.coopStage > 3 then
+				self.game.gameSettings.platforms = "on";
+			end
+			if self.coopStage > 4 then
+				self.game.gameSettings.healthSpawn = true
+			end
+			if math.random(2)==1 then
+				table.insert(self.items, Item("revive", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+			else
+				table.insert(self.items, Item("revive", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
+			end
+		end
+	end
+	
+	for i, v in ipairs(self.announcements) do
+		v.timer = v.timer - 1
+		if v.timer == 0 then
+			table.remove (self.announcements, i)
 		end
 	end
 end
@@ -407,14 +481,13 @@ function Level:creatureKilled(t)
 	if t == "bat" then
 		self.numBatsKilled = self.numBatsKilled + 1
 	end
-	self:calculateStage()
 end
 
 function Level:endGame()
 	self.game:popScreenStack()
 	self.game.mainMenu:endPlay()
 	if self.game.gameSettings.gameMode == "co-op" then
-		self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self:calculateStage(), difficulty = self.game.gameSettings.difficulty}
+		self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
 		self.game:recordNewScore(self.scoreTable)
 	end
 end

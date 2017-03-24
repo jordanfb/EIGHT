@@ -105,6 +105,17 @@ function Attacks:update(dt)
 									self.level.players[k].hasPlatforms = 2
 								elseif self.level.items[i].itemType == "bat" then
 									self.level:creatureKilled("bat")
+								elseif self.level.items[i].itemType == "revive" then
+									for n, player in ipairs(self.level.players) do
+										if player.health == 0 then
+											player.dead = false
+											player.health = 50
+											player.y = -player.height
+											player.dy = 0
+										elseif player.health < 50 then
+											player.health = 50
+										end
+									end
 								end
 								self.game:startScreenshake(.15, 1)
 								table.remove(self.level.items, i)

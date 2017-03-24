@@ -22,10 +22,18 @@ function Item:_init(itemType, x, y, dX, dY, game)
 	self.height = 70
 	
 	self.itemType = itemType
-	self.dx = dX*300
-	self.dy = dY*50
-
+	
+	self.xSpeed = 300
+	self.ySpeed = 50
+	
 	self.game = game
+	
+	if self.itemType == "bat" and self.game.gameSettings.gameMode == "co-op" then
+		self.xSpeed = self.xSpeed * self.game.level.batSpeed
+	end
+	
+	self.dx = dX*self.xSpeed
+	self.dy = dY*self.ySpeed
 	
 	self.image = nil --love.graphics.newImage('images/health-item.png')
 	
@@ -42,6 +50,8 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.speedItemImage
 	elseif self.itemType == "platform" then
 		self.image = self.game.platformItemImage
+	elseif self.itemType == "revive" then
+		self.image = self.game.reviveItemImage
 	elseif self.itemType == "bat" then
 		self.image = self.game.batImages
 		self.width = 90
@@ -81,12 +91,40 @@ function Item:update(dt)
 			if knife.x < self.x + self.width and knife.x + knife.width > self.x then	
 				if knife.y < self.y + self.height and knife.y + knife.height > self.y then
 					self.dead = true
+					self.game.level:creatureKilled("bat")
 				end
 			end
 		end
 		for i, v in pairs(self.attacks) do
 			if v > 0 then
 				self.attacks[i] = v - 1
+			end
+		end
+		if self.game.gameSettings.gameMode == "co-op" then
+			if self.x > self.game.level.SCREENWIDTH - 50 then
+				self.dx = -self.xSpeed
+			elseif self.x < 50 then
+				self.dx = self.xSpeed
+			end
+			if self.y > self.game.level.SCREENHEIGHT - 50 then
+				self.dy = -self.ySpeed
+			elseif self.y < 50 then
+				self.dy = self.ySpeed
+			end
+			
+		end
+		local alive = {}
+		for i, v in ipairs(self.game.level.players) do
+			if v.health > 0 then
+				table.insert (alive, i)
+			end
+		end
+		if #alive > 0 then
+			local yDestination = self.game.level.players[alive[math.random(#alive)]].y
+			if self.y > yDestination and math.random(5)==1 then
+				self.dy = -self.ySpeed
+			elseif math.random(5)==1 then
+				self.dy = self.ySpeed
 			end
 		end
 	end

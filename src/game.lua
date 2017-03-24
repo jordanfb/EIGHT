@@ -51,15 +51,21 @@ function Game:_init()
 	self.jumpItemImage = love.graphics.newImage('images/jump-item.png')
 	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
 	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
+	self.reviveItemImage = love.graphics.newImage('images/revive-item.png')
 
 	self.batImages = {}
 	for i = 1, 4 do
 		table.insert(self.batImages, love.graphics.newImage('images/bat-'..i..'.png'))
 	end
-
+	
 	self:addToScreenStack(self.mainMenu)
 	self.screenshakeDuration = 0
 	self.screenshakeMagnitude = 0
+	
+	self.batsPerStage = {1, 5, 10}
+	self.batSpeed = {}
+	self.batSpeed[2] = 1.25
+	self.batSpeed[3] = 1.5
 end
 
 function Game:loadScores()
@@ -80,6 +86,7 @@ function Game:makeGameSettings()
 		bats = "off",
 		gameMode = "versus",
 		difficulty = "easy",
+		healthSpawn = true,
 		punching = true, -- I hate the new Kayne
 		kicking = true, --What if Kayne wrote a song about Kayne
 		instantKill = false, --Man that'd be so Kayne
@@ -99,10 +106,11 @@ function Game:makeGameSettings()
 
 	self.coopSettings = {
 		knives = "on",
-		superJumps = "on",
-		speedUps = "on",
-		platforms = "on",
+		superJumps = "off",
+		speedUps = "off",
+		platforms = "off",
 		bats = "on",
+		healthSpawn = false,
 		instantKill = false, --Man that'd be so Kayne
 		lifeSteal = false, -- harming other people gives you health
 		poison = false,
