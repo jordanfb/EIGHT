@@ -93,6 +93,7 @@ function Level:resetPlayers()
 		self.players[i].numKnives = 0
 		self.players[i].attackedTimer = 0
 		self.players[i].hasPlatforms = 0
+		self.players[i].hasSword = 0
 	end
 	self.numPlayersAlive = #self.players
 	self.allottedBatSpawns = 0
@@ -368,6 +369,15 @@ function Level:update(dt)
 		end
 		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
 			table.insert(self.items, Item("platform", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+		end
+	end
+	if self.game.gameSettings.swords=="on" then
+		if math.random(3000/self.game.gameSettingRates.swords)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("sword", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
+		end
+		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+			table.insert(self.items, Item("sword", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.bats == "on" then

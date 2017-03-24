@@ -52,6 +52,7 @@ function Game:_init()
 	self.speedItemImage = love.graphics.newImage('images/speed-item.png')
 	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
 	self.reviveItemImage = love.graphics.newImage('images/revive-item.png')
+	self.swordItemImage = love.graphics.newImage('images/sword-item.png')
 
 	self.batImages = {}
 	for i = 1, 4 do
@@ -84,8 +85,10 @@ function Game:makeGameSettings()
 		speedUps = "on",
 		platforms = "on",
 		bats = "off",
+		swords = "on",
 		gameMode = "versus",
 		difficulty = "easy",
+		screenShake = "normal",
 		healthSpawn = true,
 		punching = true, -- I hate the new Kayne
 		kicking = true, --What if Kayne wrote a song about Kayne
@@ -98,7 +101,7 @@ function Game:makeGameSettings()
 		noHealthAtNumberOfPeople = false,
 		takeFallingOutOfWorldDamage = true,
 		healthGainOnKill = true, -- I don't think this is functional
-		playMusic = true,
+		playMusic = false,
 		punchWhileThrowing = false,
 		noHealthLimit = false,
 		screenShake = true,
@@ -126,7 +129,9 @@ function Game:makeGameSettings()
 						   speedUps = {"on", "off", "always"},
 						   platforms = {"on", "off", "always"},
 						   gameMode = {"versus", "co-op"},
+						   swords = {"on", "off", "always"},
 						   difficulty = {"easy", "medium", "hard"},
+						   screenShake = {"normal", "extreme", "none"},
 -- =======
 -- 						   bats = {"on", "off", "co-op"},
 -- >>>>>>> Coopbranch
@@ -141,6 +146,7 @@ function Game:makeGameSettings()
 			speed = 3,
 			bat = 2,
 			platforms = 1,
+			swords = 5,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional
@@ -148,6 +154,7 @@ function Game:makeGameSettings()
 			punchDamage = 20,
 			kickDamage = 40,
 			knifeDamage = 30,
+			swordDamage = 40,
 			lifeStealPercent = 50, -- the percentage of life stolen, out of 100
 			poisonRate = 1, -- per second
 			regenRate = 1, -- per second
@@ -273,6 +280,12 @@ function Game:changeSetting(setting)
 end
 
 function Game:startScreenshake(time, intensity)
+	if self.gameSettings.screenShake == "none" then
+		intensity = 0
+	elseif self.gameSettings.screenShake == "extreme" then
+		intensity = 3*intensity
+		time = 2*time
+	end
 	if self.gameSettings.screenShake then
 		self.screenshakeDuration = time
 		self.screenshakeMagnitude = intensity
@@ -378,6 +391,11 @@ function Game:loadPlayerImages()
 			self.playerImages[playerNum] = {}
 		end
 		self.playerImages[playerNum].pImage = love.graphics.newImage('images/'..playerNum..'-p.png')
+	end
+	self.knifeImages = {}
+	self.knifeImages.attack = {}
+	for i = 1, 5 do
+		table.insert(self.knifeImages.attack, love.graphics.newImage('images/sword-attack-'..i..'.png'))
 	end
 end
 
