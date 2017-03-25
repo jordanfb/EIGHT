@@ -112,6 +112,8 @@ function Attacks:update(dt)
 									self.level.players[k].speedUp = 500
 								elseif self.level.items[i].itemType == "platform" then
 									self.level.players[k].hasPlatforms = 2
+								elseif self.level.items[i].itemType == "rainbow" then
+									self.level.players[k].rainbow = 100
 								elseif self.level.items[i].itemType == "bat" then
 									self.level:creatureKilled("bat")
 								elseif self.level.items[i].itemType == "revive" then
