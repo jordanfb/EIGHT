@@ -182,7 +182,7 @@ function Menu:inputMade(inputNum, input, pressValue)
 			if self.selection % self.numPerHorizontal == 0 then
 				-- move to the right of the row
 				self.selection = self.selection + self.numPerHorizontal-1
-				if self.selection > self.numButtons then
+				if self.selection > self.numButtons-1 then
 					self.selection = self.numButtons - 1 -- because you went off the end
 				end
 			else
@@ -192,9 +192,10 @@ function Menu:inputMade(inputNum, input, pressValue)
 		-- 	print("Num "..self.numButtons)
 		-- 	print(math.floor((self.numButtons-1)/self.numPerHorizontal)*self.numPerHorizontal)
 			if self.selection % self.numPerHorizontal == self.numPerHorizontal - 1 then
+				-- if it's a regular line, and not the last row
 				self.selection = self.selection - self.numPerHorizontal + 1
 			else
-				if self.selection >= math.floor((self.numButtons-1)/self.numPerHorizontal)*self.numPerHorizontal then
+				if self.selection + 1 > self.numButtons - 1 then
 					-- it's on the last row, so set yourself to the left side of that.
 					self.selection = math.floor((self.numButtons-1)/self.numPerHorizontal)*self.numPerHorizontal
 				else
