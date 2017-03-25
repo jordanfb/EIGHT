@@ -435,16 +435,19 @@ function Level:update(dt)
 			if self.game.batSpeed[self.coopStage] then
 				self.batSpeed = self.game.batSpeed[self.coopStage]
 			end
-			if self.coopStage > 2 then
+			if self.coopStage > 4 then
 				self.game.gameSettings.superJumps = "on";
 			end
-			if self.coopStage > 1 then
+			if self.coopStage > 2 then
 				self.game.gameSettings.speedUps = "on";
 			end
-			if self.coopStage > 3 then
+			if self.coopStage > 5 then
 				self.game.gameSettings.platforms = "on";
 			end
-			if self.coopStage > 4 then
+			if self.coopStage > 9 then
+				self.game.gameSettings.swords = "on";
+			end
+			if self.coopStage > 7 then
 				self.game.gameSettings.healthSpawn = true
 			end
 			if math.random(2)==1 then

@@ -113,6 +113,7 @@ function Game:makeGameSettings()
 		speedUps = "off",
 		platforms = "off",
 		bats = "on",
+		swords = "off",
 		healthSpawn = false,
 		instantKill = false, --Man that'd be so Kayne
 		lifeSteal = false, -- harming other people gives you health
@@ -147,7 +148,7 @@ function Game:makeGameSettings()
 			speed = 3,
 			bat = 2,
 			platforms = 1,
-			swords = 5,
+			swords = 2,
 			numberJumps = 5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional

@@ -21,7 +21,7 @@ function SettingsMenu:_init(game)
 						  {"Item Spawning", "itemSpawn"}, {"Screen Shake", "screenShake"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
 
 	self.coopButtons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"}, {"Game Mode", "gameMode"},
-						{"Difficulty", "difficulty"}, {"Play Music", "playMusic"}}
+						{"Difficulty", "difficulty"}, {"Screen Shake", "screenShake"}, {"Play Music", "playMusic"}}
 	
 	self.buttons = clone(self.versusButtons)
 	
