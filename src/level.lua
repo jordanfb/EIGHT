@@ -149,7 +149,8 @@ function Level:load()
 	self.gameOver = false
 	self.winner = -1
 	self.coopStage = 1
-	self.allottedBatSpawns = self.game.batsPerStage[1]
+	self.allottedBatSpawns = 1
+	self.batsToSpawn = 0
 	self.batsSpawned = 0
 	self.numbatsKilled = 0
 	self.batSpeed = 1
@@ -388,6 +389,15 @@ function Level:update(dt)
 			table.insert(self.items, Item("sword", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
+	if self.game.gameSettings.rainbows=="on" then
+		if math.random(self.spawnRate/self.game.gameSettingRates.rainbows)==1 then
+		-- if math.random(100) == 1 then
+			table.insert(self.items, Item("rainbow", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
+		end
+		if math.random(self.spawnRate/self.game.gameSettingRates.platforms)==1 then
+			table.insert(self.items, Item("rainbow", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
+		end
+	end
 	if self.game.gameSettings.bats == "on" then
 		if self.game.gameSettings.gameMode ~= "co-op" or self.batsSpawned < self.allottedBatSpawns then
 			local ySpawn = self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])]
@@ -426,11 +436,8 @@ function Level:update(dt)
 		if self.batsSpawned == self.allottedBatSpawns and self.batsSpawned == self.numBatsKilled then
 			self.coopStage = self.coopStage + 1
 			table.insert (self.announcements, {message = "STAGE "..self.coopStage, timer = 100})
-			if self.coopStage < #self.game.batsPerStage then
-				self.allottedBatSpawns = self.allottedBatSpawns + self.game.batsPerStage[self.coopStage]
-			else
-				self.allottedBatSpawns = self.allottedBatSpawns + self.game.batsPerStage[#self.game.batsPerStage]
-			end
+			self.batsToSpawn = self.batsToSpawn + 5
+			self.allottedBatSpawns = self.allottedBatSpawns + self.batsToSpawn
 
 			if self.game.batSpeed[self.coopStage] then
 				self.batSpeed = self.game.batSpeed[self.coopStage]

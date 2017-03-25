@@ -57,6 +57,8 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.reviveItemImage
 	elseif self.itemType == "sword" then
 		self.image = self.game.swordItemImage
+	elseif self.itemType == "rainbow" then
+		self.image = self.game.rainbowItemImage
 	elseif self.itemType == "bat" then
 		self.image = self.game.batImages
 		self.width = 90
@@ -142,6 +144,20 @@ function Item:draw()
 			addX = self.width
 		end
 		love.graphics.draw(self.image[math.floor(self.animation)+1], self.x + addX, self.y, 0, -sign(self.dx), 1)
+	elseif self.itemType == "rainbow" then
+		local yFlip = 1
+		local xFlip = 1
+		local addX = 0
+		local addY = 0
+		--[[if math.random(2) == 1 then
+			xFlip = -1
+			addX = self.width
+		end
+		if math.random(2) == 1 then
+			yFlip = -1
+			addY = self.height
+		end]]--
+		love.graphics.draw(self.image, self.x + addX, self.y+ addY, 0, xFlip, yFlip)
 	else
 		love.graphics.draw(self.image, self.x, self.y, 0, self.direction, 1)
 	end

@@ -58,6 +58,8 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 	
 	self.hasSword = 0
 	
+	self.rainbow = 0
+	
 	-- animations:
 	-- punch, kick jump, duck, walking,
 	self.SCREENWIDTH = 1920
@@ -90,11 +92,36 @@ function Player:loadImages()
 	self.pImage = self.level.game.playerImages[self.playerNumber].pImage
 end
 
+function Player:randomizeImages()
+	-- load the correct images by appending things to the default filename
+	self.breathImages = self.level.game.playerImages[math.random(8)].breathImages
+	
+	self.runImages = self.level.game.playerImages[math.random(8)].runImages
+	
+	self.hitImages = self.level.game.playerImages[math.random(8)].hitImages
+
+	self.kickImages = self.level.game.playerImages[math.random(8)].kickImages
+	
+	self.duckImage = self.level.game.playerImages[math.random(8)].duckImage
+	
+	self.jumpImage = self.level.game.playerImages[math.random(8)].jumpImage
+	
+end
+
 function Player:draw()
 	if self.health <= 0 then
 		return
 	end
 		
+	if self.rainbow > 0 then
+		self:randomizeImages()
+		self.rainbow = self.rainbow - 1
+		self.health = self.health + 1
+		if self.rainbow == 0 then
+			self:loadImages()
+		end
+	end
+	
 	love.graphics.setColor(self.colorTable[self.color + 1])
 	love.graphics.draw(self.pImage, self.x + 30, self.y - 100)
 	love.graphics.setColor(255, 255, 255, 255)

@@ -53,6 +53,7 @@ function Game:_init()
 	self.platformItemImage = love.graphics.newImage('images/platform-item.png')
 	self.reviveItemImage = love.graphics.newImage('images/revive-item.png')
 	self.swordItemImage = love.graphics.newImage('images/sword-item.png')
+	self.rainbowItemImage = love.graphics.newImage('images/rainbow-item.png')
 
 	self.batImages = {}
 	for i = 1, 4 do
@@ -63,7 +64,6 @@ function Game:_init()
 	self.screenshakeDuration = 0
 	self.screenshakeMagnitude = 0
 	
-	self.batsPerStage = {1, 5, 10}
 	self.batSpeed = {}
 	self.batSpeed[2] = 1.25
 	self.batSpeed[3] = 1.5
@@ -86,6 +86,7 @@ function Game:makeGameSettings()
 		platforms = "on",
 		bats = "off",
 		swords = "on",
+		rainbows = "on",
 		gameMode = "versus",
 		difficulty = "easy",
 		screenShake = "normal",
@@ -150,6 +151,7 @@ function Game:makeGameSettings()
 			platforms = 1,
 			swords = 2,
 			numberJumps = 5,
+			rainbows = .5,
 			punchTime = 1, -- I don't think this is functional
 			kickTime = 1, -- I don't think this is functional
 			knifeTime = 1,
