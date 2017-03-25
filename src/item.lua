@@ -55,6 +55,8 @@ function Item:_init(itemType, x, y, dX, dY, game)
 		self.image = self.game.platformItemImage
 	elseif self.itemType == "revive" then
 		self.image = self.game.reviveItemImage
+	elseif self.itemType == "sword" then
+		self.image = self.game.swordItemImage
 	elseif self.itemType == "bat" then
 		self.image = self.game.batImages
 		self.width = 90

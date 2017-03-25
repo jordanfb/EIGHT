@@ -16,8 +16,9 @@ function SettingsMenu:_init(game)
 	self.updateUnder = false
 	self.game = game
 	self.versusButtons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"}, {"Game Mode", "gameMode"},
-						  {"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"}, {"Bats", "bats"},
-						  {"Poison", "poison"}, {"Life Steal", "lifeSteal"}, {"Life Regen", "regen"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
+						  {"Health Items", "healthSpawn"}, {"Jump Items", "superJumps"}, {"Knife Items", "knives"}, {"Speed Items", "speedUps"}, {"Platform Items", "platforms"},
+						  {"Sword Items", "swords"}, {"Bats", "bats"},  {"Poison", "poison"}, {"Life Steal", "lifeSteal"}, {"Life Regen", "regen"},
+						  {"Item Spawning", "itemSpawn"}, {"Screen Shake", "screenShake"}, {"Fall Damage", "takeFallingOutOfWorldDamage"}, {"Play Music", "playMusic"}}
 
 	self.coopButtons = {{"Back", "back", "action"}, {"Reset-All", "reset", "action"}, {"Randomize", "random", "action"}, {"All off", "alloff", "action"}, {"Game Mode", "gameMode"},
 						{"Difficulty", "difficulty"}, {"Play Music", "playMusic"}}

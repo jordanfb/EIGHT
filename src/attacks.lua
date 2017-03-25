@@ -46,6 +46,15 @@ function Attacks:checkCollisions(player, playerX, playerY, playerWidth, playerHe
 							end
 							player.attackedTimer = 10
 							attack[9+player.playerNumber] = true
+						elseif attack[6]==self.game.gameSettingRates.swordDamage then
+							self.game:startScreenshake(.15, 5)
+							player.health = math.max(player.health - attack[6], 0)
+							if self.game.gameSettings.instantKill then
+								player.health = 0
+								self.game:startScreenshake(.25, 10)
+							end
+							player.attackedTimer = 10
+							attack[9+player.playerNumber] = true
 						end
 						if self.game.gameSettings.lifeSteal or self.game.gameSettings.healthGainOnKill then
 							-- steal life for the player who did the attack.
@@ -116,6 +125,8 @@ function Attacks:update(dt)
 											player.health = 50
 										end
 									end
+								elseif self.level.items[i].itemType == "sword" then
+									self.level.players[k].hasSword = 500
 								end
 								self.game:startScreenshake(.15, 1)
 								table.remove(self.level.items, i)
@@ -132,7 +143,7 @@ function Attacks:draw()
 	love.graphics.setColor(255, 0, 0)
 	for i = self.firstAttack, #self.attacks, 1 do
 		local attack = self.attacks[i]
-		if (attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching) or (attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking) then
+		if (attack[6] == self.game.gameSettingRates.punchDamage and self.game.gameSettings.punching) or (attack[6] == self.game.gameSettingRates.kickDamage and self.game.gameSettings.kicking) or attack[6]==self.game.gameSettingRates.swordDamage then
 			if attack[8]>12 then
 				love.graphics.draw(self.attackImages[6-math.ceil((attack[8]-10)/2)], attack[1], attack[2])
 			else

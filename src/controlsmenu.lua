@@ -32,7 +32,7 @@ function ControlsMenu:setInput(input)
 	local keyboardT = {{punch = "c", kick = "v", left = "a", right = "d", up = "w", down = "s"},
 						{punch = "n", kick = "m", left = "f", right = "h", up = "t", down = "g"},
 						{punch = ".", kick = "/", left = "j", right = "l", up = "i", down = "k"},
-						{punch = "numpad 2", kick = "numpad 3", left = "numpad 4", right = "numpad 6", up = "numpad 8", down = "numpad 5"}}
+						{punch = "numpad 3", kick = "numpad enter", left = "numpad 4", right = "numpad 6", up = "numpad 8", down = "numpad 5"}}
 	local controlOrder = {"up", "down", "left", "right", "punch", "kick"}
 	local currentInput = {}
 	self.controlsText = "Player "..self.game.mainMenu.mapInputsToPlayers[input]..":\n"

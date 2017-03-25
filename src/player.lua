@@ -56,6 +56,8 @@ function Player:_init(level, keyboard, x, y, playerNumber, color)
 
 	self.little = true
 	
+	self.hasSword = 0
+	
 	-- animations:
 	-- punch, kick jump, duck, walking,
 	self.SCREENWIDTH = 1920
@@ -135,6 +137,33 @@ function Player:draw()
 		love.graphics.draw(self.runImages[math.ceil(self.runAnim/5)], self.x+addX, self.y, 0, self.facing, 1)
 	end
 	
+	--SWORD--
+	if self.hasSword > 0 then
+		addX = 0
+		if self.facing == -1 then
+			addX = 240
+		end
+		if self.attackTimer > 0 then
+			if self.attackType==1 then
+				if self.attackTimer < 20 then
+					love.graphics.draw(self.level.game.knifeImages.attack[math.ceil(self.attackTimer/5)], self.x+addX - 60, self.y, 0, self.facing, 1)
+				else
+					love.graphics.draw(self.level.game.knifeImages.attack[5], self.x+addX - 60, self.y, 0, self.facing, 1)
+				end
+			end	
+		elseif not self.onPlatform then
+			love.graphics.draw(self.level.game.knifeImages.attack[1], self.x+addX - 70, self.y - 20, 0, self.facing, 1)
+		elseif (self.keyboard:keyState(self.inputNumber, "down") > 0) and self.dx==0 then
+			love.graphics.draw(self.level.game.knifeImages.attack[1], self.x+addX - 70, self.y + 10, 0, self.facing, 1)
+		elseif self.dx == 0 then
+			love.graphics.draw(self.level.game.knifeImages.attack[1], self.x+addX - 70, self.y -10 + 10*math.ceil(self.anim/20), 0, self.facing, 1)
+		elseif self.dx ~= 0 then
+			-- then run!
+			love.graphics.draw(self.level.game.knifeImages.attack[1], self.x+addX - 70, self.y -10 + 10*math.ceil(self.runAnim/15), 0, self.facing, 1)
+		end
+	end
+	
+	
 	love.graphics.setColor(255, 255, 255)
 end
 
@@ -149,6 +178,12 @@ end
 function Player:update(dt)
 	if self.level.game.gameSettings.speedUps == "always" then
 		self.speedUp = 100
+	end
+	
+	if self.level.game.gameSettings.swords == "always" then
+		self.hasSword = 5
+	else
+		self.hasSword = self.hasSword - 1
 	end
 
 	if self.speedUp > 0 then
@@ -269,7 +304,7 @@ function Player:update(dt)
 		self.attackType = 2
 		self.attackTimer = 1
 		self.isAttacking = true
-	elseif ( not (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 )) or self.attackTimer==25 then
+	elseif ( not (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 )) or self.attackTimer>=25 then
 		self.isAttacking = false
 		if (self.keyboard:keyState(self.inputNumber, "punch") > 0) and not (self.keyboard:keyState(self.inputNumber, "kick") > 0 ) then
 			if self.facing==1 then
@@ -277,20 +312,36 @@ function Player:update(dt)
 					table.insert(self.level.projectiles, Projectile("knife", self.x+100, self.y+60, 1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+						if self.hasSword > 0 then
+							self.level.attacks:newAttack(self.x+160, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.swordDamage, self.facing, 20, self.playerNumber)
+						else
+							self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+						end
 					end
 				else
-					self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+					if self.hasSword > 0 then
+						self.level.attacks:newAttack(self.x+150, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.swordDamage, self.facing, 20, self.playerNumber)
+					else
+						self.level.attacks:newAttack(self.x+100, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+					end
 				end
 			else
 				if self.numKnives > 0 or self.level.game.gameSettings.knives == "always" then
 					table.insert(self.level.projectiles, Projectile("knife", self.x-70, self.y+60, -1, self.color))
 					self.numKnives = self.numKnives - 1
 					if self.level.game.gameSettings.punchWhileThrowing then
-						self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+						if  self.hasSword > 0 then
+							self.level.attacks:newAttack(self.x-130, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.swordDamage, self.facing, 20, self.playerNumber)
+						else
+							self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+						end
 					end
 				else
-					self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+					if self.hasSword > 0 then
+						self.level.attacks:newAttack(self.x-130, self.y+20, 90, 90, self.color, self.level.game.gameSettingRates.swordDamage, self.facing, 20, self.playerNumber)
+					else
+						self.level.attacks:newAttack(self.x-70, self.y+20, 90, 90, self.color, 	self.level.game.gameSettingRates.punchDamage, self.facing, 20, self.playerNumber)
+					end
 				end
 			end
 			self.coolDown = 50
@@ -325,13 +376,20 @@ function Player:update(dt)
 	end
 	
 	
+	
 	if self.isAttacking and self.attackTimer < 150 then
 		self.attackTimer = self.attackTimer + self.attackSpeed/self.attackType
+		if self.hasSword > 0 and self.attackType==1 then
+			self.attackTimer = self.attackTimer - self.attackSpeed/2
+		end
 	elseif self.attackTimer >= 150 then
 		self.attackTimer = 20
 		self.isAttacking = false
 	elseif not self.isAttacking  then
 		self.attackTimer = self.attackTimer - self.attackSpeed/self.attackType
+		if self.hasSword  > 0 and self.attackType==1 then
+			self.attackTimer = self.attackTimer + self.attackSpeed/2
+		end
 	elseif not self.isAttacking then
 		self.attackTimer = 20
 	end
