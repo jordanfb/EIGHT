@@ -133,7 +133,7 @@ function Menu:selectSelected()
 		for i, v in ipairs(self.buttons) do
 			if tostring(self.game.gameSettings[v.message]) == "true" then
 				self.game.gameSettings[v.message] = false
-			elseif tostring(self.game.gameSettings[v.message]) ~= "false" and v.message~="gameMode"  and v.message~="difficulty" then
+			elseif tostring(self.game.gameSettings[v.message]) ~= "false" and v.message~="gameMode"  and v.message~="difficulty" and v.message~="itemSpawn" then
 				self.game.gameSettings[v.message] = "off"
 			end
 		end

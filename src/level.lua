@@ -164,6 +164,17 @@ function Level:load()
 	-- for k, v in pairs(self.keyboard.keys) do
 	-- 	self.keyboard.keys[k] = false
 	-- end
+	
+	self.spawnRate = 3000
+	if self.game.gameSettings.itemSpawn == "few" then
+		self.spawnRate = 6000
+	elseif self.game.gameSettings.itemSpawn == "almost none" then
+		self.spawnRate = 12000
+	elseif self.game.gameSettings.itemSpawn == "many" then
+		self.spawnRate = 1500
+	elseif self.game.gameSettings.itemSpawn == "rediculous" then
+		self.spawnRate = 750
+	end
 end
 
 function Level:leave()
@@ -325,55 +336,55 @@ function Level:update(dt)
 		end
 	end
 	if self.game.gameSettings.healthSpawn then
-		if math.random(3000/self.game.gameSettingRates.health)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.health)==1 then
 			table.insert(self.items, Item("health", -50, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.health)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.health)==1 then
 			table.insert(self.items, Item("health", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.knives=="on" then
-		if math.random(3000/self.game.gameSettingRates.knife)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.knife)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("knife", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.knife)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.knife)==1 then
 			table.insert(self.items, Item("knife", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.superJumps=="on" then
-		if math.random(3000/self.game.gameSettingRates.jump)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.jump)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("jump", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.jump)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.jump)==1 then
 			table.insert(self.items, Item("jump", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.speedUps=="on" then
-		if math.random(3000/self.game.gameSettingRates.speed)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.speed)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("speed", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.speed)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.speed)==1 then
 			table.insert(self.items, Item("speed", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.platforms=="on" then
-		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.platforms)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("platform", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.platforms)==1 then
 			table.insert(self.items, Item("platform", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
 	if self.game.gameSettings.swords=="on" then
-		if math.random(3000/self.game.gameSettingRates.swords)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.swords)==1 then
 		-- if math.random(100) == 1 then
 			table.insert(self.items, Item("sword", -70, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], 1, 1, self.game))
 		end
-		if math.random(3000/self.game.gameSettingRates.platforms)==1 then
+		if math.random(self.spawnRate/self.game.gameSettingRates.platforms)==1 then
 			table.insert(self.items, Item("sword", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
@@ -383,12 +394,12 @@ function Level:update(dt)
 			if self.game.gameSettings.gameMode == "co-op" then
 				ySpawn = self.players[math.random(#self.players)].y
 			end
-			if math.random(3000/self.game.gameSettingRates.bat)==1 then
+			if math.random(self.spawnRate/self.game.gameSettingRates.bat)==1 then
 			-- if math.random(100) == 1 then
 				table.insert(self.items, Item("bat", -70, ySpawn, 1, 1, self.game))
 				self.batsSpawned = self.batsSpawned + 1
 			end
-			if math.random(3000/self.game.gameSettingRates.bat)==1 then
+			if math.random(self.spawnRate/self.game.gameSettingRates.bat)==1 then
 				table.insert(self.items, Item("bat", self.SCREENWIDTH, ySpawn, -1, 1, self.game))
 				self.batsSpawned = self.batsSpawned + 1
 			end

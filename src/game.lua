@@ -89,6 +89,7 @@ function Game:makeGameSettings()
 		gameMode = "versus",
 		difficulty = "easy",
 		screenShake = "normal",
+		itemSpawn = "normal",
 		healthSpawn = true,
 		punching = true, -- I hate the new Kayne
 		kicking = true, --What if Kayne wrote a song about Kayne
@@ -104,7 +105,6 @@ function Game:makeGameSettings()
 		playMusic = false,
 		punchWhileThrowing = false,
 		noHealthLimit = false,
-		screenShake = true,
 	}
 
 	self.coopSettings = {
@@ -131,7 +131,8 @@ function Game:makeGameSettings()
 						   gameMode = {"versus", "co-op"},
 						   swords = {"on", "off", "always"},
 						   difficulty = {"easy", "medium", "hard"},
-						   screenShake = {"normal", "extreme", "none"},
+						   screenShake = {"normal", "extreme", "off"},
+						   itemSpawn = {"normal", "many", "rediculous", "almost none", "few"},
 -- =======
 -- 						   bats = {"on", "off", "co-op"},
 -- >>>>>>> Coopbranch
@@ -280,7 +281,7 @@ function Game:changeSetting(setting)
 end
 
 function Game:startScreenshake(time, intensity)
-	if self.gameSettings.screenShake == "none" then
+	if self.gameSettings.screenShake == "off" then
 		intensity = 0
 	elseif self.gameSettings.screenShake == "extreme" then
 		intensity = 3*intensity
