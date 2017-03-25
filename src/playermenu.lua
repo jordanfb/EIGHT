@@ -15,7 +15,13 @@ function PlayerMenu:_init(game, mainMenu, level, playerNum, inputNum, font)
 	self.playerNum = playerNum
 	self.inputNum = inputNum
 
-	self.playerValues.color = playerNum
+	if self.game.gameSettings.gameMode == "co-op" and self.mainMenu.playerMenus[1] ~= nil then
+		-- set it to the color everyone else is
+		self.playerValues.color = self.mainMenu.playerMenus[1].playerValues.color
+	else
+		-- otherwise set it to this
+		self.playerValues.color = playerNum
+	end
 	self.menuOptions = {{"Not Ready", "Ready"},
 						{"Red\nTeam", "Green\nTeam", "Blue\nTeam", "Purple\nTeam", "Orange\nTeam", "Yellow\nTeam", "Teal\nTeam", "Pink\nTeam"},
 						{"Controls"}, {"Settings"}, 
@@ -91,6 +97,7 @@ end
 function PlayerMenu:selectValue()
 	if self.mapIndexToValue[self.menuPosition] == "settings" then
 		self.game.settingsMenu.menu:setInput(self.inputNum)
+		self.game.settingsMenu.playerNumThatOpenedThis = self.playerNum
 		self.game:addToScreenStack(self.game.settingsMenu)
 		-- print("ADDING SETTINGS HOPEFULLY? PLEASE?")
 	elseif self.mapIndexToValue[self.menuPosition] == "controls" then

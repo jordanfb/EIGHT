@@ -29,6 +29,8 @@ function SettingsMenu:_init(game)
 					
 	self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200)
 	self.subscribedToInputs = false
+
+	self.playerNumThatOpenedThis = -1 -- this is the player number that opened this
 end
 
 function SettingsMenu:load()
@@ -61,14 +63,12 @@ function SettingsMenu:update(dt)
 		for i, v in pairs(self.game.coopSettings) do
 			self.game.gameSettings[i] = v
 		end
-		
 		--set team colors
 		for i, v in pairs(self.game.mainMenu.playerMenus) do
-			self.game.mainMenu.playerMenus[i].playerValues.color = 1
-			self.game.mainMenu.playerColors[self.game.mainMenu.playingPlayers[i].playerNumber] = 1
+			v.playerValues.color = self.game.mainMenu.playerColors[self.playerNumThatOpenedThis] + 1 -- 1 should be red
+			self.game.mainMenu.playerColors[v.playerNum] = self.game.mainMenu.playerColors[self.playerNumThatOpenedThis] -- 0 is red here.
 		end
 		self.game.gameSettingRates.bat = 16
-		
 	elseif self.game.gameSettings.gameMode == "versus" and self.wasGameMode == "co-op" then
 		self.buttons = clone(self.versusButtons)
 		self.menu = Menu(self.game, self.buttons, 100, 100, love.graphics.getWidth()-200, love.graphics.getHeight()-200, 4)

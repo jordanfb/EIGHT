@@ -377,16 +377,24 @@ function MainMenu:addPlayerToGame(inputNum, playerNum)
 	local k = 1
 	self.players[playerNum].inputNumber = inputNum
 	if #self.playingPlayers == 0 then
-		-- print("ADDED AT 1")
 		table.insert(self.playingPlayers, self.players[playerNum])
 		table.insert(self.playerMenus, PlayerMenu(self.game, self, self.level, playerNum, inputNum, self.playerMenuFont))
+		if self.game.gameSettings.gameMode == "co-op" then
+			self.game.mainMenu.playerColors[playerNum] = self.playerMenus[1].playerValues.color - 1
+			-- because of the stupid way colors are done, the player menu is one indexed but not the playerColors table
+			self.playerMenus[#self.playerMenus].playerValues.color = self.playerMenus[1].playerValues.color
+		end
 	else
 		while k <= #self.playingPlayers and self.playingPlayers[k].color < self.players[playerNum].color do
 			k = k + 1
 		end
-		-- print("ADDED ELSEWHERE")
 		table.insert(self.playingPlayers, k, self.players[playerNum])
 		table.insert(self.playerMenus, k, PlayerMenu(self.game, self, self.level, playerNum, inputNum, self.playerMenuFont))
+		if self.game.gameSettings.gameMode == "co-op" then
+			self.game.mainMenu.playerColors[playerNum] = self.playerMenus[1].playerValues.color - 1
+			-- because of the stupid way colors are done, the player menu is one indexed but not the playerColors table
+			self.playerMenus[k].playerValues.color = self.playerMenus[1].playerValues.color
+		end
 	end
 end
 
