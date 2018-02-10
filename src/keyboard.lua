@@ -34,66 +34,67 @@ function Keyboard:_init(game)
 	local down = 4
 	local punch = 5
 	local kick = 6
+	local switchdirection = 7
 	-- these controls have been customized for the arcade cabinet
 	self.fourBasic = {
-		a = 0*6+left, d = 0*6+right, w = 0*6+up, s = 0*6+down, c = 0*6+punch, v = 0*6+kick,
-		--f = 1*6+left, h = 1*6+right, t = 1*6+up, g = 1*6+down, n = 1*6+punch, m = 1*6+kick,
-		j = 2*6+left, l = 2*6+right, i = 2*6+up, k = 2*6+down,
-		--kp4 = 3*6+left, kp6 = 3*6+right, kp8 = 3*6+up, kp5 = 3*6+down, kp3 = 3*6+punch, kpenter = 3*6+kick
+		a = 0*7+left, d = 0*7+right, w = 0*7+up, s = 0*7+down, z = 0*7+punch, x = 0*7+kick, c = 0*7+switchdirection, ["1"] = 0*7+punch, ["2"] = 0*7+kick, ["3"] = 0*7+switchdirection, ["5"] = 0*7+punch,
+		--f = 1*7+left, h = 1*7+right, t = 1*7+up, g = 1*7+down, n = 1*7+punch, m = 1*7+kick,
+		j = 2*7+left, l = 2*7+right, i = 2*7+up, k = 2*7+down, b = 2*7+punch, n = 2*7+kick, m = 2*7+switchdirection, ["7"] = 2*7+punch, ["8"] = 2*7+kick, ["9"] = 2*7+switchdirection, ["6"] = 2*7+punch
+		--kp4 = 3*7+left, kp7 = 3*7+right, kp8 = 3*7+up, kp5 = 3*7+down, kp3 = 3*7+punch, kpenter = 3*7+kick
 	}
-	--self.fourBasic["."] = 2*6+punch
-	--self.fourBasic["/"] = 2*6+kick
+	--self.fourBasic["."] = 2*7+punch
+	--self.fourBasic["/"] = 2*7+kick
 
 
 	self.eightStandard = {
-		q = 2*6+left, w = 2*6+right, e = 2*6+up, r = 2*6+down, t = 2*6+punch, y = 2*6+kick,
-		u = 3*6+left, i = 3*6+right, o = 3*6+up, p = 3*6+down, 
-		a = 4*6+left, s = 4*6+right, d = 4*6+up, f = 4*6+down, g = 4*6+punch, h = 4*6+kick,
-		j = 5*6+left, k = 5*6+right, l = 5*6+up,
-		lshift = 6*6+left, z = 6*6+right, x = 6*6+up, c = 6*6+down, v = 6*6+punch, b = 6*6+kick,
-		n = 7*6+left, m = 7*6+right, rshift = 7*6+kick,
+		q = 2*7+left, w = 2*7+right, e = 2*7+up, r = 2*7+down, t = 2*7+punch, y = 2*7+kick,
+		u = 3*7+left, i = 3*7+right, o = 3*7+up, p = 3*7+down, 
+		a = 4*7+left, s = 4*7+right, d = 4*7+up, f = 4*7+down, g = 4*7+punch, h = 4*7+kick,
+		j = 5*7+left, k = 5*7+right, l = 5*7+up,
+		lshift = 6*7+left, z = 6*7+right, x = 6*7+up, c = 6*7+down, v = 6*7+punch, b = 6*7+kick,
+		n = 7*7+left, m = 7*7+right, rshift = 7*7+kick,
 	}
-	self.eightStandard["`"] = 0*6+left
-	self.eightStandard["1"] = 0*6+right
-	self.eightStandard["2"] = 0*6+up
-	self.eightStandard["3"] = 0*6+down
-	self.eightStandard["4"] = 0*6+punch
-	self.eightStandard["5"] = 0*6+kick
+	self.eightStandard["`"] = 0*7+left
+	self.eightStandard["1"] = 0*7+right
+	self.eightStandard["2"] = 0*7+up
+	self.eightStandard["3"] = 0*7+down
+	self.eightStandard["4"] = 0*7+punch
+	self.eightStandard["5"] = 0*7+kick
 
-	self.eightStandard["7"] = 1*6+left
-	self.eightStandard["8"] = 1*6+right
-	self.eightStandard["9"] = 1*6+up
-	self.eightStandard["0"] = 1*6+down
-	self.eightStandard["-"] = 1*6+punch
-	self.eightStandard["="] = 1*6+kick
+	self.eightStandard["7"] = 1*7+left
+	self.eightStandard["8"] = 1*7+right
+	self.eightStandard["9"] = 1*7+up
+	self.eightStandard["0"] = 1*7+down
+	self.eightStandard["-"] = 1*7+punch
+	self.eightStandard["="] = 1*7+kick
 	
-	self.eightStandard["["] = 3*6+punch
-	self.eightStandard["]"] = 3*6+kick
+	self.eightStandard["["] = 3*7+punch
+	self.eightStandard["]"] = 3*7+kick
 
-	self.eightStandard[";"] = 5*6+down
-	self.eightStandard["'"] = 5*6+punch
-	self.eightStandard["return"] = 5*6+kick
+	self.eightStandard[";"] = 5*7+down
+	self.eightStandard["'"] = 5*7+punch
+	self.eightStandard["return"] = 5*7+kick
 
-	self.eightStandard[","] = 7*6+up
-	self.eightStandard["."] = 7*6+down
-	self.eightStandard["/"] = 7*6+punch
+	self.eightStandard[","] = 7*7+up
+	self.eightStandard["."] = 7*7+down
+	self.eightStandard["/"] = 7*7+punch
 
 
 
 	self.eightWasdPress = {unpack(self.eightStandard)}
-	self.eightWasdPress["6"] = 6*6+left
-	self.eightWasdPress["z"] = 6*6+right
-	self.eightWasdPress["x"] = 6*6+up
-	self.eightWasdPress["c"] = 6*6+down
-	self.eightWasdPress["v"] = 6*6+punch
-	self.eightWasdPress["b"] = 6*6+kick
+	self.eightWasdPress["6"] = 6*7+left
+	self.eightWasdPress["z"] = 6*7+right
+	self.eightWasdPress["x"] = 6*7+up
+	self.eightWasdPress["c"] = 6*7+down
+	self.eightWasdPress["v"] = 6*7+punch
+	self.eightWasdPress["b"] = 6*7+kick
 
-	self.eightWasdPress["n"] = 7*6+left
-	self.eightWasdPress["m"] = 7*6+right
-	self.eightWasdPress[","] = 7*6+up
-	self.eightWasdPress["."] = 7*6+down
-	self.eightWasdPress["/"] = 7*6+punch
-	self.eightWasdPress["\\"] = 7*6+kick
+	self.eightWasdPress["n"] = 7*7+left
+	self.eightWasdPress["m"] = 7*7+right
+	self.eightWasdPress[","] = 7*7+up
+	self.eightWasdPress["."] = 7*7+down
+	self.eightWasdPress["/"] = 7*7+punch
+	self.eightWasdPress["\\"] = 7*7+kick
 	self.eightWasdPress["rshift"] = nil
 
 	self.eightWasdUnpress = {
@@ -148,7 +149,7 @@ function Keyboard:addGamepadBindingsFrom(filename)
 end
 
 function Keyboard:keyTypeToNum(keyType)
-	local convertTable = {left = 1, right = 2, up = 3, down = 4, punch = 5, kick = 6}
+	local convertTable = {left = 1, right = 2, up = 3, down = 4, punch = 5, kick = 6, switchdirection = 7}
 	return convertTable[keyType]
 end
 
@@ -177,8 +178,8 @@ function Keyboard:keyTypeInputNumKeyboard(key, unicode)
 	if keyValue == nil then
 		return nil, nil, nil
 	end
-	local keyType = ((keyValue-1) % 6) + 1
-	local inputNum = math.floor((keyValue-1)/6)+1
+	local keyType = ((keyValue-1) % 7) + 1
+	local inputNum = math.floor((keyValue-1)/7)+1
 	return keyType, inputNum, press
 end
 
@@ -212,8 +213,8 @@ function Keyboard:keyreleased(key, unicode)
 	end
 
 	if keyValue ~= nil then
-		inputNum = math.floor((keyValue-1)/6)+1
-		keyType = ((keyValue-1) % 6) + 1
+		inputNum = math.floor((keyValue-1)/7)+1
+		keyType = ((keyValue-1) % 7) + 1
 		-- if keyType == 0 then keyType = 6 end
 		if inputNum ~= nil and inputNum ~= 0 then
 			if self:keyNumToType(keyType) ~= nil then

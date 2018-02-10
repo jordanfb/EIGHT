@@ -29,11 +29,12 @@ end
 function ControlsMenu:setInput(input)
 	self.inputNum = input
 	self.menuSelection = 1
-	local keyboardT = {{punch = "c", kick = "v", left = "a", right = "d", up = "w", down = "s"},
+	-- changed for arcade machine
+	local keyboardT = {{punch = "left button", kick = "middle button", ["switch direction"] = "right button", ["joystick"] = "move, jump and duck"},
 						{punch = "n", kick = "m", left = "f", right = "h", up = "t", down = "g"},
-						{punch = ".", kick = "/", left = "j", right = "l", up = "i", down = "k"},
+						{punch = "left button", kick = "middle button", ["switch direction"] = "right button", ["joystick"] = "move, jump and duck"},
 						{punch = "numpad 3", kick = "numpad enter", left = "numpad 4", right = "numpad 6", up = "numpad 8", down = "numpad 5"}}
-	local controlOrder = {"up", "down", "left", "right", "punch", "kick"}
+	local controlOrder = {"joystick", "punch", "kick", "switch direction"}
 	local currentInput = {}
 	self.controlsText = "Player "..self.game.mainMenu.mapInputsToPlayers[input]..":\n"
 	if input <= 8 then
@@ -49,7 +50,7 @@ function ControlsMenu:setInput(input)
 				end
 			end
 		end
-		self.controlsText = self.controlsText .. "\nHold left and right at the same time to face the other direction\n\nPress any key to return."
+		self.controlsText = self.controlsText .. "\n\nPress any input to return."
 	else
 		if input <= 16 or not self.game.keyboard.gamepads[(input-9)%8+1].split then
 			self.controlsText = self.controlsText.."Joystick Binding: "..self.game.keyboard.gamepadBindings[self.game.keyboard.gamepads[(input-9)%8+1].primaryMode].name.."\n\n"
