@@ -133,9 +133,9 @@ function Menu:selectSelected()
 		end
 	elseif self.buttons[self.selection+1].message == "alloff" then
 		for i, v in ipairs(self.buttons) do
-			if tostring(self.game.gameSettings[v.message]) == "true" then
+			if tostring(self.game.gameSettings[v.message]) == "true" and v.message ~= "playMusic" then
 				self.game.gameSettings[v.message] = false
-			elseif tostring(self.game.gameSettings[v.message]) ~= "false" and v.message~="gameMode"  and v.message~="difficulty" and v.message~="itemSpawn" then
+			elseif tostring(self.game.gameSettings[v.message]) ~= "false" and v.message~="gameMode"  and v.message~="difficulty" and v.message~="itemSpawn" and v.message~="playMusic" then
 				self.game.gameSettings[v.message] = "off"
 			end
 		end
@@ -154,7 +154,7 @@ function Menu:inputMade(inputNum, input, pressValue)
 		return
 	end
 	if self.controllingInput == 0 or self.controllingInput == inputNum then
-		if (input == "punch" or input == "kick" or input == "menupunch" or input == "menukick") then
+		if (input == "punch" or input == "kick" or input == "menupunch" or input == "menukick" or input == "switchdirection") then
 			self:selectSelected()
 			-- self.selectionToggle = true
 		-- else

@@ -186,7 +186,7 @@ function ControlsMenu:inputMade(inputNum, input, pressValue)
 	if self.inputNum <= 8 then
 		self.game:popScreenStack() -- it's a keyboard, so exit out
 	end
-	if input == "right" or input == "lookright" or input == "menuright" or input == "punch" or input == "menupunch" then
+	if input == "right" or input == "lookright" or input == "menuright" or input == "punch" or input == "menupunch" or input == "switchdirection" then
 		if self.menuSelection == 1 then
 			self:changeJoystickInputMethod(true)
 		elseif self.menuSelection == 2 then

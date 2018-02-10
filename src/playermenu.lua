@@ -122,12 +122,13 @@ function PlayerMenu:inputMade(inputNum, input, pressValue)
 			self.playerValues[self.mapIndexToValue[self.menuPosition]] = self.playerValues[self.mapIndexToValue[self.menuPosition]] - 1
 			-- return self.menuOptions[optionNumber][self.playerValues[self.mapIndexToValue[optionNumber]]]
 		elseif input == "right" or input == "kick" or input == "menuright" or input == "lookright" or input == "menukick" then
+		elseif input == "right" or input == "kick" or input == "menuright" or input == "lookright" or input == "menukick" or input == "switchdirection" then
 			self.playerValues[self.mapIndexToValue[self.menuPosition]] = self.playerValues[self.mapIndexToValue[self.menuPosition]] + 1
 		end
 		self.playerValues[self.mapIndexToValue[self.menuPosition]] = self:listIndexMod(self.playerValues[self.mapIndexToValue[self.menuPosition]], #self.menuOptions[self.menuPosition])
 		self:changeValue()
 	else
-		if input == "punch" or input == "kick" or input == "menupunch" or input == "menukick" then
+		if input == "punch" or input == "kick" or input == "menupunch" or input == "menukick" or input == "switchdirection" then
 			self:selectValue()
 		end
 	end
