@@ -121,7 +121,6 @@ function PlayerMenu:inputMade(inputNum, input, pressValue)
 		if input == "left" or input == "punch" or input == "menuleft" or input == "lookleft" or input == "menupunch" then
 			self.playerValues[self.mapIndexToValue[self.menuPosition]] = self.playerValues[self.mapIndexToValue[self.menuPosition]] - 1
 			-- return self.menuOptions[optionNumber][self.playerValues[self.mapIndexToValue[optionNumber]]]
-		elseif input == "right" or input == "kick" or input == "menuright" or input == "lookright" or input == "menukick" then
 		elseif input == "right" or input == "kick" or input == "menuright" or input == "lookright" or input == "menukick" or input == "switchdirection" then
 			self.playerValues[self.mapIndexToValue[self.menuPosition]] = self.playerValues[self.mapIndexToValue[self.menuPosition]] + 1
 		end
