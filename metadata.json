@@ -1,7 +1,7 @@
 {  
    "ExeFolder":"",
    "ExeName":"",
-   "IconName":"",
+   "IconName":"icon.png",
    "ScreenshotName":"screenshot.png",
    "VideoName":"preview.mp4",
    "HasVideo":false,
@@ -30,7 +30,7 @@
    "KeyZ":"Punch",
    "KeyX":"Kick",
    "KeyC":"Switch Direction",
-   "Key5":"",
+   "Key5":"Select",
    "PlayerTwoControlLabel":"Player 2",
    "KeyI":"Jump",
    "KeyJ":"Left",
@@ -42,5 +42,5 @@
    "KeyB":"Punch",
    "KeyN":"Kick",
    "KeyM":"Switch Direction",
-   "Key6":""
+   "Key6":"Select"
 }
