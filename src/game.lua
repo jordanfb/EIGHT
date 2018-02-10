@@ -86,7 +86,7 @@ function Game:makeGameSettings()
 		platforms = "on",
 		bats = "off",
 		swords = "on",
-		rainbows = "on",
+		rainbows = "off",  -- this is disabled for the arcade mode
 		gameMode = "versus",
 		difficulty = "easy",
 		screenShake = "normal",
@@ -103,7 +103,7 @@ function Game:makeGameSettings()
 		noHealthAtNumberOfPeople = false,
 		takeFallingOutOfWorldDamage = true,
 		healthGainOnKill = true, -- I don't think this is functional
-		playMusic = false,
+		playMusic = true,
 		punchWhileThrowing = false,
 		noHealthLimit = false,
 	}

@@ -34,14 +34,15 @@ function Keyboard:_init(game)
 	local down = 4
 	local punch = 5
 	local kick = 6
+	-- these controls have been customized for the arcade cabinet
 	self.fourBasic = {
 		a = 0*6+left, d = 0*6+right, w = 0*6+up, s = 0*6+down, c = 0*6+punch, v = 0*6+kick,
-		f = 1*6+left, h = 1*6+right, t = 1*6+up, g = 1*6+down, n = 1*6+punch, m = 1*6+kick,
+		--f = 1*6+left, h = 1*6+right, t = 1*6+up, g = 1*6+down, n = 1*6+punch, m = 1*6+kick,
 		j = 2*6+left, l = 2*6+right, i = 2*6+up, k = 2*6+down,
-		kp4 = 3*6+left, kp6 = 3*6+right, kp8 = 3*6+up, kp5 = 3*6+down, kp3 = 3*6+punch, kpenter = 3*6+kick
+		--kp4 = 3*6+left, kp6 = 3*6+right, kp8 = 3*6+up, kp5 = 3*6+down, kp3 = 3*6+punch, kpenter = 3*6+kick
 	}
-	self.fourBasic["."] = 2*6+punch
-	self.fourBasic["/"] = 2*6+kick
+	--self.fourBasic["."] = 2*6+punch
+	--self.fourBasic["/"] = 2*6+kick
 
 
 	self.eightStandard = {
@@ -152,7 +153,7 @@ function Keyboard:keyTypeToNum(keyType)
 end
 
 function Keyboard:keyNumToType(keyNum)
-	local convertTable = {"left", "right", "up", "down", "punch", "kick"}
+	local convertTable = {"left", "right", "up", "down", "punch", "kick", "switchdirection"} -- we added switchdirection for the arcade machine
 	return convertTable[keyNum]
 end
 
