@@ -134,7 +134,7 @@ function Game:makeGameSettings()
 						   swords = {"on", "off", "always"},
 						   difficulty = {"easy", "medium", "hard"},
 						   screenShake = {"normal", "extreme", "off"},
-						   itemSpawn = {"normal", "many", "rediculous", "almost none", "few"},
+						   itemSpawn = {"normal", "many", "ridiculous", "almost none", "few"},
 -- =======
 -- 						   bats = {"on", "off", "co-op"},
 -- >>>>>>> Coopbranch

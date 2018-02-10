@@ -173,7 +173,7 @@ function Level:load()
 		self.spawnRate = 12000
 	elseif self.game.gameSettings.itemSpawn == "many" then
 		self.spawnRate = 1500
-	elseif self.game.gameSettings.itemSpawn == "rediculous" then
+	elseif self.game.gameSettings.itemSpawn == "ridiculous" then
 		self.spawnRate = 750
 	end
 end
@@ -398,7 +398,7 @@ function Level:update(dt)
 			table.insert(self.items, Item("rainbow", self.SCREENWIDTH, self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])], -1, 1, self.game))
 		end
 	end
-	if self.game.gameSettings.bats == "on" then
+	if self.game.gameSettings.bats == "on" or self.game.gameSettings.bats == true then
 		if self.game.gameSettings.gameMode ~= "co-op" or self.batsSpawned < self.allottedBatSpawns then
 			local ySpawn = self.allLevelItemSpawns[self.level][math.random(#self.allLevelItemSpawns[self.level])]
 			if self.game.gameSettings.gameMode == "co-op" then
