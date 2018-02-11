@@ -15,7 +15,7 @@ function Level:_init(keyboard, setPlayers, game)
 	self.updateUnder = false
 
 	self.SCREENWIDTH = 1920
-	self.SCREENHEIGHT = 1080
+	self.SCREENHEIGHT = 1200
 	
 	self.game = game
 	self.keyboard = keyboard
@@ -304,6 +304,22 @@ function Level:drawHealth()
 	end
 end
 
+function Level:updateSaveHighScores()
+	-- this is for the arcade cabinet, it saves high scores for the pretty text things using game.makeprettytextwhateverIcalledthisfunction()
+	local highscoreText = self.game:makePrettyScoreText(self.game.scoreData)
+	-- then save that to a file using lua file io so that we can reach EVERYWHERE in the filesystem
+
+	-- save things to the arcade cabinet extra data if able to
+	-- this is a thing testing for writing extradata for the arcade cabinet
+	file = io.open("CabinetData/highscoreDisplay.txt", "w")
+	if file ~= nil then
+		file:write(highscoreText)
+		file:close()
+	else
+		error(io.open("CabinetData/highscoreDisplay.txt", "w")) -- this is temporary for debugging why it errors on the arcade cabinet
+	end
+end
+
 function Level:update(dt)
 	if self.gameOver then
 		self.endGameTimer = self.endGameTimer - dt
@@ -529,6 +545,8 @@ function Level:endGame()
 	if self.game.gameSettings.gameMode == "co-op" then
 		self.scoreTable = {numplayers = #self.players, map = self.level, batskilled = self.numBatsKilled, stage = self.coopStage, difficulty = self.game.gameSettings.difficulty}
 		self.game:recordNewScore(self.scoreTable)
+		-- also edit the extradata file for the arcade cabinet stuff...
+		self:updateSaveHighScores()
 	end
 end
 

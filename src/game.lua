@@ -178,15 +178,39 @@ function Game:recordNewScore(scoreTable)
 	self.highScore, self.highScoreDisplayText = self:findBestScore(self.scoreData)
 end
 
-function Game:findBestScore(scoreTable)
+function Game:makePrettyScoreText(scoreTable)
+	-- this returns the pretty string with the best scores from each difficulty
+	-- for the arcade machine
+	local outputText = "Co-op High Scores:\r\n"
+	local colors = {"<color=red>", "<color=yellow>", "<color=lime>", "<color=white>"}
+	local color = 1
+	for i = #self.settingOptions.difficulty, 1, -1 do
+		local difficultyText = ""
+		difficultyText = difficultyText .. colors[color] .. self.settingOptions.difficulty[i]:sub(1,1):upper()..self.settingOptions.difficulty[i]:sub(2) .. ":</color> "
+		-- sort the difficulties backwards to put the highest score for the hardest difficulty first
+		local bestScore, displayText = self:findBestScore(scoreTable, self.settingOptions.difficulty[i])
+		if (bestScore ~= nil) then
+			difficultyText = difficultyText .. displayText .. "\r\n"
+			outputText = outputText .. difficultyText
+		end
+		color = color + 1
+		if color > #colors then
+			color = #colors
+		end
+	end
+	return outputText
+end
+
+function Game:findBestScore(scoreTable, difficultyOverride)
 	local bestScore = {}
 	local bestStage = -1
 	local bestBats = -1
 	if self.scoreData == nil then
 		return -1
 	end
+	local difficultyToFind = difficultyOverride or self.gameSettings.difficulty -- if they pass in an override, then use that
 	for k, score in pairs(scoreTable) do
-		if score.difficulty == self.gameSettings.difficulty then
+		if score.difficulty == difficultyToFind then
 			if score.stage > bestStage then
 				bestStage = score.stage
 				bestBats = score.batskilled

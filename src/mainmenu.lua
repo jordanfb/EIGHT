@@ -33,7 +33,7 @@ function MainMenu:_init(game)
 	self.playingPlayers = {}
 
 	self.SCREENWIDTH = 1920
-	self.SCREENHEIGHT = 1080
+	self.SCREENHEIGHT = 1200
 	self.menuCanvas = love.graphics.newCanvas(self.SCREENWIDTH, self.SCREENHEIGHT)
 end
 
@@ -181,6 +181,7 @@ end
 function MainMenu:draw()
 	love.graphics.setCanvas(self.menuCanvas)
 	love.graphics.clear()
+	love.graphics.draw(self.bg, -240, -135, 0, 1.25, 1.25) -- this is different because of the arcade machine, it's scaled up and centered
 	-- now start the drawing
 	-- love.graphics.setFont(self.mainFont)
 	-- love.graphics.setColor(255, 255, 255, 255)
@@ -234,7 +235,6 @@ function MainMenu:draw()
 	love.graphics.setCanvas()
 	love.graphics.setColor(255, 255, 255)
 
-	love.graphics.draw(self.bg)
 	love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/self.SCREENWIDTH, self.zoom*love.graphics.getHeight()/self.SCREENHEIGHT, self.SCREENWIDTH/2, self.SCREENHEIGHT/2)
 
 	-- love.graphics.draw(self.menuCanvas, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, self.zoom*love.graphics.getWidth()/self.SCREENWIDTH, self.zoom*love.graphics.getHeight()/self.SCREENHEIGHT, love.graphics.getWidth()/2, love.graphics.getHeight()/2)

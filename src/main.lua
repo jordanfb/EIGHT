@@ -12,7 +12,7 @@ local game = Game()
 function love.load(args)
 	math.randomseed(os.time())
 	love.filesystem.setIdentity('EIGHT')
-	
+
 	game:load(args)
 	--local width, height = 512, 256
 	local width, height = 1920, 1080
